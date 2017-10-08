@@ -1,0 +1,12 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}" />
+<div align="center">
+
+    <h1>Welcome to Time2Voting!</h1>
+
+    <p>Click the button to start!</p>
+
+    <button onclick="location.href={% url 'polls:index' %}">Start Voting!</button>
+
+</div>
