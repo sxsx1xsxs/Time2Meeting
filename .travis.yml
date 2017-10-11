@@ -11,9 +11,7 @@ services:
   - postgresql
 
 before_script:
-  - sudo -u postgres createuser -D -A -P wayne
-  - sudo -u postgres createdb -O wayne mytestdatabase
-  - sudo /etc/init.d/postgresql reload
+  - psql -c 'create database mytestdatabase;' -U postgres
 
 script:
   - python manage.py test
