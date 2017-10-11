@@ -86,8 +86,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'awesomedb',
-        'USER': 'postgres',
-        'PASSWORD': '',
+        'USER': 'wayne',
+        'PASSWORD': 'wayne',
         'HOST': '127.0.0.1',
         'PORT': '5432',
         'TEST': {
