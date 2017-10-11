@@ -1,11 +1,21 @@
 language: python
 
 python:
-- 3.6
+  - 3.6
 
 install:
     # Install the Python dependencies
-    - pip install -r requirements.txt
+  - pip install -r requirements.txt
+
+services:
+  - postgresql
+
+before_script:
+  - sudo -u postgres createuser -D -A -P wayne
+  - sudo -u postgres createdb -O wayne mytestdatabase
+  - sudo /etc/init.d/postgresql reload
 
 script:
-- python manage.py test
+  - python manage.py test
+
+
