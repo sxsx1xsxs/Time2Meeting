@@ -11,7 +11,7 @@ services:
   - postgresql
 
 before_script:
-  - psql -c 'create database mytestdatabase;' -U postgres
+  - psql -c 'create database awesomedb;' -U postgres
 
 script:
   - python manage.py test
