@@ -19,6 +19,8 @@ from home import views
 
 urlpatterns = [
     url(r'^polls/', include('polls.urls')),
+    url(r'^manage_event/', include('manage_event.urls')),
+    url(r'^result/', include('result.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index),
     url(r'^login/', include('login.urls')),
