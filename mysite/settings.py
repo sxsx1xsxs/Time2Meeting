@@ -28,6 +28,10 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '113043432208-j5lm6q6503m6j76c7v5j4ibb4a3u7nf8.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '5T8oNE4R7h4FEITw1koKugVF'
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,7 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'polls.apps.PollsConfig',
     'home.apps.HomeConfig',
+    'login',
+    'social.apps.django_app.default',
+    'social_django',
 ]
+
+LOGIN_REDIRECT_URL = '/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -101,6 +110,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+   'django.contrib.auth.context_processors.auth',
+   'django.core.context_processors.debug',
+   'django.core.context_processors.i18n',
+   'django.core.context_processors.media',
+   'django.core.context_processors.static',
+   'django.core.context_processors.tz',
+   'django.contrib.messages.context_processors.messages',
+   'social.apps.django_app.context_processors.backends',
+   'social.apps.django_app.context_processors.login_redirect',
+)
+
+AUTHENTICATION_BACKENDS = (
+   # 'social.backends.facebook.FacebookOAuth2',
+   'social.backends.google.GoogleOAuth2',
+   # 'social.backends.twitter.TwitterOAuth',
+   'django.contrib.auth.backends.ModelBackend',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
