@@ -19,11 +19,8 @@ from home import views
 
 urlpatterns = [
     url(r'^polls/', include('polls.urls')),
-<<<<<<< HEAD
     url(r'^manage_event/', include('manage_event.urls')),
-=======
     url(r'^result/', include('result.urls')),
->>>>>>> origin/master
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index)
 ]
