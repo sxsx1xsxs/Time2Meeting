@@ -10,3 +10,19 @@
     <button onclick="location.href={% url 'polls:index' %}">Start Voting!</button>
 
 </div>
+
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<form action= "{% url 'manage_event:create_event' %}" method="post">
+    {% csrf_token %}
+First name:<br>
+<input type="text" name="event_name">
+<br>
+<input type="submit" value="Create">
+</form>
+
+</body>
+</html>

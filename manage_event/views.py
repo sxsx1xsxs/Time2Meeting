@@ -7,11 +7,12 @@ from django.utils import timezone
 
 from .models import Users, Events, TimeSlots
 
+
 # Create your views here.
 def index(request):
-    latest_event_list = Events.objects.order_by('-event_date')[:5]
-    output = ', '.join([q.event_name for q in latest_event_list])
-    return HttpResponse(output)
+    #latest_event_list = Events.objects.order_by('-event_date')[:5]
+    #output = ', '.join([q.event_name for q in latest_event_list])
+    return HttpResponse("hello")
 
 # def detail(request, event_id):
 #     return HttpResponse("You're looking at event %s." % event_id)
@@ -23,24 +24,32 @@ def index(request):
 # def select(request, question_id):
 #     return HttpResponse("You're selecting on timeslots %s." % question_id)
 
-def create_event(request, event_name, user_name):
+
+def create_event(request):
+    # need add exception
+
+    event_name = request.POST.get('event_name')
     event = Events()
     event.event_name = event_name
-    event.event_organizer = user_name
+    event.save()
 
-    return HttpResponse("You're creating.")
+    return HttpResponse("You have created an event named:" + event_name)
+
 
 def delete_event(request, event_name, user_name):
 
     return HttpResponse("You're deleting.")
 
+
 def select_timeslots(request, event_name, user_name, timeslot):
 
     return HttpResponseRedirect(reverse('manage_event:results', args=(Events.event_id,)))
 
+
 def get_result(request, event_name):
     # get timeslots and compute
     return True
+
 
 def make_decision(request, event_name, user_name):
     result = get_result(request, event_name)

@@ -96,7 +96,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'awesomedb',
-        'USER': 'postgres',
+        'USER': 'Shadow',
         'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': '5432',
@@ -124,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+'''
 TEMPLATE_CONTEXT_PROCESSORS = (
    'django.contrib.auth.context_processors.auth',
    'django.core.context_processors.debug',
@@ -136,6 +136,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
    'social.apps.django_app.context_processors.backends',
    'social.apps.django_app.context_processors.login_redirect',
 )
+'''
 
 AUTHENTICATION_BACKENDS = (
    # 'social.backends.facebook.FacebookOAuth2',
