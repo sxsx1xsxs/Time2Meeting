@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button onclick="location.href='{% url 'manage_event:index' %}'">Time2Meeting</button>
+<button onclick="location.href='{% url 'manage_event:guidance' %}'">Guidance</button>
+<button onclick="location.href='{% url 'manage_event:team' %}'">Team</button>
+
+<form action= "{% url 'manage_event:create_event' %}" method="post">
+    {% csrf_token %}
+    <br>
+    <input type="text" name="event_name">
+    <br>
+    <input type="date" name="time_range">
+    <br>
+    <input type="date" name="deadline">
+    <br>
+    <input type="submit" value="Create">
+    <br>
+
+</form>
+</body>
+</html>
