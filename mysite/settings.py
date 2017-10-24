@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'social.apps.django_app.default',
     'social_django',
     'manage_event',
+    'time2meeting',
 ]
 
 LOGIN_REDIRECT_URL = '/'

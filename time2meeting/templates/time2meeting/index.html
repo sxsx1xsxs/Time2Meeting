@@ -1,0 +1,45 @@
+<html lang='en'>
+
+<button onclick="location.href='{% url 'time2meeting:index' %}'">Time2Meeting</button>
+<button onclick="location.href='{% url 'time2meeting:guidance' %}'">Guidance</button>
+<button onclick="location.href='{% url 'time2meeting:team' %}'">Team</button>
+
+<meta name="google-signin-client_id" content="113043432208-j5lm6q6503m6j76c7v5j4ibb4a3u7nf8.apps.googleusercontent.com">
+ <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script type="text/javascript">
+    function onSignIn(googleUser) {
+      console.log('success');
+        var profile = googleUser.getBasicProfile();
+        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        console.log('Name: ' + profile.getName());
+        console.log('Image URL: ' + profile.getImageUrl());
+        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    }
+
+function onFailure(error) {
+      console.log(error);
+    }
+    </script>
+    <div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onSignInFailure"></div>
+    <a href="#" onclick="signOut();">Sign out</a>
+    <script>
+    function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function() {
+            console.log('User signed out.');
+        });
+    }
+    </script>
+
+<div align="center">
+
+    <h1>Welcome to Time2Meeting!</h1>
+
+    <p>Click the button to create a event!</p>
+
+    <button onclick="location.href='{% url 'time2meeting:create_event' %}'">Create_event</button>
+
+</div>
+
+profile.getImageUrl()
+</html>

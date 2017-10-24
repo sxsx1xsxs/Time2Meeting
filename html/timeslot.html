@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="google-signin-client_id" content="113043432208-j5lm6q6503m6j76c7v5j4ibb4a3u7nf8.apps.googleusercontent.com">
+    <style type="text/css" media="screen">
+    table#power_schedule td {
+        width: 140px;
+    }
+
+    table#power_schedule td.selectable,
+    table#power_schedule th {
+        font-size: 12px;
+        width: 70px;
+        height: 25px;
+        text-align: center;
+    }
+
+    table#power_schedule td.selectable {
+        width: 60px;
+        background-color: #77DD77;
+        border: 1px solid #68C168;
+    }
+
+    table#power_schedule td.highlighted {
+        background-color: #FF6961;
+        border: 1px solid #E8615A;
+    }
+
+    table#power_schedule td:first-child {
+        cursor: pointer;
+    }
+    </style>
+</head>
+
+<body>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script type="text/javascript">
+    function onSignIn(googleUser) {
+      console.log('success');
+        var profile = googleUser.getBasicProfile();
+        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        console.log('Name: ' + profile.getName());
+        console.log('Image URL: ' + profile.getImageUrl());
+        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    }
+
+function onFailure(error) {
+      console.log(error);
+    }
+    </script>
+    <div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onSignInFailure"></div>
+    <a href="#" onclick="signOut();">Sign out</a>
+    <script>
+    function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function() {
+            console.log('User signed out.');
+        });
+    }
+    </script>
+    <table cellpadding="0" cellspacing="0" id="power_schedule">
+        <thead>
+            <th/>
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+            <th>Sat</th>
+            <th>Sun</th>
+        </thead>
+        <tr>
+            <td>00:00-00:30</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>00:30-01:00</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>01:00-01:30</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+    </table>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" charset="utf-8">
+    $(function() {
+        // Create table dragging functionality
+        var isMouseDown = false;
+        var highlighted
+        $("table#power_schedule td.selectable")
+            .mousedown(function() {
+                isMouseDown = true;
+                highlighted = $(this).hasClass('highlighted')
+
+                if (highlighted) {
+                    $(this).removeClass('highlighted')
+                } else {
+                    $(this).addClass('highlighted')
+                }
+                return false; // prevent text selection
+            })
+            .mouseover(function() {
+                if (isMouseDown) {
+                    if (highlighted) {
+                        $(this).removeClass('highlighted')
+                    } else {
+                        $(this).addClass('highlighted')
+                    }
+                }
+            })
+            .bind("selectstart", function() {
+                return false; // prevent text selection in IE
+            })
+
+        $('table#power_schedule td:first-child')
+            .mousedown(function() {
+                isMouseDown = true;
+
+                $(this).parent().find('td:not(:first-of-type)').toggleClass('highlighted')
+                $(this).css('cursor', 'pointer')
+                return false
+            })
+            .mouseover(function() {
+                if (isMouseDown) {
+                    $(this).parent().find('td:not(:first-of-type)').toggleClass('highlighted')
+                }
+            })
+            .bind("selectstart", function() {
+                return false; // prevent text selection in IE
+            })
+
+        $(document)
+            .mouseup(function() {
+                isMouseDown = false
+            })
+    });
+    </script>
+    <button> submit</button>
+</body>
+
+</html>
