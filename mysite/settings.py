@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'polls.apps.PollsConfig',
-    'home.apps.HomeConfig',
     'login',
     'social.apps.django_app.default',
     'social_django',

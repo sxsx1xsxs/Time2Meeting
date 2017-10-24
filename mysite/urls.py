@@ -15,14 +15,16 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from home import views
+from time2meeting import views
 
 urlpatterns = [
     url(r'^polls/', include('polls.urls')),
+
     url(r'^manage_event/', include('manage_event.urls')),
     url(r'^time2meeting/', include('time2meeting.urls')),
+
     url(r'^admin/', admin.site.urls),
+    url(r'^time2meeting/', include('time2meeting.urls')),
     url(r'^$', views.index),
     url(r'^login/', include('login.urls')),
-
 ]

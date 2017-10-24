@@ -1,36 +1,66 @@
 {% extends 'login/base.html' %}
+<!DOCTYPE html>
+<html>
 
+<head>
+    <meta charset="utf-8" />
+    <meta name="google-signin-client_id" content="113043432208-j5lm6q6503m6j76c7v5j4ibb4a3u7nf8.apps.googleusercontent.com">
+</head>
 {% block main %}
- <div>
- <h1>Third-party authentication demo</h1>
 
- <p>
-      <li>
-       <a>Hello {{ user.get_full_name|default:user.username }}!</a>
-     </li>
-     <li>
-       <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
-     </li>
-   <ul>
-   {% if user and not user.is_anonymous %}
-     <li>
-       <a>Hello {{ user.get_full_name|default:user.username }}!</a>
-     </li>
-     <li>
-       <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
-     </li>
-   {% else %}
-     <!--<li>-->
-       <!--<a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with Facebook</a>-->
-     <!--</li>-->
-     <li>
-       <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login with Google</a>
-     </li>
-     <!--<li>-->
-       <!--<a href="{% url 'social:begin' 'twitter' %}?next={{ request.path }}">Login with Twitter</a>-->
-     <!--</li>-->
-   {% endif %}
-   </ul>
- </p>
- </div>
-{% endblock %}
+<body>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <script type="text/javascript">
+    function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        console.log('Name: ' + profile.getName());
+        console.log('Image URL: ' + profile.getImageUrl());
+        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    }
+    </script>
+    <a href="#" onclick="signOut();">Sign out</a>
+    <script>
+    function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function() {
+            console.log('User signed out.');
+        });
+    }
+    </script>
+    <div>
+        <h1>Third-party authentication demo</h1>
+        <p>
+            <li>
+                <a>Hello {{ user.get_full_name|default:user.username }}!</a>
+            </li>
+            <li>
+                <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
+            </li>
+            <ul>
+                {% if user and not user.is_anonymous %}
+                <li>
+                    <a>Hello {{ user.get_full_name|default:user.username }}!</a>
+                </li>
+                <li>
+                    <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
+                </li>
+                {% else %}
+                <!--<li>-->
+                <!--<a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with Facebook</a>-->
+                <!--</li>-->
+                <li>
+                    <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login with Google</a>
+                </li>
+                <!--<li>-->
+                <!--<a href="{% url 'social:begin' 'twitter' %}?next={{ request.path }}">Login with Twitter</a>-->
+                <!--</li>-->
+                {% endif %}
+            </ul>
+        </p>
+    </div>
+    {% endblock %}
+</body>
+
+</html>

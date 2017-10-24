@@ -5,10 +5,10 @@ from django.utils import timezone
 # Create your models here.
 class Events(models.Model):
     event_name = models.CharField(max_length=300)
-    #event_id = models.IntegerField(primary_key=True)
+    #time_range = models.DateTimeField(None, None, False, False)
     #event_organizer = models.CharField(max_length=300)
     #wait_for_decision = models.BooleanField()
-    #time_range = models.DateTimeField(None, None, False, False)
+    #
     #deadline = models.DateTimeField(None, None, False, False)
     #final_decision = models.BooleanField()
     #final_decision_timeslot = models.DateTimeField(None, None, False, False)
