@@ -91,19 +91,21 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 #    }
 #}
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'awesomedb',
-        'USER': 'postgres',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-        'TEST': {
-            'NAME': 'mytestdatabase',
-        },
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'awesomedb',
+#         # 'USER': 'postgres',
+#         'USER': 'meeting',
+#         # 'PASSWORD': '',
+#         'PASSWORD': 'meeting',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#         'TEST': {
+#             'NAME': 'mytestdatabase',
+#         },
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
