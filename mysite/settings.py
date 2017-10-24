@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'login',
     'social.apps.django_app.default',
     'social_django',
+    'manage_event',
 ]
 
 LOGIN_REDIRECT_URL = '/'
@@ -91,21 +92,19 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 #    }
 #}
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'awesomedb',
-#         # 'USER': 'postgres',
-#         'USER': 'meeting',
-#         # 'PASSWORD': '',
-#         'PASSWORD': 'meeting',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-#         'TEST': {
-#             'NAME': 'mytestdatabase',
-#         },
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'awesomedb',
+        'USER': 'Shadow',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+        'TEST': {
+            'NAME': 'mytestdatabase',
+        },
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -125,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+'''
 TEMPLATE_CONTEXT_PROCESSORS = (
    'django.contrib.auth.context_processors.auth',
    'django.core.context_processors.debug',
@@ -137,6 +136,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
    'social.apps.django_app.context_processors.backends',
    'social.apps.django_app.context_processors.login_redirect',
 )
+'''
 
 AUTHENTICATION_BACKENDS = (
    # 'social.backends.facebook.FacebookOAuth2',
