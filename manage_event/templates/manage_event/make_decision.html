@@ -1,0 +1,14 @@
+<div align="center">
+<h1>{{ event.event_name }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+    <form action="{% url 'manage_event:make_decision' event.id %}" method="post">
+{% csrf_token %}
+{% for time_slot in event.timeslots_set.all %}
+    <input type="radio" name="time_slot" id="time_slot{{ forloop.counter }}" value="{{ time_slot.id }}" />
+    <label for="time_slot{{ forloop.counter }}">{{ time_slot.timeslot }}</label><br />
+{% endfor %}
+<input type="submit" value="Decide" />
+</form>
+</div>

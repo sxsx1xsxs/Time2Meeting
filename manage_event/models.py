@@ -43,9 +43,23 @@ class TimeSlots(models.Model):
     #two fields are primary key together
 
     event = models.ForeignKey(Events, on_delete=models.CASCADE)
-    event_participant = models.ForeignKey(Users, on_delete=models.CASCADE)
+    #event_participant = models.ForeignKey(Users, on_delete=models.CASCADE)
 
     timeslot = models.DateTimeField(None, None, False, False)
+    is_result = models.IntegerField(default=0)
+    is_decision = models.IntegerField(default=0)
 
-    def __str__(self):
-        return self.timeslot
+    # def __str__(self):
+    #     return self.timeslot
+
+class Results(models.Model):
+
+    event = models.ForeignKey(Events, on_delete=models.CASCADE)
+    timeslot = models.DateTimeField(None, None, False, False)
+
+
+class Decision(models.Model):
+
+    event = models.ForeignKey(Events, on_delete=models.CASCADE)
+    timeslot = models.DateTimeField(None, None, False, False)
+
