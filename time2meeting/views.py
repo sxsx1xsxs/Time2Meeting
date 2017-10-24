@@ -56,9 +56,10 @@ def delete_event(request, event_name, user_name):
     return HttpResponse("You're deleting.")
 
 
-def select_timeslots(request, event_name, user_name, timeslot):
+def select_timeslots(request):
 
-    return HttpResponseRedirect(reverse('time2meeting:results', args=(Events.event_id,)))
+    # return HttpResponseRedirect(reverse('time2meeting:results', args=(Events.event_id,)))
+    return render(request, 'time2meeting/select_timeslots.html', context=None)
 
 
 def get_result(request, event_name):
