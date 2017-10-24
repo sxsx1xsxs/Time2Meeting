@@ -8,7 +8,7 @@
 
     <ul>
     {% for event in event_to_do %}
-        <li><a href="{% url 'manage_event:make_decision_detail' event.id%}">{{ event.event_name }}</a></li>
+        <li><a href="{% url 'manage_event:select_timeslots' event.id%}">{{ event.event_name }}</a></li>
     {% endfor %}
     </ul>
 

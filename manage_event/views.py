@@ -89,10 +89,10 @@ def delete_event(request, event_name, user_name):
     return HttpResponse("You're deleting.")
 
 
-def select_timeslots(request):
-
+def select_timeslots(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
     # return HttpResponseRedirect(reverse('time2meeting:results', args=(Events.event_id,)))
-    return render(request, 'manage_event/select_timeslots.html', context=None)
+    return render(request, 'manage_event/select_timeslots.html', {'event': event})
 
 
 def get_result(request):
