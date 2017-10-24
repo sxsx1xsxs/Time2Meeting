@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'social.apps.django_app.default',
     'social_django',
     'time2meeting.apps.Time2MeetingConfig',
+    'sidebars',
 ]
 
 LOGIN_REDIRECT_URL = '/'
@@ -95,7 +96,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'awesomedb',
-        'USER': 'Shadow',
+        'USER': 'postgres',
         'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': '5432',

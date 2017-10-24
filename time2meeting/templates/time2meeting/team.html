@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'time2meeting/base.html' %}
+{% block content %}
 
 <button onclick="location.href='{% url 'time2meeting:index' %}'">Back</button>
 This is about team.
 
-</body>
-</html>
+{% endblock%}

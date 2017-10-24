@@ -1,10 +1,7 @@
+{% extends 'time2meeting/base.html' %}
+{% block content %}
+
 {% load static %}
-
-<link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}" />
-<button onclick="location.href='{% url 'time2meeting:index' %}'">Time2Meeting</button>
-<button onclick="location.href='{% url 'time2meeting:guidance' %}'">Guidance</button>
-<button onclick="location.href='{% url 'time2meeting:team' %}'">Team</button>
-
 <div align="center">
 
     <h1>Welcome to Time2Meeting!</h1>
@@ -15,3 +12,4 @@
 
 </div>
 
+{% endblock%}

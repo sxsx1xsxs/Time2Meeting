@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<button onclick="location.href='{% url 'time2meeting:index' %}'">Time2Meeting</button>
-<button onclick="location.href='{% url 'time2meeting:guidance' %}'">Guidance</button>
-<button onclick="location.href='{% url 'time2meeting:team' %}'">Team</button>
-
+{% extends 'time2meeting/base.html' %}
+{% block content %}
 <form action= "{% url 'time2meeting:create_event' %}" method="post">
     {% csrf_token %}
     <br>
@@ -22,5 +13,4 @@
     <br>
 
 </form>
-</body>
-</html>
+{% endblock %}
