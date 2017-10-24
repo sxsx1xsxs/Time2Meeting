@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<button onclick="location.href='{% url 'time2meeting:index' %}'">Time2Meeting</button>
+<button onclick="location.href='{% url 'time2meeting:guidance' %}'">Guidance</button>
+<button onclick="location.href='{% url 'time2meeting:team' %}'">Team</button>
+
+<h1>Event Created Successfully!</h1>
+<h2>Share this link to invite your friends to join the event:</h2>
+
+<form>
+    <input type="text" name="share_link" value="https://">
+</form>
+<button onclick="location.href='{% url 'time2meeting:team' %}'">Select your time slots</button>
+<br>
+<button onclick="location.href='{% url 'time2meeting:team' %}'">Create another event</button>
+<br>
+<button onclick="location.href='{% url 'time2meeting:team' %}'">Back to organize events</button>
+<br>
+</body>
+</html>

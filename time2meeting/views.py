@@ -9,10 +9,19 @@ from .models import Users, Events, TimeSlots
 
 
 # Create your views here.
+from django.shortcuts import render
+
+
 def index(request):
-    #latest_event_list = Events.objects.order_by('-event_date')[:5]
-    #output = ', '.join([q.event_name for q in latest_event_list])
-    return HttpResponse("hello")
+    return render(request, 'time2meeting/index.html', context=None)
+
+
+def guidance(request):
+    return render(request, 'time2meeting/guidance.html', context=None)
+
+
+def team(request):
+    return render(request, 'time2meeting/team.html', context=None)
 
 # def detail(request, event_id):
 #     return HttpResponse("You're looking at event %s." % event_id)
@@ -27,13 +36,19 @@ def index(request):
 
 def create_event(request):
     # need add exception
+    if request.method == 'GET':
+        return render(request, 'time2meeting/create_event.html', context=None)
+    elif request.method == 'POST':
+        event_name = request.POST.get('event_name')
+        event = Events()
+        event.event_name = event_name
+        event.save()
+        return HttpResponseRedirect(reverse('time2meeting:create_publish'))
 
-    event_name = request.POST.get('event_name')
-    event = Events()
-    event.event_name = event_name
-    event.save()
 
-    return HttpResponse("You have created an event named:" + event_name)
+def create_publish(request):
+    if request.method == 'GET':
+        return render(request, 'time2meeting/create_publish.html', context=None)
 
 
 def delete_event(request, event_name, user_name):
@@ -43,7 +58,7 @@ def delete_event(request, event_name, user_name):
 
 def select_timeslots(request, event_name, user_name, timeslot):
 
-    return HttpResponseRedirect(reverse('manage_event:results', args=(Events.event_id,)))
+    return HttpResponseRedirect(reverse('time2meeting:results', args=(Events.event_id,)))
 
 
 def get_result(request, event_name):
