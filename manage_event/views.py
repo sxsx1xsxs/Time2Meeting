@@ -23,15 +23,17 @@ def index(request):
     #     'event_wait_for_decision' : event_wait_for_decision,
     # })
 
+
 def organize_index(request):
     event_wait_for_decision = Events.objects.all()
     event_on_going = Events.objects.all()
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/organize_index.html', {
-        'event_wait_for_decision' : event_wait_for_decision,
-        'event_on_going' : event_on_going,
+        'event_wait_for_decision': event_wait_for_decision,
+        'event_on_going': event_on_going,
     })
+
 
 def participate_index(request):
     event_to_do = Events.objects.all()
@@ -45,8 +47,6 @@ def participate_index(request):
         'event_pending': event_pending,
 
     })
-
-
 
 
 def guidance(request):
@@ -73,15 +73,23 @@ def create_event(request):
         return render(request, 'manage_event/create_event.html', context=None)
     elif request.method == 'POST':
         event_name = request.POST.get('event_name')
+        time_range = request.POST.get('time_range')
+        deadline = request.POST.get('deadline')
         event = Events()
+
         event.event_name = event_name
+        event.time_range = time_range
+        event.deadline = deadline
         event.save()
-        return HttpResponseRedirect(reverse('manage_event:create_publish'))
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
 
 
-def create_publish(request):
+def create_publish(request, event_id):
     if request.method == 'GET':
-        return render(request, 'manage_event/create_publish.html', context=None)
+        return render(request, 'manage_event/create_publish.html', {'event_id': event_id})
 
 
 def delete_event(request, event_name, user_name):
@@ -90,7 +98,11 @@ def delete_event(request, event_name, user_name):
 
 
 def select_timeslots(request, event_id):
+<<<<<<< Updated upstream
     event = get_object_or_404(Events, pk=event_id)
+=======
+
+>>>>>>> Stashed changes
     # return HttpResponseRedirect(reverse('time2meeting:results', args=(Events.event_id,)))
     return render(request, 'manage_event/select_timeslots.html', {'event': event})
 

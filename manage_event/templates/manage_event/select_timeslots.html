@@ -4,7 +4,6 @@
 <h1>Select time slot for {{ event.event_name }}</h1>
 <head>
     <meta charset="utf-8" />
-    <meta name="google-signin-client_id" content="113043432208-j5lm6q6503m6j76c7v5j4ibb4a3u7nf8.apps.googleusercontent.com">
     <style type="text/css" media="screen">
     table#power_schedule td {
         width: 140px;
@@ -36,31 +35,6 @@
 </head>
 
 <body>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <script type="text/javascript">
-    function onSignIn(googleUser) {
-      console.log('success');
-        var profile = googleUser.getBasicProfile();
-        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-        console.log('Name: ' + profile.getName());
-        console.log('Image URL: ' + profile.getImageUrl());
-        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-    }
-
-function onFailure(error) {
-      console.log(error);
-    }
-    </script>
-    <div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onSignInFailure"></div>
-    <a href="#" onclick="signOut();">Sign out</a>
-    <script>
-    function signOut() {
-        var auth2 = gapi.auth2.getAuthInstance();
-        auth2.signOut().then(function() {
-            console.log('User signed out.');
-        });
-    }
-    </script>
     <table cellpadding="0" cellspacing="0" id="power_schedule">
         <thead>
             <th/>
@@ -73,7 +47,7 @@ function onFailure(error) {
             <th>Sun</th>
         </thead>
         <tr>
-            <td>00:00-00:30</td>
+            <td>08:00-09:00</td>
             <td class="selectable"> </td>
             <td class="selectable"> </td>
             <td class="selectable"> </td>
@@ -83,7 +57,137 @@ function onFailure(error) {
             <td class="selectable"> </td>
         </tr>
         <tr>
-            <td>00:30-01:00</td>
+            <td>10:00-11:00</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>11:00-12:00</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>13:00-14:00</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>14:00-15:00</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>16:00-17:00</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>18:00-19:00</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>20:00-21:00</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>22:00-23:00</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>01:00-01:30</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>01:00-01:30</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>01:00-01:30</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>01:00-01:30</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>01:00-01:30</td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+            <td class="selectable"> </td>
+        </tr>
+        <tr>
+            <td>01:00-01:30</td>
             <td class="selectable"> </td>
             <td class="selectable"> </td>
             <td class="selectable"> </td>
