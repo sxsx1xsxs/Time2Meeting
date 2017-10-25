@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'manage_event/base.html' %}
+{% block content %}
 
 <button onclick="location.href='{% url 'manage_event:index' %}'">Back</button>
 This is the guidance.
 
-</body>
-</html>
+{% endblock%}

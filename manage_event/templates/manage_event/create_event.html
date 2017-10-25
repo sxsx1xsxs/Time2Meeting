@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<button onclick="location.href='{% url 'manage_event:index' %}'">Time2Meeting</button>
-<button onclick="location.href='{% url 'manage_event:guidance' %}'">Guidance</button>
-<button onclick="location.href='{% url 'manage_event:team' %}'">Team</button>
+{% extends 'manage_event/base.html' %}
+{% block content %}
+
 
 <form action= "{% url 'manage_event:create_event' %}" method="post">
     {% csrf_token %}
@@ -22,5 +15,6 @@
     <br>
 
 </form>
-</body>
-</html>
+
+
+{% endblock%}
