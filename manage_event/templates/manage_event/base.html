@@ -10,9 +10,9 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
 </head>
 <body>
-<button onclick="location.href='{% url 'time2meeting:index' %}'">Time2Meeting</button>
-<button onclick="location.href='{% url 'time2meeting:guidance' %}'">Guidance</button>
-<button onclick="location.href='{% url 'time2meeting:team' %}'">Team</button>
+<button onclick="location.href='{% url 'manage_event:index' %}'">Time2Meeting</button>
+<button onclick="location.href='{% url 'manage_event:guidance' %}'">Guidance</button>
+<button onclick="location.href='{% url 'manage_event:team' %}'">Team</button>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 <script type="text/javascript">
     function onSignIn(googleUser) {
