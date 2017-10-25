@@ -5,10 +5,13 @@
 <form action= "{% url 'manage_event:create_event' %}" method="post">
     {% csrf_token %}
     <br>
+    Event name:<br>
     <input type="text" name="event_name">
     <br>
-    <input type="date" name="time_range">
+    Time range:<br>
+    <input type="date" name="time_range_start"> to <input type="date" name="time_range_end">
     <br>
+    Deadline: <br>
     <input type="date" name="deadline">
     <br>
     <input type="submit" value="Create">

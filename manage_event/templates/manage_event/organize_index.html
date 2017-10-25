@@ -4,7 +4,7 @@
 
 <div align="center">
 
-    <h1>Welcome to Time2Voting!</h1>
+    <h1>Welcome to Time2Meeting!</h1>
 
     <p>Organize index page.</p>
 
@@ -26,8 +26,15 @@
     {% endfor %}
     </ul>
 
-</div>
+    <p>History:</p>
 
+    <ul>
+    {% for event in event_history %}
+        <li><a href="{% url 'manage_event:make_decision_results' event.id%}">{{ event.event_name }}</a></li>
+    {% endfor %}
+    </ul>
+
+</div>
 
 {% endblock%}
 
