@@ -25,19 +25,21 @@ def index(request):
 
 
 def organize_index(request):
-    event_wait_for_decision = Events.objects.all()
-    event_on_going = Events.objects.all()
+    event_wait_for_decision = Events.objects.filter(final_decision = False).filter(deadline__lte= timezone.now())
+    event_on_going = Events.objects.filter(deadline__gte= timezone.now())
+    event_history = Events.objects.filter(final_decision = True)
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/organize_index.html', {
         'event_wait_for_decision': event_wait_for_decision,
         'event_on_going': event_on_going,
+        'event_history' : event_history,
     })
 
 
 def participate_index(request):
-    event_to_do = Events.objects.all()
-    event_result = Events.objects.all()
+    event_to_do = Events.objects.filter(deadline__gte= timezone.now())
+    event_result = Events.objects.filter(final_decision = True)
     event_pending = Events.objects.all()
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
@@ -129,7 +131,13 @@ def make_decision(request, event_id):
     else:
         decision = event.decision_set.create(timeslot=selected_timeslot.timeslot)
         decision.save()
+        event.final_decision = True
+        event.save()
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('manage_event:make_decision_results', args=(event.id,)))
+
+def show_decision_result(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    return render(request, 'manage_event/show_decision_result.html', {'event': event})

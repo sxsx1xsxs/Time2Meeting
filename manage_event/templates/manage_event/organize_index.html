@@ -26,6 +26,14 @@
     {% endfor %}
     </ul>
 
+    <p>History:</p>
+
+    <ul>
+    {% for event in event_history %}
+        <li><a href="{% url 'manage_event:make_decision_results' event.id%}">{{ event.event_name }}</a></li>
+    {% endfor %}
+    </ul>
+
 </div>
 
 

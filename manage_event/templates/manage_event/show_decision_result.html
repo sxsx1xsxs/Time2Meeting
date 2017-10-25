@@ -1,0 +1,14 @@
+{% extends 'manage_event/base.html' %}
+{% block content %}
+
+
+<div align="center">
+<h1>{{ event.event_name }}</h1>
+
+<p> The final time is {{ event.decision_set.get.timeslot }}.</p>
+
+<a href="{% url 'manage_event:participate_index' %}">Back to Participate Event</a>
+</div>
+
+
+{% endblock%}
