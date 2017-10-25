@@ -75,12 +75,14 @@ def create_event(request):
         return render(request, 'manage_event/create_event.html', context=None)
     elif request.method == 'POST':
         event_name = request.POST.get('event_name')
-        time_range = request.POST.get('time_range')
+        time_range_start = request.POST.get('time_range_start')
+        time_range_end = request.POST.get('time_range_end')
         deadline = request.POST.get('deadline')
-        event = Events()
 
+        event = Events()
         event.event_name = event_name
-        event.time_range = time_range
+        event.time_range_start = time_range_start
+        event.time_range_end = time_range_end
         event.deadline = deadline
         event.save()
         # Always return an HttpResponseRedirect after successfully dealing
@@ -110,13 +112,16 @@ def get_result(request):
     # get timeslots and compute
     return True
 
+
 def make_decision_detail(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     return render(request, 'manage_event/make_decision.html', {'event': event})
 
+
 def make_decision_results(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     return render(request, 'manage_event/make_decision_results.html', {'event': event})
+
 
 def make_decision(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
