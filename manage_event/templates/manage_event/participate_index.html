@@ -20,7 +20,7 @@
 
     <ul>
     {% for event in event_result %}
-        <li><a href="{% url 'manage_event:make_decision_detail' event.id%}">{{ event.event_name }}</a></li>
+        <li><a href="{% url 'manage_event:show_decision_result' event.id%}">{{ event.event_name }}</a></li>
     {% endfor %}
     </ul>
 

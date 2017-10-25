@@ -9,7 +9,7 @@ class Events(models.Model):
     #event_organizer = models.CharField(max_length=300)
     #wait_for_decision = models.BooleanField()
     deadline = models.DateTimeField(None, None, False, False)
-    #final_decision = models.BooleanField()
+    final_decision = models.BooleanField(default=False)
     #final_decision_timeslot = models.DateTimeField(None, None, False, False)
 
     # for inviting participants
