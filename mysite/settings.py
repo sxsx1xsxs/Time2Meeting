@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'social.apps.django_app.default',
     'social_django',
     'time2meeting.apps.Time2MeetingConfig',
-    'sidebars',
+    'manage_event',
 ]
 
 LOGIN_REDIRECT_URL = '/'

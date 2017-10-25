@@ -1,0 +1,25 @@
+<div align="center">
+
+    <h1>Welcome to Time2Voting!</h1>
+
+    <p>Organize index page.</p>
+
+    <button onclick="location.href='{% url 'manage_event:create_event' %}'">Create event</button>
+
+    <p>Wait for decision:</p>
+
+    <ul>
+    {% for event in event_wait_for_decision %}
+        <li><a href="{% url 'manage_event:make_decision_detail' event.id%}">{{ event.event_name }}</a></li>
+    {% endfor %}
+    </ul>
+
+    <p>On going:</p>
+
+    <ul>
+    {% for event in event_on_going %}
+        <li><a href="{% url 'manage_event:make_decision_detail' event.id%}">{{ event.event_name }}</a></li>
+    {% endfor %}
+    </ul>
+
+</div>

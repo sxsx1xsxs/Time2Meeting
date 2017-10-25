@@ -14,12 +14,14 @@ from django.shortcuts import render
 
 def index(request):
 
-    event_wait_for_decision = Events.objects.all()
-    #latest_event_list = Events.objects.order_by('-event_date')[:5]
-    #output = ', '.join([q.event_name for q in latest_event_list])
-    return render(request, 'manage_event/organize_index.html', {
-        'event_wait_for_decision' : event_wait_for_decision,
-    })
+    return render(request, 'manage_event/index.html', context=None)
+
+    # event_wait_for_decision = Events.objects.all()
+    # #latest_event_list = Events.objects.order_by('-event_date')[:5]
+    # #output = ', '.join([q.event_name for q in latest_event_list])
+    # return render(request, 'manage_event/organize_index.html', {
+    #     'event_wait_for_decision' : event_wait_for_decision,
+    # })
 
 def organize_index(request):
     event_wait_for_decision = Events.objects.all()
@@ -27,8 +29,8 @@ def organize_index(request):
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/organize_index.html', {
-        'event_wait_for_decision' : event_wait_for_decision,
-        'event_on_going' : event_on_going,
+        'event_wait_for_decision': event_wait_for_decision,
+        'event_on_going': event_on_going,
     })
 
 def participate_index(request):
@@ -44,15 +46,15 @@ def participate_index(request):
 
     })
 
-    #return render(request, 'time2meeting/index.html', context=None)
+
 
 
 def guidance(request):
-    return render(request, 'time2meeting/guidance.html', context=None)
+    return render(request, 'manage_event/guidance.html', context=None)
 
 
 def team(request):
-    return render(request, 'time2meeting/team.html', context=None)
+    return render(request, 'manage_event/team.html', context=None)
 
 # def detail(request, event_id):
 #     return HttpResponse("You're looking at event %s." % event_id)
@@ -68,18 +70,18 @@ def team(request):
 def create_event(request):
     # need add exception
     if request.method == 'GET':
-        return render(request, 'time2meeting/create_event.html', context=None)
+        return render(request, 'manage_event/create_event.html', context=None)
     elif request.method == 'POST':
         event_name = request.POST.get('event_name')
         event = Events()
         event.event_name = event_name
         event.save()
-        return HttpResponseRedirect(reverse('time2meeting:create_publish'))
+        return HttpResponseRedirect(reverse('manage_event:create_publish'))
 
 
 def create_publish(request):
     if request.method == 'GET':
-        return render(request, 'time2meeting/create_publish.html', context=None)
+        return render(request, 'manage_event/create_publish.html', context=None)
 
 
 def delete_event(request, event_name, user_name):
@@ -87,34 +89,15 @@ def delete_event(request, event_name, user_name):
     return HttpResponse("You're deleting.")
 
 
-def select_timeslots(request):
-
+def select_timeslots(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
     # return HttpResponseRedirect(reverse('time2meeting:results', args=(Events.event_id,)))
-    return render(request, 'time2meeting/select_timeslots.html', context=None)
+    return render(request, 'manage_event/select_timeslots.html', {'event': event})
 
 
 def get_result(request):
     # get timeslots and compute
     return True
-
-# def make_decision_index(request):
-#
-#     #selected_choice = TimeSlots.get(pk=request.POST['choice'])
-#     timeslots = TimeSlots.objects
-#     return render(request, 'manage_event/make_decision.html', context={
-#         'timeslots':timeslots,
-#     })
-#
-# def make_decision(request):
-#
-#     return HttpResponse("You have make decision.")
-
-    # result = get_result(request)
-    # if request == 'abort':
-    #     return False
-    # elif request == 'decide':
-    #     # update final decision
-    #     return True
 
 def make_decision_detail(request, event_id):
     event = get_object_or_404(Events, pk=event_id)

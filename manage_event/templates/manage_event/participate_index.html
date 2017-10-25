@@ -1,0 +1,31 @@
+<div align="center">
+
+    <h1>Welcome to Time2Voting!</h1>
+
+    <p>Participate index page.</p>
+
+    <p>To do:</p>
+
+    <ul>
+    {% for event in event_to_do %}
+        <li><a href="{% url 'manage_event:select_timeslots' event.id%}">{{ event.event_name }}</a></li>
+    {% endfor %}
+    </ul>
+
+    <p>Result:</p>
+
+    <ul>
+    {% for event in event_result %}
+        <li><a href="{% url 'manage_event:make_decision_detail' event.id%}">{{ event.event_name }}</a></li>
+    {% endfor %}
+    </ul>
+
+    <p>Pending:</p>
+
+    <ul>
+    {% for event in event_pending %}
+        <li><a href="{% url 'manage_event:make_decision_detail' event.id%}">{{ event.event_name }}</a></li>
+    {% endfor %}
+    </ul>
+
+</div>
