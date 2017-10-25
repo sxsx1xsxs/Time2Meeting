@@ -78,12 +78,13 @@ def create_event(request):
         time_range_start = request.POST.get('time_range_start')
         time_range_end = request.POST.get('time_range_end')
         deadline = request.POST.get('deadline')
-        if (time_range is '' or event_name is ''):
+        if (time_range_start is '' or time_range_end is '' or deadline is '' or event_name is ''):
             return render(request, 'manage_event/create_event.html', context = None)
         else:
             event = Events()
             event.event_name = event_name
-            event.time_range = time_range
+            event.time_range_start = time_range_start
+            event.time_range_end = time_range_end
             event.deadline = deadline
             event.save()
                 # Always return an HttpResponseRedirect after successfully dealing
@@ -143,10 +144,7 @@ def make_decision(request, event_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('manage_event:make_decision_results', args=(event.id,)))
-<<<<<<< HEAD
-=======
 
 def show_decision_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     return render(request, 'manage_event/show_decision_result.html', {'event': event})
->>>>>>> origin/master
