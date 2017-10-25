@@ -118,8 +118,8 @@ def make_decision(request, event_id):
             'error_message': "You didn't select a choice.",
         })
     else:
-        selected_timeslot.is_decision += 1
-        selected_timeslot.save()
+        decision = event.decision_set.create(timeslot=selected_timeslot.timeslot)
+        decision.save()
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.

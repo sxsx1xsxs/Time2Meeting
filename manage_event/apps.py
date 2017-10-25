@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class Time2MeetingConfig(AppConfig):
+class ManageEventConfig(AppConfig):
     name = 'manage_event'
