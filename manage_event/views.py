@@ -75,16 +75,18 @@ def create_event(request):
         event_name = request.POST.get('event_name')
         time_range = request.POST.get('time_range')
         deadline = request.POST.get('deadline')
-        event = Events()
-
-        event.event_name = event_name
-        event.time_range = time_range
-        event.deadline = deadline
-        event.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
+        if (time_range is '' or event_name is ''):
+            return render(request, 'manage_event/create_event.html', context = None)
+        else:
+            event = Events()
+            event.event_name = event_name
+            event.time_range = time_range
+            event.deadline = deadline
+            event.save()
+                # Always return an HttpResponseRedirect after successfully dealing
+                # with POST data. This prevents data from being posted twice if a
+                # user hits the Back button.
+            return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
 
 
 def create_publish(request, event_id):
@@ -94,12 +96,12 @@ def create_publish(request, event_id):
 
 def delete_event(request, event_name, user_name):
 
-    return HttpResponse("You're deleting.")
+
+    return HttpResponseRedirect("You're deleting.")
 
 
 def select_timeslots(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-
     # return HttpResponseRedirect(reverse('time2meeting:results', args=(Events.event_id,)))
     return render(request, 'manage_event/select_timeslots.html', {'event': event})
 
