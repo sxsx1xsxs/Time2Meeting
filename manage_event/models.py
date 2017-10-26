@@ -18,7 +18,6 @@ class Events(models.Model):
     final_time_end = models.DateTimeField(null=True, blank=True)
     deadline = models.DateTimeField()
     duration = models.DurationField()
-
     status = models.CharField(max_length=10, default='Available')
     # record the status of the event, "Available' or 'Abort'
 

@@ -80,18 +80,19 @@ def create_event(request):
         duration = request.POST.get('duration')
         deadline = request.POST.get('deadline')
 
-        if (time_range_start is '' or time_range_end is '' or deadline is '' or event_name is ''):
-            return render(request, 'manage_event/create_event.html', context = None)
+        if time_range_start is '' or time_range_end is '' or deadline is '' or event_name is '':
+            return render(request, 'manage_event/create_event.html', context=None)
         else:
             event = Events()
             event.event_name = event_name
             event.time_range_start = time_range_start
             event.time_range_end = time_range_end
+            event.duration = duration
             event.deadline = deadline
             event.save()
-                # Always return an HttpResponseRedirect after successfully dealing
-                # with POST data. This prevents data from being posted twice if a
-                # user hits the Back button.
+            # Always return an HttpResponseRedirect after successfully dealing
+            # with POST data. This prevents data from being posted twice if a
+            # user hits the Back button.
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
 
 
