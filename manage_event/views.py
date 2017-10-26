@@ -77,7 +77,9 @@ def create_event(request):
         event_name = request.POST.get('event_name')
         time_range_start = request.POST.get('time_range_start')
         time_range_end = request.POST.get('time_range_end')
+        duration = request.POST.get('duration')
         deadline = request.POST.get('deadline')
+
         if (time_range_start is '' or time_range_end is '' or deadline is '' or event_name is ''):
             return render(request, 'manage_event/create_event.html', context = None)
         else:
