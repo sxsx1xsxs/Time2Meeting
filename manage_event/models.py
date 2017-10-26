@@ -62,4 +62,3 @@ class Decision(models.Model):
 
     event = models.ForeignKey(Events, on_delete=models.CASCADE)
     timeslot = models.DateTimeField(None, None, False, False)
-
