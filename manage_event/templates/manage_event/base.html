@@ -44,7 +44,7 @@ function onFailure(error) {
 <div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onSignInFailure"></div>
 
 
-<a id='g-signout'  href="#" onclick="signOut();"></a>
+
 <script>
     function signOut() {
         var auth2 = gapi.auth2.getAuthInstance();
@@ -58,8 +58,9 @@ function onFailure(error) {
       <!--gapi.auth2.getAuthInstance().signOut();-->
       <!--console.log('hi');-->
 
-    };
+    <!--};-->
     </script>
+<a id='g-signout'  href="#" onclick="signOut()"></a>
 <div class="page-header">
     <h1><a href="/">Time2Meeting</a></h1>
 </div>
