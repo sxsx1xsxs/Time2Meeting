@@ -48,7 +48,7 @@ function onFailure(error) {
 
 </style>
 
-<div class="right">Hi, &nbsp <div style="display: inline" id="username"></div>
+<div class="right">Hi, &nbsp <div style="display: inline" id="username">please sign in</div>
 <div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onSignInFailure"></div>
 </div>
 
@@ -59,7 +59,7 @@ function onFailure(error) {
         auth2.signOut().then(function() {
             console.log('User signed out.');
             document.getElementById("g-signout").innerHTML = "";
-            document.getElementById("greeting").innerHTML = "";
+            document.getElementById("username").innerHTML = "please sign in";
         });
     }
 
