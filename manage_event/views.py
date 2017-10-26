@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 
-from .models import Users, Events, TimeSlots, Results, Decision
+from .models import Users, Events, TimeSlots, EventUser
 
 
 # Create your views here.
