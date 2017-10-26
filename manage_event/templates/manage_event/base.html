@@ -23,6 +23,7 @@
         console.log('Image URL: ' + profile.getImageUrl());
         console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
         document.getElementById("g-signout").innerHTML = "Sign out"
+        document.getElementById("username").innerHTML = profile.getName();
     }
 
 function onFailure(error) {
@@ -40,9 +41,16 @@ function onFailure(error) {
         right: 0px;
         }
 
-</style>
-<div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onSignInFailure"></div>
+         .right{
+        position: absolute;
+        right: 0px;
+        }
 
+</style>
+
+<div class="right">Hi, &nbsp <div style="display: inline" id="username"></div>
+<div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onSignInFailure"></div>
+</div>
 
 
 <script>
@@ -50,7 +58,8 @@ function onFailure(error) {
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function() {
             console.log('User signed out.');
-            document.getElementById("g-signout").innerHTML = ""
+            document.getElementById("g-signout").innerHTML = "";
+            document.getElementById("greeting").innerHTML = "";
         });
     }
 
