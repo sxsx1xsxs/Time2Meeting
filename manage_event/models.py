@@ -1,6 +1,4 @@
 from django.db import models
-
-
 # Create your models here.
 class Users(models.Model):
     user_email = models.EmailField(max_length=254, primary_key=True)

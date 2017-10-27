@@ -4,8 +4,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.utils import simplejson
 
-from .models import Users, Events, TimeSlots, EventUser
+from .models import Users, Events, TimeSlots, Results, Decision
 
 
 # Create your views here.
@@ -148,3 +149,33 @@ def make_decision(request, event_id):
 def show_decision_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     return render(request, 'manage_event/show_decision_result.html', {'event': event})
+
+def get_each_user_timeslots(request, user_email, event_id):
+    user_data = {}
+    user_timeslots = TimeSlots.objects.filter
+    ('event_id'= event_id and 'user_email' = user_email)
+    for each in user_timeslots:
+        date = each.date()
+        time = each.time()
+        user_data.setdefault([date,time], value = 1)
+    return HttpResponse(simplejson.dumps(user_data), content_type='application/json')
+
+
+def all_user_timeslots(request, useruser_email, event_id):
+    all_user_data = {}
+    all_user_timeslots = TimeSlots.objects.filter('event_id'= event_id)
+    for each in all_user_timeslots:
+        date = each.date()
+        time = each.time()
+        l = [date, time]
+        if l not in all_user_data:
+            all_user_data.setdefault([date, time], value = 0)
+        else:
+            all_user_data[date, time] += 1
+    return HttpResponse(simplejson.dumps(all_user_timeslots), content_type='application/json')
+
+# def read_select_timeslots(request, user_email, event_id):
+#     f = open('user_timeslots.json')
+#     json_string = f.read()
+#     data = json.loads(json_string)
+#     f.close()
