@@ -4,9 +4,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
-#from django.utils import json
+# from django.utils import json
 
-#from .models import Users, Events, TimeSlots, Results, Decision
+from .models import Users, Events, TimeSlots
 
 
 # Create your views here.
