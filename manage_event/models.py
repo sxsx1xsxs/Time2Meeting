@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+
 # Create your models here.
 class Users(models.Model):
     user_email = models.EmailField(max_length=254, primary_key=True)
@@ -10,12 +12,16 @@ class Users(models.Model):
 
 class Events(models.Model):
     event_name = models.CharField(max_length=300)
+    create_time = models.DateTimeField(default=timezone.now)
     time_range_start = models.DateTimeField()
     time_range_end = models.DateTimeField()
     final_time_start = models.DateTimeField(null=True, blank=True)
     final_time_end = models.DateTimeField(null=True, blank=True)
     deadline = models.DateTimeField()
     duration = models.DurationField()
+    status = models.CharField(max_length=10, default='Available')
+    # record the status of the event, "Available' or 'Abort'
+
     info = models.TextField(null=True)
 
     def __str__(self):

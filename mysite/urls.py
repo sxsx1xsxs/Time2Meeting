@@ -15,7 +15,6 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-#from time2meeting import views
 from manage_event import views
 
 urlpatterns = [
