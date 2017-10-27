@@ -4,6 +4,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.contrib.auth.models import User
+from django.http import JsonResponse
 
 from .models import Users, Events, TimeSlots, Results, Decision
 
@@ -12,9 +14,9 @@ from .models import Users, Events, TimeSlots, Results, Decision
 from django.shortcuts import render
 
 
-def index(request):
-
-    return render(request, 'manage_event/index.html', context=None)
+# def index(request):
+#
+#     return render(request, 'manage_event/index.html', context=None)
 
     # event_wait_for_decision = Events.objects.all()
     # #latest_event_list = Events.objects.order_by('-event_date')[:5]
@@ -22,6 +24,22 @@ def index(request):
     # return render(request, 'manage_event/organize_index.html', {
     #     'event_wait_for_decision' : event_wait_for_decision,
     # })
+
+def index(request):
+    # get cookie by key
+    user_name = request.COOKIES.get('username')
+    if not user_name:
+        # set cookie:
+        # 1.initial a response;
+        # 2.set cookie(key, value);
+        # 3.return response to make the cookie change
+        response = HttpResponse('set cookie as wayne')
+        response.set_cookie('username', 'wayne')
+        return response
+    else:
+        response = HttpResponse('set cookie as null')
+        response.set_cookie('username', '')
+        return response
 
 
 def organize_index(request):
@@ -148,3 +166,12 @@ def make_decision(request, event_id):
 def show_decision_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     return render(request, 'manage_event/show_decision_result.html', {'event': event})
+
+
+def validate_username(request):
+    email=request.GET.get('email', None)
+    username=request.GET.get('username', None)
+    data = {
+        'is_taken': True
+    }
+    return JsonResponse(data)

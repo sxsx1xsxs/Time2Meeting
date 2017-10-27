@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index),
     url(r'^login/', include('login.urls')),
+    url(r'^ajax/validate_username/$', views.validate_username, name='validate_username'),
 ]

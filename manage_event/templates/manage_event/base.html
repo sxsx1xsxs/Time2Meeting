@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
 <button onclick="location.href='{% url 'manage_event:index' %}'">Time2Meeting</button>
@@ -24,6 +25,17 @@
         console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
         document.getElementById("g-signout").innerHTML = "Sign out"
         document.getElementById("username").innerHTML = profile.getName();
+         $.ajax({
+        url: '/ajax/validate_username/',
+        data: {
+          'username': profile.getName(),
+          'email': profile.getEmail()
+        },
+        dataType: 'json',
+        success: function (data) {
+          console.log('success submitted to server');
+        }
+      });
     }
 
 function onFailure(error) {
@@ -61,11 +73,25 @@ function onFailure(error) {
             document.getElementById("g-signout").innerHTML = "";
             document.getElementById("username").innerHTML = "please sign in";
         });
+        $.ajax({
+        url: '/ajax/validate_username/',
+        data: {
+          'username': null,
+          'email': null
+        },
+        dataType: 'json',
+        success: function (data) {
+          console.log('success logged out and submitted to server');
+        }
+      });
     }
 
     <!--window.onbeforeunload = function(e){-->
-      <!--gapi.auth2.getAuthInstance().signOut();-->
-      <!--console.log('hi');-->
+       <!--var profile = googleUser.getBasicProfile();-->
+        <!--console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.-->
+        <!--console.log('Name: ' + profile.getName());-->
+        <!--console.log('Image URL: ' + profile.getImageUrl());-->
+        <!--console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.-->
 
     <!--};-->
     </script>
