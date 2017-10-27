@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 
-from .models import Users, Events, TimeSlots, Results, Decision
+from .models import Users, Events, TimeSlots, EventUser
 
 
 # Create your views here.
@@ -13,8 +13,26 @@ from django.shortcuts import render
 
 
 def index(request):
+    # get cookie by key
+    user_email = request.COOKIES.get('username')
+    if not user_email:
+        # set cookie:
+        # 1.initial a response;
+        # 2.set cookie(key, value);
+        # 3.return response to make the cookie change
+        response = render(request, 'manage_event/index.html', context=None)
+        response.set_cookie('username', 'wayne')
+        return response
+    else:
+        response = render(request, 'manage_event/index.html', context=None)
+        response.set_cookie('username', '')
+        return response
 
-    return render(request, 'manage_event/index.html', context=None)
+    # a = request.COOKIES.get('csrftoken')
+    # if a:
+    #     return HttpResponse(a)
+    # else:
+    #     return render(request, 'manage_event/index.html', context=None)
 
     # event_wait_for_decision = Events.objects.all()
     # #latest_event_list = Events.objects.order_by('-event_date')[:5]
@@ -25,9 +43,9 @@ def index(request):
 
 
 def organize_index(request):
-    event_wait_for_decision = Events.objects.filter(final_decision = False).filter(deadline__lte= timezone.now())
+    event_wait_for_decision = Events.objects.filter(final_time_start__isnull = True).filter(deadline__lte= timezone.now())
     event_on_going = Events.objects.filter(deadline__gte= timezone.now())
-    event_history = Events.objects.filter(final_decision = True)
+    event_history = Events.objects.filter(final_time_start__isnull = False)
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/organize_index.html', {
@@ -39,7 +57,7 @@ def organize_index(request):
 
 def participate_index(request):
     event_to_do = Events.objects.filter(deadline__gte= timezone.now())
-    event_result = Events.objects.filter(final_decision = True)
+    event_result = Events.objects.filter(final_time_start__isnull = False)
     event_pending = Events.objects.all()
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
@@ -77,19 +95,22 @@ def create_event(request):
         event_name = request.POST.get('event_name')
         time_range_start = request.POST.get('time_range_start')
         time_range_end = request.POST.get('time_range_end')
+        duration = request.POST.get('duration')
         deadline = request.POST.get('deadline')
-        if (time_range_start is '' or time_range_end is '' or deadline is '' or event_name is ''):
-            return render(request, 'manage_event/create_event.html', context = None)
+
+        if time_range_start is '' or time_range_end is '' or deadline is '' or event_name is '':
+            return render(request, 'manage_event/create_event.html', context=None)
         else:
             event = Events()
             event.event_name = event_name
             event.time_range_start = time_range_start
             event.time_range_end = time_range_end
+            event.duration = duration
             event.deadline = deadline
             event.save()
-                # Always return an HttpResponseRedirect after successfully dealing
-                # with POST data. This prevents data from being posted twice if a
-                # user hits the Back button.
+            # Always return an HttpResponseRedirect after successfully dealing
+            # with POST data. This prevents data from being posted twice if a
+            # user hits the Back button.
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
 
 
@@ -110,9 +131,10 @@ def select_timeslots(request, event_id):
     return render(request, 'manage_event/select_timeslots.html', {'event': event})
 
 
-def get_result(request):
+def get_result(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
     # get timeslots and compute
-    return True
+    return []
 
 
 def make_decision_detail(request, event_id):
