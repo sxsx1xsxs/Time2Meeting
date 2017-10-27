@@ -4,9 +4,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
-from django.utils import simplejson
+#from django.utils import json
 
-from .models import Users, Events, TimeSlots, Results, Decision
+#from .models import Users, Events, TimeSlots, Results, Decision
 
 
 # Create your views here.
@@ -174,8 +174,8 @@ def show_decision_result(request, event_id):
 
 def get_each_user_timeslots(request, user_email, event_id):
     user_data = {}
-    user_timeslots = TimeSlots.objects.filter
-    ('event_id'= event_id and 'user_email' = user_email)
+    q1 = TimeSlots.objects.filter(event_id__gte = event_id)
+    user_timeslots = q1.objects.filter(user_email__gte = user_email)
     for each in user_timeslots:
         date = each.date()
         time = each.time()
@@ -185,7 +185,7 @@ def get_each_user_timeslots(request, user_email, event_id):
 
 def all_user_timeslots(request, useruser_email, event_id):
     all_user_data = {}
-    all_user_timeslots = TimeSlots.objects.filter('event_id'= event_id)
+    all_user_timeslots = TimeSlots.objects.filter(event_id__gte = event_id)
     for each in all_user_timeslots:
         date = each.date()
         time = each.time()
