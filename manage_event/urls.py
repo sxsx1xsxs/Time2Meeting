@@ -26,7 +26,6 @@ urlpatterns = [
     url(r'^create_event/$', views.create_event, name='create_event'),
     url(r'^(?P<event_id>[0-9]+)/create_publish/$', views.create_publish, name='create_publish'),
     url(r'^(?P<event_id>[0-9]+)/select_timeslots/$', views.select_timeslots, name='select_timeslots'),
-    url(r'^ajax/validate_username/$', views.validate_username, name='validate_username'),
 
 
 ]

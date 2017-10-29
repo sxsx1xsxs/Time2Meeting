@@ -1,8 +1,7 @@
 from django.contrib import admin
-from .models import Events, Users, TimeSlots, Results, Decision
+from .models import Events, Users, TimeSlots, EventUser
 
 admin.site.register(Events)
 admin.site.register(Users)
 admin.site.register(TimeSlots)
-admin.site.register(Results)
-admin.site.register(Decision)
+admin.site.register(EventUser)

@@ -25,17 +25,8 @@
         console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
         document.getElementById("g-signout").innerHTML = "Sign out"
         document.getElementById("username").innerHTML = profile.getName();
-         $.ajax({
-        url: '/ajax/validate_username/',
-        data: {
-          'username': profile.getName(),
-          'email': profile.getEmail()
-        },
-        dataType: 'json',
-        success: function (data) {
-          console.log('success submitted to server');
-        }
-      });
+        document.cookie = "username="+profile.getName();
+        document.cookie = "email="+profile.getEmail();
     }
 
 function onFailure(error) {
@@ -72,18 +63,9 @@ function onFailure(error) {
             console.log('User signed out.');
             document.getElementById("g-signout").innerHTML = "";
             document.getElementById("username").innerHTML = "please sign in";
+            document.cookie = "username=";
+            document.cookie = "email=";
         });
-        $.ajax({
-        url: '/ajax/validate_username/',
-        data: {
-          'username': null,
-          'email': null
-        },
-        dataType: 'json',
-        success: function (data) {
-          console.log('success logged out and submitted to server');
-        }
-      });
     }
 
     <!--window.onbeforeunload = function(e){-->

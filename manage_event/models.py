@@ -3,62 +3,47 @@ from django.utils import timezone
 
 
 # Create your models here.
-class Events(models.Model):
-    event_name = models.CharField(max_length=300, null=False)
-    time_range_start = models.DateTimeField()
-    time_range_end = models.DateTimeField(None, None, False, False)
-    #event_organizer = models.CharField(max_length=300)
-    wait_for_decision = models.BooleanField(default=True)
-    deadline = models.DateTimeField(None, None, False, False)
-    final_decision = models.BooleanField(default=False)
-    #final_decision_timeslot = models.DateTimeField(None, None, False, False)
-
-    # for inviting participants
-    # participants = models.IntegerField()
-
-    def __str__(self):
-        return self.event_name
-
-    #def is_wait_for_decision(self):
-    #    now = timezone.now()
-    #    if now >= self.deadline:
-    #        self.wait_for_decision = True
-    #        return True
-    #    else:
-    #        return False
-
-    def generate_url(self):
-        return True
-
-
 class Users(models.Model):
+    user_email = models.EmailField(max_length=254, primary_key=True)
     user_name = models.CharField(max_length=300)
-    user_email = models.CharField(max_length=300)
 
     def __str__(self):
         return self.user_name
 
 
+class Events(models.Model):
+    event_name = models.CharField(max_length=300)
+    create_time = models.DateTimeField(default=timezone.now)
+    time_range_start = models.DateTimeField()
+    time_range_end = models.DateTimeField()
+    final_time_start = models.DateTimeField(null=True, blank=True)
+    final_time_end = models.DateTimeField(null=True, blank=True)
+    deadline = models.DateTimeField()
+    duration = models.DurationField()
+    status = models.CharField(max_length=10, default='Available')
+    # record the status of the event, "Available' or 'Abort'
+
+    info = models.TextField(null=True)
+
+    def __str__(self):
+        return self.event_name
+
+
+class EventUser(models.Model):
+    event_id = models.ForeignKey(Events, on_delete=models.CASCADE)
+    user_email = models.ForeignKey(Users)
+
+    class Meta:
+        unique_together = ("event_id", "user_email")
+
+    role = models.CharField(max_length=1)
+
+
 class TimeSlots(models.Model):
-    #two fields are primary key together
+    event_id = models.ForeignKey(Events, on_delete=models.CASCADE)
+    user_email = models.ForeignKey(Users)
 
-    event = models.ForeignKey(Events, on_delete=models.CASCADE)
-    #event_participant = models.ForeignKey(Users, on_delete=models.CASCADE)
+    class Meta:
+        unique_together = ("event_id", "user_email")
 
-    timeslot = models.DateTimeField(None, None, False, False)
-    is_result = models.IntegerField(default=0)
-    is_decision = models.IntegerField(default=0)
-
-    # def __str__(self):
-    #     return self.timeslot
-
-class Results(models.Model):
-
-    event = models.ForeignKey(Events, on_delete=models.CASCADE)
-    timeslot = models.DateTimeField(None, None, False, False)
-
-
-class Decision(models.Model):
-
-    event = models.ForeignKey(Events, on_delete=models.CASCADE)
-    timeslot = models.DateTimeField(None, None, False, False)
+    time_slot_start = models.DateTimeField()
