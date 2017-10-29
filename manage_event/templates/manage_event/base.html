@@ -25,8 +25,8 @@
         console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
         document.getElementById("g-signout").innerHTML = "Sign out"
         document.getElementById("username").innerHTML = profile.getName();
-        document.cookie = "username="+profile.getName();
-        document.cookie = "email="+profile.getEmail();
+        document.cookie = "username="+profile.getName()+"; path=/";;
+        document.cookie = "email="+profile.getEmail()+"; path=/";;
     }
 
 function onFailure(error) {
@@ -63,8 +63,8 @@ function onFailure(error) {
             console.log('User signed out.');
             document.getElementById("g-signout").innerHTML = "";
             document.getElementById("username").innerHTML = "please sign in";
-            document.cookie = "username=";
-            document.cookie = "email=";
+            document.cookie = "username=; path=/";;
+            document.cookie = "email=; path=/";;
         });
     }
 
