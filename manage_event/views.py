@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
@@ -15,14 +15,16 @@ from django.shortcuts import render
 
 
 def index(request):
+    user_email = request.COOKIES.get('email')
+    if not user_email:
+        return render(request, 'manage_event/index.html')
+    else:
 
-    # return render(request, 'manage_event/index.html', context=None)
-    event_wait_for_decision = Events.objects.all()
-    #latest_event_list = Events.objects.order_by('-event_date')[:5]
-    #output = ', '.join([q.event_name for q in latest_event_list])
-    return render(request, 'manage_event/organize_index.html', {
-        'event_wait_for_decision': event_wait_for_decision,
-    })
+        # return render(request, 'manage_event/index.html', context=None)
+        # event_wait_for_decision = Events.objects.all()
+        # latest_event_list = Events.objects.order_by('-event_date')[:5]
+        # output = ', '.join([q.event_name for q in latest_event_list])
+        return render(request, 'manage_event/index.html')
 
 # def index(request):
 #     get cookie by key
@@ -39,7 +41,6 @@ def index(request):
 #         response = HttpResponse('set cookie as null')
 #         response.set_cookie('username', '')
 #         return response
-
 
 def organize_index(request):
     event_wait_for_decision = Events.objects.filter(final_time_start__isnull = True).filter(deadline__lte= timezone.now())
@@ -67,13 +68,6 @@ def participate_index(request):
 
     })
 
-
-def guidance(request):
-    return render(request, 'manage_event/guidance.html', context=None)
-
-
-def team(request):
-    return render(request, 'manage_event/team.html', context=None)
 
 # def detail(request, event_id):
 #     return HttpResponse("You're looking at event %s." % event_id)
