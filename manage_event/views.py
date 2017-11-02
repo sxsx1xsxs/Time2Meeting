@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+import datetime, json
 # from django.utils import json
 
 
@@ -123,16 +124,48 @@ def select_timeslots(request, event_id):
     # return HttpResponseRedirect(reverse('time2meeting:results', args=(Events.event_id,)))
     return render(request, 'manage_event/select_timeslots.html', {'event': event})
 
-
-def get_result(request, event_id):
+def get_result(event_id):
+    """
+    Get result based on all the time slots users provided.
+    :param event_id:
+    :return: A dictionary of the (time slot, number of available person) pair.
+    """
     event = get_object_or_404(Events, pk=event_id)
+    timeslots = event.timeslots_set.all()
+
+    result = {}
+    for timeslot in timeslots:
+        time_slot_start = timeslot.time_slot_start
+        if not result.get(time_slot_start):
+            result[time_slot_start] = 1
+        else:
+            result[time_slot_start] += 1
+
     # get timeslots and compute
-    return []
+    return result
 
 
 def make_decision_detail(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    return render(request, 'manage_event/make_decision.html', {'event': event})
+    result = get_result(event_id)
+    #result = {datetime.datetime(2017, 10, 20, 23, 30):1}
+    time_range_start = event.time_range_start
+    time_range_end = event.time_range_end
+
+    # Make json data according to contract
+    result_data = {}
+    time = time_range_start
+    thirty_mins = datetime.timedelta(minutes=30)
+    while time < time_range_end:
+        if not result.get(time):
+            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = 0
+        else:
+            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
+        time += thirty_mins
+    result_json = json.dumps(result_data)
+
+    return HttpResponse(json.loads(result_json).values())
+    #return render(request, 'manage_event/make_decision.html', {'event': event})
 
 
 def make_decision_results(request, event_id):
@@ -142,6 +175,23 @@ def make_decision_results(request, event_id):
 
 def make_decision(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
+    result = get_result(event_id)
+    # result = {datetime.datetime(2017, 10, 20, 23, 30):1}
+    time_range_start = event.time_range_start
+    time_range_end = event.time_range_end
+
+    # Make json data according to contract
+    result_data = {}
+    time = time_range_start
+    thirty_mins = datetime.timedelta(minutes=30)
+    while time < time_range_end:
+        if not result.get(time):
+            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = 0
+        else:
+            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
+        time += thirty_mins
+    result_json = json.dumps(result_data)
+
     try:
         selected_timeslot = event.timeslots_set.get(pk=request.POST['time_slot'])
     except (KeyError, TimeSlots.DoesNotExist):
