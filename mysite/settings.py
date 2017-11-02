@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'social.apps.django_app.default',
     'social_django',
     'manage_event.apps.ManageEventConfig',
+    'home.apps.HomeConfig',
 ]
 
 LOGIN_REDIRECT_URL = '/'
