@@ -1,83 +1,21 @@
 {% load staticfiles %}
 <html>
 <head>
-    <title>Time2Meeting</title>
-    <meta charset="utf-8" />
-    <meta name="google-signin-client_id" content="113043432208-j5lm6q6503m6j76c7v5j4ibb4a3u7nf8.apps.googleusercontent.com">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-    <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!--<title>Time2Meeting</title>-->
+    <!--<meta charset="utf-8" />-->
+    <!--<meta name="google-signin-client_id" content="113043432208-j5lm6q6503m6j76c7v5j4ibb4a3u7nf8.apps.googleusercontent.com">-->
+    <!--<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">-->
+    <!--<link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>-->
+    <!--<link rel="stylesheet" href="{% static 'css/base.css' %}">-->
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
 </head>
 <body>
 <button onclick="location.href='{% url 'home:homepage' %}'">Time2Meeting</button>
 <button onclick="location.href='{% url 'home:guidance' %}'">Guidance</button>
 <button onclick="location.href='{% url 'home:team' %}'">Team</button>
-<script src="https://apis.google.com/js/platform.js" async defer></script>
-<script type="text/javascript">
-    function onSignIn(googleUser) {
-      console.log('success');
-        var profile = googleUser.getBasicProfile();
-        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-        console.log('Name: ' + profile.getName());
-        console.log('Image URL: ' + profile.getImageUrl());
-        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-        document.getElementById("g-signout").innerHTML = "Sign out"
-        document.getElementById("username").innerHTML = profile.getName();
-        document.cookie = "username="+profile.getName()+"; path=/";;
-        document.cookie = "email="+profile.getEmail()+"; path=/";;
-    }
-
-function onFailure(error) {
-      console.log(error);
-    }
-    </script>
-<style>
-        .g-signin2{
-        position: absolute;
-        right: 0px;
-        }
-
-        #g-signout{
-        position: absolute;
-        right: 0px;
-        }
-
-         .right{
-        position: absolute;
-        right: 0px;
-        }
-
-</style>
-
-<div class="right">Hi, &nbsp <div style="display: inline" id="username">please sign in</div>
-<div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onSignInFailure"></div>
-</div>
 
 
-<script>
-    function signOut() {
-        var auth2 = gapi.auth2.getAuthInstance();
-        auth2.signOut().then(function() {
-            console.log('User signed out.');
-            document.getElementById("g-signout").innerHTML = "";
-            document.getElementById("username").innerHTML = "please sign in";
-            document.cookie = "username=; path=/";;
-            document.cookie = "email=; path=/";;
-        });
-    }
-
-    <!--window.onbeforeunload = function(e){-->
-       <!--var profile = googleUser.getBasicProfile();-->
-        <!--console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.-->
-        <!--console.log('Name: ' + profile.getName());-->
-        <!--console.log('Image URL: ' + profile.getImageUrl());-->
-        <!--console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.-->
-
-    <!--};-->
-    </script>
-<a id='g-signout'  href="#" onclick="signOut()"></a>
 <div class="page-header">
     <h1><a href="/">Time2Meeting</a></h1>
 </div>
