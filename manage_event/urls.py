@@ -17,6 +17,6 @@ urlpatterns = [
     url(r'^create_event/$', views.create_event, name='create_event'),
     url(r'^(?P<event_id>[0-9]+)/create_publish/$', views.create_publish, name='create_publish'),
     url(r'^(?P<event_id>[0-9]+)/select_timeslots/$', views.select_timeslots, name='select_timeslots'),
-    url(r'^(?P<event_id>[0-9]+)/select_publish/$',views.select_publish, name= "select_publish")
+    url(r'^(?P<event_id>[0-9]+)/select_publish/$',views.select_publish, name= "select_publish"),
     url(r'^(?P<event_id>[0-9]+)/modify_timeslots/$',views.modify_timeslots, name= "modify_timeslots")
 ]

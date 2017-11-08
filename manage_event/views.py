@@ -146,7 +146,7 @@ def make_decision_detail(request, event_id):
     time_range_start = event.time_range_start
     time_range_end = event.time_range_end
 
-    # Make json data according to contract
+    # Make json data ac cording to contract
     result_data = {}
     time = time_range_start
     thirty_mins = datetime.timedelta(minutes=30)
@@ -158,7 +158,8 @@ def make_decision_detail(request, event_id):
         time += thirty_mins
     result_json = json.dumps(result_data)
 
-    return HttpResponse(json.loads(result_json).values())
+    return HttpResponse(result_json)
+    #return HttpResponse(json.loads(result_json).values())
     #return render(request, 'manage_event/make_decision.html', {'event': event})
 
 
@@ -203,6 +204,7 @@ def make_decision(request, event_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('manage_event:make_decision_results', args=(event.id,)))
+
 
 def show_decision_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)

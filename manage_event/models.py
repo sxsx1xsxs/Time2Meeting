@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 
 
 # Create your models here.
@@ -23,6 +25,13 @@ class Events(models.Model):
     status = models.CharField(max_length=10, default='Available')
     # record the status of the event, "Available' or 'Abort'
 
+    def clean(self):
+        if self.time_range_start < timezone.now():
+            raise ValidationError(_('invalid time range start point'))
+        if self.time_range_end < self.time_range_start:
+            raise ValidationError(_('invalid time range'))
+        if self.deadline > self.time_range_start:
+            raise ValidationError(_('invalid deadline'))
     info = models.TextField(null=True)
 
     def __str__(self):
@@ -30,20 +39,20 @@ class Events(models.Model):
 
 
 class EventUser(models.Model):
-    event_id = models.ForeignKey(Events, on_delete=models.CASCADE)
-    user_email = models.ForeignKey(Users)
+    event = models.ForeignKey(Events, on_delete=models.CASCADE)
+    user = models.ForeignKey(Users)
 
     class Meta:
-        unique_together = ("event_id", "user_email")
+        unique_together = ("event", "user")
 
     role = models.CharField(max_length=1)
 
 
 class TimeSlots(models.Model):
-    event_id = models.ForeignKey(Events, on_delete=models.CASCADE)
-    user_email = models.ForeignKey(Users)
+    event = models.ForeignKey(Events, on_delete=models.CASCADE)
+    user = models.ForeignKey(Users)
 
     class Meta:
-        unique_together = ("event_id", "user_email")
+        unique_together = ("event", "user")
 
     time_slot_start = models.DateTimeField()
