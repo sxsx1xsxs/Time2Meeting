@@ -15,8 +15,9 @@
 <button onclick="location.href='{% url 'home:guidance' %}'">Guidance</button>
 <button onclick="location.href='{% url 'home:team' %}'">Team</button>
 {% if user.is_authenticated %}
-<div><a href="/manage_event/logout">Log out</a></div>
+<a href="/manage_event/logout">Log out</a>
 {% endif %}
+{% csrf_token %}
 
 <div class="page-header">
     <h1><a href="/">Time2Meeting</a></h1>
