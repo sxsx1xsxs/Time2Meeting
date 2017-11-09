@@ -5,6 +5,16 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 # from django.utils import json
+import sys
+from django.shortcuts import render, get_object_or_404, redirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib.auth import logout
+from django.http import HttpResponseRedirect
+from django.db import transaction
+from .models import Profile
+from .forms import UserForm, ProfileForm
 
 
 from .models import Users, Events, TimeSlots
@@ -14,6 +24,7 @@ from .models import Users, Events, TimeSlots
 from django.shortcuts import render
 
 
+@login_required
 def index(request):
     user_email = request.COOKIES.get('email')
     if not user_email:
@@ -42,7 +53,11 @@ def index(request):
 #         response.set_cookie('username', '')
 #         return response
 
+
+@login_required
 def organize_index(request):
+
+    print (request.user.email)
     event_wait_for_decision = Events.objects.filter(final_time_start__isnull = True).filter(deadline__lte= timezone.now())
     event_on_going = Events.objects.filter(deadline__gte= timezone.now())
     event_history = Events.objects.filter(final_time_start__isnull = False)
@@ -51,10 +66,11 @@ def organize_index(request):
     return render(request, 'manage_event/organize_index.html', {
         'event_wait_for_decision': event_wait_for_decision,
         'event_on_going': event_on_going,
-        'event_history' : event_history,
+        'event_history': event_history,
     })
 
 
+@login_required
 def participate_index(request):
     event_to_do = Events.objects.filter(deadline__gte= timezone.now())
     event_result = Events.objects.filter(final_time_start__isnull = False)
@@ -80,6 +96,7 @@ def participate_index(request):
 #     return HttpResponse("You're selecting on timeslots %s." % question_id)
 
 
+@login_required
 def create_event(request):
     # need add exception
     if request.method == 'GET':
@@ -107,39 +124,46 @@ def create_event(request):
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
 
 
+@login_required
 def create_publish(request, event_id):
     if request.method == 'GET':
         return render(request, 'manage_event/create_publish.html', {'event_id': event_id})
 
 
+@login_required
 def delete_event(request, event_name, user_name):
 
 
     return HttpResponseRedirect("You're deleting.")
 
 
+@login_required
 def select_timeslots(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     # return HttpResponseRedirect(reverse('time2meeting:results', args=(Events.event_id,)))
     return render(request, 'manage_event/select_timeslots.html', {'event': event})
 
 
+@login_required
 def get_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     # get timeslots and compute
     return []
 
 
+@login_required
 def make_decision_detail(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     return render(request, 'manage_event/make_decision.html', {'event': event})
 
 
+@login_required
 def make_decision_results(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     return render(request, 'manage_event/make_decision_results.html', {'event': event})
 
 
+@login_required
 def make_decision(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     try:
@@ -160,11 +184,14 @@ def make_decision(request, event_id):
         # user hits the Back button.
         return HttpResponseRedirect(reverse('manage_event:make_decision_results', args=(event.id,)))
 
+
+@login_required
 def show_decision_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     return render(request, 'manage_event/show_decision_result.html', {'event': event})
 
 
+@login_required
 def get_each_user_timeslots(request, user_email, event_id):
     user_data = {}
     q1 = TimeSlots.objects.filter(event_id__gte = event_id)
@@ -175,7 +202,7 @@ def get_each_user_timeslots(request, user_email, event_id):
         user_data.setdefault([date,time], value = 1)
     return HttpResponse(simplejson.dumps(user_data), content_type='application/json')
 
-
+@login_required
 def all_user_timeslots(request, useruser_email, event_id):
     all_user_data = {}
     all_user_timeslots = TimeSlots.objects.filter(event_id__gte = event_id)
@@ -194,4 +221,36 @@ def all_user_timeslots(request, useruser_email, event_id):
 #     json_string = f.read()
 #     data = json.loads(json_string)
 #     f.close()
+
+
+@login_required
+def Home(request):
+    return render(request, 'manage_event/index.html')
+
+
+@login_required
+@transaction.atomic
+def update_profile(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return HttpResponseRedirect('/manage_event/')
+        else:
+            messages.error(request, _('Please correct the error below.'))
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+    return render(request, 'manage_event/profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
+
+
+@login_required
+def webLogout(request):
+    logout(request)
+    return HttpResponseRedirect('/manage_event/')
 
