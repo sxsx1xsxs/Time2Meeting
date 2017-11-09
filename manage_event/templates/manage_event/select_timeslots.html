@@ -30,109 +30,117 @@
     table#power_schedule td:first-child {
         cursor: pointer;
     }
+
+
     </style>
+
     <table cellpadding="0" cellspacing="0" id="power_schedule">
-        <thead>
+        <tr id="firstRow">
             <th/>
-            <th>Mon</th>
-            <th>Tue</th>
-            <th>Wed</th>
-            <th>Thu</th>
-            <th>Fri</th>
-            <th>Sat</th>
-            <th>Sun</th>
-        </thead>
-        <tr>
-            <td>08:00-09:00</td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
+            <!--<th>Mon</th>-->
+            <!--<th>Tue</th>-->
+            <!--<th>Wed</th>-->
+            <!--<th>Thu</th>-->
+            <!--<th>Fri</th>-->
+            <!--<th>Sat</th>-->
+            <!--<th>Sun</th>-->
+
         </tr>
-        <tr>
-            <td>10:00-11:00</td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-        </tr>
-        <tr>
-            <td>11:00-12:00</td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-        </tr>
-        <tr>
-            <td>13:00-14:00</td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-        </tr>
-        <tr>
-            <td>14:00-15:00</td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-        </tr>
-        <tr>
-            <td>16:00-17:00</td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-        </tr>
-        <tr>
-            <td>18:00-19:00</td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-        </tr>
-        <tr>
-            <td>20:00-21:00</td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-        </tr>
-        <tr>
-            <td>22:00-23:00</td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-            <td class="selectable"> </td>
-        </tr>
+        <!--<tr id="secondRow">-->
+            <!--<td>08:00-09:00</td>-->
+            <!--<td class="selectable"> </td>-->
+            <!--<td class="selectable"> </td>-->
+            <!--<td class="selectable"> </td>-->
+            <!--<td class="selectable"> </td>-->
+            <!--<td class="selectable"> </td>-->
+            <!--<td class="selectable"> </td>-->
+            <!--<td class="selectable"> </td>-->
+        <!--</tr>-->
     </table>
+
+
+    <script>
+
+ var originaltimeslotsjson ='{'+
+	'"2017-10-10 18:30:00": "Selected",'+
+	'"2017-10-10 19:00:00": "Blank",'+
+	'"2017-10-11 18:30:00": "Selected",'+
+	'"2017-10-11 19:00:00": "Blank",'+
+	'"2017-10-12 18:30:00": "Selected",'+
+	'"2017-10-12 19:00:00": "Blank"'+
+    '}';
+
+ var originalTimeslots = JSON.parse(originaltimeslotsjson);
+
+ <!--var timeslotsjson = '{'+-->
+	<!--'"2017-10-10":'+-->
+	<!--'{'+-->
+	 	<!--'"18:30:00": "Selected",'+-->
+	 	<!--'"19:00:00": "Blank"'+-->
+	<!--'},'+-->
+	<!--'"2017-10-11":'+-->
+	<!--'{'+-->
+	 	<!--'"18:30:00": "Selected",'+-->
+	 	<!--'"19:00:00": "Blank"'+-->
+	<!--'},'+-->
+	<!--'"2017-10-12":'+-->
+	<!--'{'+-->
+	 	<!--'"18:30:00": "Selected",'+-->
+	 	<!--'"19:00:00": "Blank"'+-->
+	<!--'}'+-->
+ <!--'}';-->
+
+ <!--var timeslots = JSON.parse(timeslotsjson);-->
+
+ var timeslots = {};
+ var date;
+
+ for (entry in originalTimeslots) {
+    var items = entry.split(" ");
+    if (date != items[0]) {
+        date = items[0];
+        timeslots[date] = {};
+        timeslots[date][items[1]] = originalTimeslots[entry];
+    }else {
+        timeslots[date][items[1]] = originalTimeslots[entry];
+    }
+ }
+
+ var firstColumn = timeslots[Object.keys(timeslots)[0]];
+
+ for (day in timeslots) {
+     firstColumn = timeslots[day];
+     document.getElementById("firstRow").innerHTML += "<td>"+day+"</td>";
+ }
+
+ for (time in firstColumn) {
+    document.getElementById("power_schedule").innerHTML += "<tr id= "+time+">" + "<td>"+time+"</td>" +"</tr>";
+
+    for (day in timeslots) {
+          if (timeslots[day][time] == "Blank") {
+          document.getElementById(time).innerHTML += "<td class='selectable' id='" +day+" "+time+"'> </td>";
+          } else {
+          document.getElementById(time).innerHTML += "<td class='selectable highlighted' id='" +day+" "+time+"'> </td>";
+          }
+    }
+ }
+
+function myFunction(){
+
+    for(entry in originalTimeslots) {
+        var currentcell = document.getElementById(entry);
+        if (currentcell.className.includes("highlighted")) {
+            originalTimeslots[entry] = "Selected";
+        }
+        else {
+            originalTimeslots[entry] = "Blank";
+        }
+    }
+
+    console.log(originalTimeslots);
+}
+
+    </script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript" charset="utf-8">
     $(function() {
@@ -187,6 +195,6 @@
             })
     });
     </script>
-    <button> submit</button>
+    <button onclick="myFunction()"> submit</button>
 
 {% endblock%}

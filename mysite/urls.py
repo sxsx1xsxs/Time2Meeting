@@ -22,7 +22,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # This is our homepage!
     url(r'^$', views.homepage),
-    url(r'^login/', include('login.urls')),
     url(r'^home/', include('home.urls')),
+    url(r'^account/', include('social_django.urls', namespace='social')),
+    url(r'^account/', include('django.contrib.auth.urls', namespace='auth')),
 
 ]
