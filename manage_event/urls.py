@@ -22,9 +22,14 @@ urlpatterns = [
     url(r'^profile/$', views.update_profile),
     url(r'^logout/$', views.webLogout),
     url(r'^(?P<event_id>[0-9]+)/select_publish/$',views.select_publish, name= "select_publish"),
-    # url(r'^(?P<event_id>[0-9]+)/modify_timeslots/$',views.modify_timeslots, name= "modify_timeslots"),
+    url(r'^(?P<event_id>[0-9]+)/modify_timeslots_read/$',views.modify_timeslots_read, name= "modify_timeslots_read"),
     url(r'^(?P<event_id>[0-9]+)/read_timeslots/$', views.read_timeslots, name='read_timeslots'),
 
-    url(r'^(?P<event_id>[0-9]+)/make_decision_json/$', views.make_decision_json, name='make_decision_json'),
-]
 
+    url(r'^(?P<event_id>[0-9]+)/make_decision_json/$', views.make_decision_json, name='make_decision_json'),
+
+    url(r'^(?P<event_id>[0-9]+)/initialize_timeslots/$', views.initialize_timeslots, name='initialize_timeslots'),
+    url(r'^(?P<event_id>[0-9]+)/modify_timeslots_update/$', views.modify_timeslots_update, name='modify_timeslots_update'),
+    #url(r'^(?P<event_id>[0-9]+)/read_timeslots/$', views.get_each_user_timeslots, name='get_each_user_timeslots'),
+
+]

@@ -244,6 +244,7 @@ def show_decision_result(request, event_id):
 
 @login_required
 def get_each_user_timeslots(request, user_email, event_id):
+    event = get_object_or_404(Events, pk=event_id)
     time_range_start = event.time_range_start
     time_range_end = event.time_range_end
     q1 = TimeSlots.objects.filter(event_id__gte = event_id)
@@ -266,6 +267,8 @@ def get_each_user_timeslots(request, user_email, event_id):
 
 @login_required
 def all_user_timeslots(request, useruser_email, event_id):
+
+    event = get_object_or_404(Events, pk=event_id)
 
     time_range_start = event.time_range_start
     time_range_end = event.time_range_end
@@ -319,17 +322,17 @@ def webLogout(request):
 @login_required
 def select_timeslots(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
+    #return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))
     return render(request, 'manage_event/select_timeslots.html', {'event': event})
 
 
 @login_required
 def read_timeslots(request, event_id):
-    print('read_timeslots')
-    print(TimeSlots.objects.all())
+    event = get_object_or_404(Events, pk=event_id)
+    # user = request.user.email
     # user = Users.objects.create(pk = "qimenghan77@gmail.com", user_name = "qimeng")
     # user.save()
-    event = get_object_or_404(Events, pk=event_id)
-    user = get_object_or_404(Users, pk="qimenghan77@gmail.com")
+    user = get_object_or_404(Users, pk=request.user.email)
     """
     Read the Json file includes user selection information and update the database
     """
@@ -356,27 +359,110 @@ def read_timeslots(request, event_id):
         json_data = json.loads(request.body)
     if request.method == 'GET':
         json_data = json.loads(s)
-
     dict_data = json_data
     print(TimeSlots.objects.all())
     for key, value in dict_data.items():
-        print(key)
         if (value == "Selected"):
             user_time_slot = TimeSlots.objects.update_or_create(event_id = event,
             user_email = user, time_slot_start = key)
     # return redirect("")
     return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))
 
+@login_required
+def initialize_timeslots(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    time_range_start = event.time_range_start
+    time_range_end = event.time_range_end
+    # Make json data according to contract
+    user_data = {}
+    time = time_range_start
+    thirty_mins = datetime.timedelta(minutes=30)
+
+    while time < time_range_end:
+        user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
+            #print(time.strftime("%Y-%m-%d %H:%M:%S"))
+            #print(user_data[time.strftime("%Y-%m-%d %H:%M:%S")])
+        time += thirty_mins
+    dumps = json.dumps(user_data)
+    return HttpResponse(dumps, content_type='application/json')
+
+
 
 @login_required
 def select_publish(request, event_id):
-    print('select publish')
     event = get_object_or_404(Events, pk=event_id)
     #pass the event name to the html page
-    context = {'event': event}
-    print('select publish done')
+    timeslots = TimeSlots.objects.filter(event_id= event_id)
+    show_timeslots = []
+    for t in timeslots:
+        show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
+    # print(t.time_slot_start.strftime('%Y-%m-%d %H:%M'))
+    # timeslots.extra(select={'time_slot_start':"DATE_FORMAT(activation_date, '%Y-%m-%d')"})
+    # timeslots = (timeslots.values_list('time_slot_start', flat=True))
+    # timeslots = list(timeslots.extra(select={'time_slot_start':"DATE_FORMAT(activation_date, '%Y-%m-%d')"}).values_list('date', flat='true')
+    # timeslots = timeslots.values('datestr')
+    # print(type(timeslots.all()))
+    # print(timeslots.all())
+    context = {'event': event, 'timeslots': show_timeslots}
     return render(request, 'manage_event/select_publish.html', context)
-#
-# def modify_timeslots(request, event_id):
-#     return render(request, 'manage_event/modify_timeslots.html', context)
 
+@login_required
+def modify_timeslots_read(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    user_email = request.user.email
+    time_range_start = event.time_range_start
+    time_range_end = event.time_range_end
+    q1 = TimeSlots.objects.filter(event_id__gte = event_id)
+    user_timeslots = q1.filter(user_email__gte = user_email)
+    # Make json data according to contract
+    user_data = {}
+    time = time_range_start
+    thirty_mins = datetime.timedelta(minutes=30)
+
+    while time < time_range_end:
+        if not user_timeslots.filter(time_slot_start = time):
+            user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
+            print(time.strftime("%Y-%m-%d %H:%M:%S"))
+            print(user_data[time.strftime("%Y-%m-%d %H:%M:%S")])
+        else:
+            user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Selected"
+        time += thirty_mins
+    dumps = json.dumps(user_data)
+    return HttpResponse(dumps, content_type='application/json')
+
+@login_required
+def modify_timeslots_update(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    user = get_object_or_404(Users, pk=request.user.email)
+    q1 = TimeSlots.objects.filter(event_id__gte = event_id)
+    user_timeslots = q1.filter(user_email__gte = request.user.email)
+    user_timeslots.delete()
+
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+        dict_data = json_data
+
+
+
+    if request.method == 'GET':
+        s = """{
+      	"2017-10-10 18:30:00": "Blank",
+      	"2017-10-10 19:00:00": "Blank",
+      	"2017-10-11 18:30:00": "Blank",
+      	"2017-10-11 19:00:00": "Blank",
+      	"2017-10-12 18:30:00": "Selected",
+      	"2017-10-12 19:00:00": "Selected",
+      	"2017-10-13 18:30:00": "Selected",
+      	"2017-10-13 19:00:00": "Blank",
+      	"2017-10-14 18:30:00": "Selected",
+      	"2017-10-14 19:00:00": "Blank",
+      	"2017-10-15 18:30:00": "Selected",
+      	"2017-10-15 19:00:00": "Blank"
+          }"""
+        dict_data = json.loads(s)
+    #print(TimeSlots.objects.all())
+    for key, value in dict_data.items():
+        if (value == "Selected"):
+            user_time_slot = TimeSlots.objects.update_or_create(event_id = event,
+            user_email = user, time_slot_start = key)
+    return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))
