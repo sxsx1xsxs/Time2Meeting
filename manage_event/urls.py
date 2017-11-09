@@ -4,7 +4,8 @@ from . import views
 
 app_name = 'manage_event'
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
+    # url(r'^$', views.index, name='index'),
+    url(r'^$', views.Home),
     url(r'^organize/$', views.organize_index, name='organize_index'),
     url(r'^participate/$', views.participate_index, name='participate_index'),
 
@@ -17,9 +18,13 @@ urlpatterns = [
     url(r'^create_event/$', views.create_event, name='create_event'),
     url(r'^(?P<event_id>[0-9]+)/create_publish/$', views.create_publish, name='create_publish'),
     url(r'^(?P<event_id>[0-9]+)/select_timeslots/$', views.select_timeslots, name='select_timeslots'),
+    # url(r'^$', views.Home),
+    url(r'^profile/$', views.update_profile),
+    url(r'^logout/$', views.webLogout),
     url(r'^(?P<event_id>[0-9]+)/select_publish/$',views.select_publish, name= "select_publish"),
     # url(r'^(?P<event_id>[0-9]+)/modify_timeslots/$',views.modify_timeslots, name= "modify_timeslots"),
     url(r'^(?P<event_id>[0-9]+)/read_timeslots/$', views.read_timeslots, name='read_timeslots'),
 
     url(r'^(?P<event_id>[0-9]+)/make_decision_json/$', views.make_decision_json, name='make_decision_json'),
 ]
+
