@@ -1,16 +1,45 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 import datetime
 
 
+# # Create your models here.
+# class Users(models.Model):
+#     user_email = models.EmailField(max_length=254, primary_key=True)
+#     user_name = models.CharField(max_length=300)
+#
+#     def __str__(self):
+#         return self.user_name
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, unique=True, null=False, db_index=True)
+    bio = models.TextField(max_length=500, blank=True)
+    location = models.CharField(max_length=30, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
 # Create your models here.
 class Users(models.Model):
     user_email = models.EmailField(max_length=254, primary_key=True, blank=False)
     user_name = models.CharField(max_length=300)
 
     def __str__(self):
-        return self.user_name
+        return self.user.email
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+
 
     def clean(self):
         if self.user_email == '':
@@ -45,7 +74,7 @@ class Events(models.Model):
 
 class EventUser(models.Model):
     event = models.ForeignKey(Events, on_delete=models.CASCADE)
-    user = models.ForeignKey(Users)
+    user = models.ForeignKey(User, null=True)
 
     class Meta:
         unique_together = ("event", "user")
@@ -57,9 +86,8 @@ class EventUser(models.Model):
 
 class TimeSlots(models.Model):
     event = models.ForeignKey(Events, on_delete=models.CASCADE)
-    user = models.ForeignKey(Users)
+    user = models.ForeignKey(User, null=True)
+    time_slot_start = models.DateTimeField()
 
     class Meta:
-        unique_together = ("event", "user")
-
-    time_slot_start = models.DateTimeField()
+        unique_together = (("event", "user", "time_slot_start"),)
