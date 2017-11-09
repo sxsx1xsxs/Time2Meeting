@@ -4,7 +4,6 @@ from . import views
 
 app_name = 'manage_event'
 urlpatterns = [
-    # ex: /polls/
     # url(r'^$', views.index, name='index'),
     url(r'^$', views.Home),
     url(r'^organize/$', views.organize_index, name='organize_index'),
@@ -22,7 +21,8 @@ urlpatterns = [
     # url(r'^$', views.Home),
     url(r'^profile/$', views.update_profile),
     url(r'^logout/$', views.webLogout),
-
-
+    url(r'^(?P<event_id>[0-9]+)/select_publish/$',views.select_publish, name= "select_publish"),
+    # url(r'^(?P<event_id>[0-9]+)/modify_timeslots/$',views.modify_timeslots, name= "modify_timeslots"),
+    url(r'^(?P<event_id>[0-9]+)/read_timeslots/$', views.read_timeslots, name='read_timeslots'),
 ]
 

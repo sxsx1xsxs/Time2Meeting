@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+import datetime, json
 # from django.utils import json
 import sys
 from django.shortcuts import render, get_object_or_404, redirect
@@ -140,21 +141,52 @@ def delete_event(request, event_name, user_name):
 @login_required
 def select_timeslots(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    # return HttpResponseRedirect(reverse('time2meeting:results', args=(Events.event_id,)))
     return render(request, 'manage_event/select_timeslots.html', {'event': event})
-
-
-@login_required
-def get_result(request, event_id):
-    event = get_object_or_404(Events, pk=event_id)
     # get timeslots and compute
-    return []
+
+
+def get_result(event_id):
+    """
+    Get result based on all the time slots users provided.
+    :param event_id:
+    :return: A dictionary of the (time slot, number of available person) pair.
+    """
+    event = get_object_or_404(Events, pk=event_id)
+    timeslots = event.timeslots_set.all()
+
+    result = {}
+    for timeslot in timeslots:
+        time_slot_start = timeslot.time_slot_start
+        if not result.get(time_slot_start):
+            result[time_slot_start] = 1
+        else:
+            result[time_slot_start] = 1
+    return result
 
 
 @login_required
 def make_decision_detail(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    return render(request, 'manage_event/make_decision.html', {'event': event})
+    result = get_result(event_id)
+    #result = {datetime.datetime(2017, 10, 20, 23, 30):1}
+    time_range_start = event.time_range_start
+    time_range_end = event.time_range_end
+
+    # Make json data according to contract
+    result_data = {}
+    time = time_range_start
+    thirty_mins = datetime.timedelta(minutes=30)
+
+    while time < time_range_end:
+        if not result.get(time):
+            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = 0
+        else:
+            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
+        time = thirty_mins
+    result_json = json.dumps(result_data)
+
+    return HttpResponse(json.loads(result_json).values())
+    #return render(request, 'manage_event/make_decision.html', {'event': event})
 
 
 @login_required
@@ -166,6 +198,23 @@ def make_decision_results(request, event_id):
 @login_required
 def make_decision(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
+    result = get_result(event_id)
+    # result = {datetime.datetime(2017, 10, 20, 23, 30):1}
+    time_range_start = event.time_range_start
+    time_range_end = event.time_range_end
+
+    # Make json data according to contract
+    result_data = {}
+    time = time_range_start
+    thirty_mins = datetime.timedelta(minutes=30)
+    while time < time_range_end:
+        if not result.get(time):
+            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = 0
+        else:
+            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
+        time = thirty_mins
+    result_json = json.dumps(result_data)
+
     try:
         selected_timeslot = event.timeslots_set.get(pk=request.POST['time_slot'])
     except (KeyError, TimeSlots.DoesNotExist):
@@ -193,34 +242,43 @@ def show_decision_result(request, event_id):
 
 @login_required
 def get_each_user_timeslots(request, user_email, event_id):
-    user_data = {}
+    time_range_start = event.time_range_start
+    time_range_end = event.time_range_end
     q1 = TimeSlots.objects.filter(event_id__gte = event_id)
     user_timeslots = q1.objects.filter(user_email__gte = user_email)
-    for each in user_timeslots:
-        date = each.date()
-        time = each.time()
-        user_data.setdefault([date,time], value = 1)
-    return HttpResponse(simplejson.dumps(user_data), content_type='application/json')
+
+    # Make json data according to contract
+    user_data = {}
+    time = time_range_start
+    thirty_mins = datetime.timedelta(minutes=30)
+
+    while time < time_range_end:
+        if not user_timeslots.get(time):
+            user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
+        else:
+            user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Selected"
+        time = thirty_mins
+    dumps = json.dumps(user_data)
+    return HttpResponse(dumps, content_type='application/json')
+
 
 @login_required
 def all_user_timeslots(request, useruser_email, event_id):
+    time_range_start = event.time_range_start
+    time_range_end = event.time_range_end
+    result = get_result(event_id)
+
     all_user_data = {}
     all_user_timeslots = TimeSlots.objects.filter(event_id__gte = event_id)
-    for each in all_user_timeslots:
-        date = each.date()
-        time = each.time()
-        l = [date, time]
-        if l not in all_user_data:
-            all_user_data.setdefault([date, time], value = 0)
-        else:
-            all_user_data[date, time] += 1
-    return HttpResponse(simplejson.dumps(all_user_timeslots), content_type='application/json')
 
-# def read_select_timeslots(request, user_email, event_id):
-#     f = open('user_timeslots.json')
-#     json_string = f.read()
-#     data = json.loads(json_string)
-#     f.close()
+    while time < time_range_end:
+        if not all_user_timeslots.get(time):
+            user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
+        else:
+            user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
+        time = thirty_mins
+    dumps = json.dumps(user_data)
+    return HttpResponse(simplejson.dumps(all_user_timeslots), content_type='application/json')
 
 
 @login_required
@@ -253,4 +311,69 @@ def update_profile(request):
 def webLogout(request):
     logout(request)
     return HttpResponseRedirect('/manage_event/')
+
+
+@login_required
+def select_timeslots(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    return render(request, 'manage_event/select_timeslots.html', {'event': event})
+
+
+@login_required
+def read_timeslots(request, event_id):
+    print('read_timeslots')
+    print(TimeSlots.objects.all())
+    # user = Users.objects.create(pk = "qimenghan77@gmail.com", user_name = "qimeng")
+    # user.save()
+    event = get_object_or_404(Events, pk=event_id)
+    user = get_object_or_404(Users, pk="qimenghan77@gmail.com")
+    """
+    Read the Json file includes user selection information and update the database
+    """
+    # f = open('user_timeslots.json')
+    # json_string = f.read()
+    #json.loads retruns a list that contains a dictionary
+    # data = json.loads(json_string)
+    # f.close()
+    s = """{
+  	"2017-10-10 18:30:00": "Selected",
+  	"2017-10-10 19:00:00": "Blank",
+  	"2017-10-11 18:30:00": "Selected",
+  	"2017-10-11 19:00:00": "Blank",
+  	"2017-10-12 18:30:00": "Selected",
+  	"2017-10-12 19:00:00": "Blank",
+  	"2017-10-13 18:30:00": "Selected",
+  	"2017-10-13 19:00:00": "Blank",
+  	"2017-10-14 18:30:00": "Selected",
+  	"2017-10-14 19:00:00": "Blank",
+  	"2017-10-15 18:30:00": "Selected",
+  	"2017-10-15 19:00:00": "Blank"
+      }"""
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+    if request.method == 'GET':
+        json_data = json.loads(s)
+
+    dict_data = json_data
+    print(TimeSlots.objects.all())
+    for key, value in dict_data.items():
+        print(key)
+        if (value == "Selected"):
+            user_time_slot = TimeSlots.objects.update_or_create(event_id = event,
+            user_email = user, time_slot_start = key)
+    # return redirect("")
+    return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))
+
+
+@login_required
+def select_publish(request, event_id):
+    print('select publish')
+    event = get_object_or_404(Events, pk=event_id)
+    #pass the event name to the html page
+    context = {'event': event}
+    print('select publish done')
+    return render(request, 'manage_event/select_publish.html', context)
+#
+# def modify_timeslots(request, event_id):
+#     return render(request, 'manage_event/modify_timeslots.html', context)
 

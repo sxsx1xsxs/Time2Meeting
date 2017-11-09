@@ -67,8 +67,7 @@ class EventUser(models.Model):
 class TimeSlots(models.Model):
     event_id = models.ForeignKey(Events, on_delete=models.CASCADE)
     user_email = models.ForeignKey(Users)
+    time_slot_start = models.DateTimeField()
 
     class Meta:
-        unique_together = ("event_id", "user_email")
-
-    time_slot_start = models.DateTimeField()
+        unique_together = (("event_id", "user_email", "time_slot_start"),)
