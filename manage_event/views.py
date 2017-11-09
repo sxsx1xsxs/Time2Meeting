@@ -133,7 +133,7 @@ def get_result(event_id):
         if not result.get(time_slot_start):
             result[time_slot_start] = 1
         else:
-            result[time_slot_start] += 1
+            result[time_slot_start] = 1
 
     # get timeslots and compute
     return result
@@ -155,7 +155,7 @@ def make_decision_detail(request, event_id):
             result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = 0
         else:
             result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
-        time += thirty_mins
+        time = thirty_mins
     result_json = json.dumps(result_data)
 
     return HttpResponse(result_json)
@@ -184,7 +184,7 @@ def make_decision(request, event_id):
             result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = 0
         else:
             result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
-        time += thirty_mins
+        time = thirty_mins
     result_json = json.dumps(result_data)
 
     try:
@@ -228,7 +228,7 @@ def get_each_user_timeslots(request, user_email, event_id):
             user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
         else:
             user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Selected"
-        time += thirty_mins
+        time = thirty_mins
     dumps = json.dumps(user_data)
     return HttpResponse(dumps, content_type='application/json')
 
@@ -246,37 +246,66 @@ def all_user_timeslots(request, useruser_email, event_id):
             user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
         else:
             user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
-        time += thirty_mins
+        time = thirty_mins
     dumps = json.dumps(user_data)
     return HttpResponse(simplejson.dumps(all_user_timeslots), content_type='application/json')
 
 
-def select_timeslots(request,user_email,event_id):
+def select_timeslots(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    user = get_object_or_404(Users, pk=user_email)
+    return render(request, 'manage_event/select_timeslots.html', {'event': event})
+
+def read_timeslots(request, event_id):
+    print('read_timeslots')
+    print(TimeSlots.objects.all())
+    # user = Users.objects.create(pk = "qimenghan77@gmail.com", user_name = "qimeng")
+    # user.save()
+    event = get_object_or_404(Events, pk=event_id)
+    user = get_object_or_404(Users, pk="qimenghan77@gmail.com")
     """
     Read the Json file includes user selection information and update the database
     """
-    f = open('user_timeslots.json')
-    json_string = f.read()
+    # f = open('user_timeslots.json')
+    # json_string = f.read()
     #json.loads retruns a list that contains a dictionary
-    data = json.loads(json_string)
-    f.close()
+    # data = json.loads(json_string)
+    # f.close()
+    s = """{
+  	"2017-10-10 18:30:00": "Selected",
+  	"2017-10-10 19:00:00": "Blank",
+  	"2017-10-11 18:30:00": "Selected",
+  	"2017-10-11 19:00:00": "Blank",
+  	"2017-10-12 18:30:00": "Selected",
+  	"2017-10-12 19:00:00": "Blank",
+  	"2017-10-13 18:30:00": "Selected",
+  	"2017-10-13 19:00:00": "Blank",
+  	"2017-10-14 18:30:00": "Selected",
+  	"2017-10-14 19:00:00": "Blank",
+  	"2017-10-15 18:30:00": "Selected",
+  	"2017-10-15 19:00:00": "Blank"
+      }"""
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+    if request.method == 'GET':
+        json_data = json.loads(s)
 
-    dict_data = data[0]
+    dict_data = json_data
+    print(TimeSlots.objects.all())
     for key, value in dict_data.items():
+        print(key)
         if (value == "Selected"):
-            user_time_slot = TimeSlots.objects.create(event_id = event_id,
-            user_email = user_email, time_slot_start = key)
-            user_time_slot.save()
-    return HttpResponseRedirect(reverse('manage_event: select_publish', args=(Events.event_id,)))
-
+            user_time_slot = TimeSlots.objects.update_or_create(event_id = event,
+            user_email = user, time_slot_start = key)
+    # return redirect("")
+    return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))
 
 def select_publish(request, event_id):
+    print('select publish')
     event = get_object_or_404(Events, pk=event_id)
     #pass the event name to the html page
     context = {'event': event}
+    print('select publish done')
     return render(request, 'manage_event/select_publish.html', context)
-
-def modify_timeslots(request, user_email, event_id):
-    return render(request, 'manage_event/modify_timeslots.html', context)
+#
+# def modify_timeslots(request, event_id):
+#     return render(request, 'manage_event/modify_timeslots.html', context)
