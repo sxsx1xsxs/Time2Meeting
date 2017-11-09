@@ -26,5 +26,7 @@ urlpatterns = [
     url(r'^(?P<event_id>[0-9]+)/read_timeslots/$', views.read_timeslots, name='read_timeslots'),
     url(r'^(?P<event_id>[0-9]+)/initialize_timeslots/$', views.initialize_timeslots, name='initialize_timeslots'),
     url(r'^(?P<event_id>[0-9]+)/modify_timeslots_update/$', views.modify_timeslots_update, name='modify_timeslots_update'),
+    url(r'^(?P<event_id>[0-9]+)/select_publish_render/$',views.select_publish_render, name= "select_publish_render"),
+
     #url(r'^(?P<event_id>[0-9]+)/read_timeslots/$', views.get_each_user_timeslots, name='get_each_user_timeslots'),
 ]

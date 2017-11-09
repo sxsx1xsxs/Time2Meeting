@@ -5,13 +5,13 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
-# Create your models here.
-class Users(models.Model):
-    user_email = models.EmailField(max_length=254, primary_key=True)
-    user_name = models.CharField(max_length=300)
-
-    def __str__(self):
-        return self.user_name
+# # Create your models here.
+# class Users(models.Model):
+#     user_email = models.EmailField(max_length=254, primary_key=True)
+#     user_name = models.CharField(max_length=300)
+#
+#     def __str__(self):
+#         return self.user_name
 
 
 class Profile(models.Model):
@@ -55,19 +55,19 @@ class Events(models.Model):
 
 
 class EventUser(models.Model):
-    event_id = models.ForeignKey(Events, on_delete=models.CASCADE)
-    user_email = models.ForeignKey(Users)
+    event = models.ForeignKey(Events, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True)
 
     class Meta:
-        unique_together = ("event_id", "user_email")
+        unique_together = ("event", "user")
 
     role = models.CharField(max_length=1)
 
 
 class TimeSlots(models.Model):
-    event_id = models.ForeignKey(Events, on_delete=models.CASCADE)
-    user_email = models.ForeignKey(Users)
+    event = models.ForeignKey(Events, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True)
     time_slot_start = models.DateTimeField()
 
     class Meta:
-        unique_together = (("event_id", "user_email", "time_slot_start"),)
+        unique_together = (("event", "user", "time_slot_start"),)
