@@ -133,7 +133,7 @@ def get_result(event_id):
         if not result.get(time_slot_start):
             result[time_slot_start] = 1
         else:
-            result[time_slot_start] = 1
+            result[time_slot_start] += 1
 
     # get timeslots and compute
     return result
@@ -141,25 +141,9 @@ def get_result(event_id):
 
 def make_decision_detail(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    result = get_result(event_id)
-    #result = {datetime.datetime(2017, 10, 20, 23, 30):1}
-    time_range_start = event.time_range_start
-    time_range_end = event.time_range_end
+    #return HttpResponse(json.loads(result_json).values())
 
-    # Make json data according to contract
-    result_data = {}
-    time = time_range_start
-    thirty_mins = datetime.timedelta(minutes=30)
-    while time < time_range_end:
-        if not result.get(time):
-            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = 0
-        else:
-            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
-        time = thirty_mins
-    result_json = json.dumps(result_data)
-
-    return HttpResponse(json.loads(result_json).values())
-    #return render(request, 'manage_event/make_decision.html', {'event': event})
+    return render(request, 'manage_event/make_decision.html', {'event': event})
 
 
 def make_decision_results(request, event_id):
@@ -167,7 +151,13 @@ def make_decision_results(request, event_id):
     return render(request, 'manage_event/make_decision_results.html', {'event': event})
 
 
-def make_decision(request, event_id):
+def make_decision_jason(request, event_id):
+    """
+    Used for .js parsing json by ajax.
+    :param request:
+    :param event_id:
+    :return:
+    """
     event = get_object_or_404(Events, pk=event_id)
     result = get_result(event_id)
     # result = {datetime.datetime(2017, 10, 20, 23, 30):1}
@@ -180,34 +170,41 @@ def make_decision(request, event_id):
     thirty_mins = datetime.timedelta(minutes=30)
     while time < time_range_end:
         if not result.get(time):
-            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = 0
+            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = '0'
         else:
-            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
+            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = str(result[time])
         time = thirty_mins
     result_json = json.dumps(result_data)
 
-    try:
-        selected_timeslot = event.timeslots_set.get(pk=request.POST['time_slot'])
-    except (KeyError, TimeSlots.DoesNotExist):
-        # Redisplay the question voting form.
-        return render(request, 'manage_event/make_decision.html', {
-            'event': event,
-            'error_message': "You didn't select a choice.",
-        })
-    else:
-        decision = event.decision_set.create(timeslot=selected_timeslot.timeslot)
-        decision.save()
-        event.final_decision = True
-        event.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(reverse('manage_event:make_decision_results', args=(event.id,)))
+    return HttpResponse(result_json, content_type='application/json')
+
+def make_decision(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+
+    if request.method == 'POST':
+        decision_json = json.loads(request.body)
+        for key in decision_json:
+            if decision_json[key] == "Selected":
+                final_time_start, create = Events.objects.update_or_create(event_id=event.id, final_time_start = key)
+
+                for key_1 in decision_json:
+                    if decision_json[key_1] == "Selected":
+                        final_time_end, create = Events.objects.update_or_create(event_id=event.id,
+                                                                                   final_time_end=key)
+                # Always return an HttpResponseRedirect after successfully dealing
+                # with POST data. This prevents data from being posted twice if a
+                # user hits the Back button.
+                return HttpResponseRedirect(reverse('manage_event:make_decision_results', args=(event.id,)))
+
+    return render(request, 'manage_event/make_decision.html', {
+        'event': event,
+        'error_message': "You didn't select a choice.",
+    })
+
 
 def show_decision_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     return render(request, 'manage_event/show_decision_result.html', {'event': event})
-
 
 
 def get_each_user_timeslots(request, user_email, event_id):

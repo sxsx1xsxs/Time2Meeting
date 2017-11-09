@@ -20,4 +20,6 @@ urlpatterns = [
     url(r'^(?P<event_id>[0-9]+)/select_publish/$',views.select_publish, name= "select_publish"),
     # url(r'^(?P<event_id>[0-9]+)/modify_timeslots/$',views.modify_timeslots, name= "modify_timeslots"),
     url(r'^(?P<event_id>[0-9]+)/read_timeslots/$', views.read_timeslots, name='read_timeslots'),
+
+    url(r'^(?P<event_id>[0-9]+)/make_decision_json/$', views.make_decision_json, name='make_decision_json'),
 ]

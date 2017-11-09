@@ -5,7 +5,7 @@
 <div align="center">
 <h1>{{ event.event_name }}</h1>
 
-<p> You have choose {{ event.decision_set.get.timeslot }} as your final decision.</p>
+<p> You have choose {{ event.final_time_start }} to {{ event.final_time_end }} as your final decision.</p>
 
 <a href="{% url 'manage_event:organize_index' %}">Back to Organize Event</a>
 </div>
