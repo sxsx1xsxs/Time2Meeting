@@ -25,12 +25,9 @@ from .models import Events, TimeSlots
 from django.shortcuts import render
 
 
+
 @login_required
 def index(request):
-        # return render(request, 'manage_event/index.html', context=None)
-        # event_wait_for_decision = Events.objects.all()
-        # latest_event_list = Events.objects.order_by('-event_date')[:5]
-        # output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/index.html')
 
 # def index(request):
@@ -276,11 +273,6 @@ def show_decision_result(request, event_id):
 #         time = thirty_mins
 #     dumps = json.dumps(user_data)
 #     return HttpResponse(simplejson.dumps(all_user_timeslots), content_type='application/json')
-
-
-@login_required
-def Home(request):
-    return render(request, 'manage_event/index.html')
 
 
 @login_required
