@@ -188,7 +188,6 @@ def make_decision_json(request, event_id):
     :param event_id:
     :return:
     """
-
     event = get_object_or_404(Events, pk=event_id)
     result = get_result(event_id)
     # result = {datetime.datetime(2017, 10, 20, 23, 30):1}
@@ -204,7 +203,7 @@ def make_decision_json(request, event_id):
             result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = '0'
         else:
             result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = str(result[time])
-        time = thirty_mins
+        time += thirty_mins
     result_json = json.dumps(result_data)
 
     return HttpResponse(result_json, content_type='application/json')
@@ -214,7 +213,7 @@ def make_decision(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
 
     if request.method == 'POST':
-        decision_json = json.loads(request.body)
+        decision_json = json.loads(request.body.decode("utf-8"))
         for key in decision_json:
             if decision_json[key] == "Selected":
                 final_time_start, create = Events.objects.update_or_create(event_id=event.id, final_time_start = key)
@@ -239,7 +238,6 @@ def make_decision(request, event_id):
 def show_decision_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     return render(request, 'manage_event/show_decision_result.html', {'event': event})
-
 
 
 @login_required

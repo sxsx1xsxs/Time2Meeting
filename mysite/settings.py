@@ -161,9 +161,9 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'fancydb',
+        'NAME': 'awesomedb',
         'USER': 'postgres',
-        'PASSWORD': 'Qimeng1019',
+        'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': '5432',
         'TEST': {
