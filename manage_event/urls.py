@@ -10,8 +10,9 @@ urlpatterns = [
 
 
     url(r'^(?P<event_id>[0-9]+)/make_decision/$', views.make_decision, name='make_decision'),
+    url(r'^(?P<event_id>[0-9]+)/make_decision_render/$', views.make_decision_render, name='make_decision_render'),
     url(r'^(?P<event_id>[0-9]+)/make_decision_results/$', views.make_decision_results, name='make_decision_results'),
-    url(r'^(?P<event_id>[0-9]+)/$', views.make_decision_detail, name='make_decision_detail'),
+    url(r'^(?P<event_id>[0-9]+)/make_decision_detail/$', views.make_decision_detail, name='make_decision_detail'),
     url(r'^(?P<event_id>[0-9]+)/show_decision_result/$', views.show_decision_result, name='show_decision_result'),
 
     url(r'^create_event/$', views.create_event, name='create_event'),

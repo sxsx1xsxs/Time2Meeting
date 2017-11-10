@@ -208,23 +208,34 @@ def make_decision(request, event_id):
         decision_json = json.loads(request.body.decode("utf-8"))
         for key in decision_json:
             if decision_json[key] == "Selected":
-                final_time_start, create = Events.objects.update_or_create(event_id=event.id, final_time_start = key)
-
+                event.final_time_start = datetime.datetime.strptime(key, "%Y-%m-%d %H:%M:%S")
+                event.save()
                 for key_1 in decision_json:
                     if decision_json[key_1] == "Selected":
-                        final_time_end, create = Events.objects.update_or_create(event_id=event.id,
-                                                                                   final_time_end=key)
-                # Always return an HttpResponseRedirect after successfully dealing
-                # with POST data. This prevents data from being posted twice if a
-                # user hits the Back button.
-                return HttpResponseRedirect(reverse('manage_event:make_decision_results', args=(event.id,)))
+                        event.final_time_end = datetime.datetime.strptime(key_1, "%Y-%m-%d %H:%M:%S") + datetime.timedelta(minutes=30)
+                        event.save()
 
-    return render(request, 'manage_event/make_decision.html', {
-        'event': event,
-        'error_message': "You didn't select a choice.",
-    })
+                name = request.POST.get('name')
+                dict = {'name': name}
+                return HttpResponse(json.dumps(dict), content_type='application/json')
 
+    name = request.POST.get('name')
+    dict = {'name': name}
+    return HttpResponse(json.dumps(dict), content_type='application/json')
 
+@login_required
+def make_decision_render(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    if event.final_time_start and event.final_time_end:
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        return HttpResponseRedirect(reverse('manage_event:make_decision_results', args=(event.id,)))
+    else:
+        return render(request, 'manage_event/make_decision.html', {
+            'event': event,
+            'error_message': "You didn't make a decision.",
+        })
 
 @login_required
 def show_decision_result(request, event_id):
