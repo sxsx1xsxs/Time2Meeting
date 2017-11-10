@@ -1,7 +1,6 @@
-from django.shortcuts import redirect, HttpResponseRedirect
-from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from manage_event.models import Profile
+from manage_event.models import Events
 from django import forms
 
 
@@ -16,3 +15,8 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ('bio', 'location', 'birth_date')
 
+
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Events
+        fields = ('event_name', 'time_range_start', 'time_range_end', 'deadline')

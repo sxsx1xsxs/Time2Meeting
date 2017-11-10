@@ -4,16 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
-import datetime
-
-
-# # Create your models here.
-# class Users(models.Model):
-#     user_email = models.EmailField(max_length=254, primary_key=True)
-#     user_name = models.CharField(max_length=300)
-#
-#     def __str__(self):
-#         return self.user_name
+from datetime import timedelta
 
 
 class Profile(models.Model):
@@ -21,13 +12,6 @@ class Profile(models.Model):
     bio = models.TextField(max_length=500, blank=True)
     location = models.CharField(max_length=30, blank=True)
     birth_date = models.DateField(null=True, blank=True)
-# Create your models here.
-class Users(models.Model):
-    user_email = models.EmailField(max_length=254, primary_key=True, blank=False)
-    user_name = models.CharField(max_length=300)
-
-    def __str__(self):
-        return self.user.email
 
 
 @receiver(post_save, sender=User)
@@ -39,11 +23,6 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
-
-
-    def clean(self):
-        if self.user_email == '':
-            raise ValidationError('email cannot be blank.')
 
 
 class Events(models.Model):
@@ -80,8 +59,7 @@ class EventUser(models.Model):
         unique_together = ("event", "user")
 
     role = models.CharField(max_length=1)
-
-    def test_
+    status = models.CharField(max_length=30, default='todo')
 
 
 class TimeSlots(models.Model):
@@ -91,3 +69,9 @@ class TimeSlots(models.Model):
 
     class Meta:
         unique_together = (("event", "user", "time_slot_start"),)
+
+    def clean(self):
+        if self.time_slot_start < self.event.time_range_start:
+            raise ValidationError('invalid time slot')
+        if self.time_slot_start + timedelta(minutes=30) > self.event.time_range:
+            raise ValidationError('invalid time slot')

@@ -15,7 +15,7 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db import transaction
 from .models import Profile
-from .forms import UserForm, ProfileForm
+from .forms import UserForm, ProfileForm, EventForm
 
 
 from .models import Events, TimeSlots
@@ -50,7 +50,7 @@ def index(request):
 @login_required
 def organize_index(request):
 
-    print (request.user.email)
+    print(request.user.email)
     event_wait_for_decision = Events.objects.filter(final_time_start__isnull = True).filter(deadline__lte= timezone.now())
     event_on_going = Events.objects.filter(deadline__gte= timezone.now())
     event_history = Events.objects.filter(final_time_start__isnull = False)
@@ -93,28 +93,30 @@ def participate_index(request):
 def create_event(request):
     # need add exception
     if request.method == 'GET':
-        return render(request, 'manage_event/create_event.html', context=None)
+        form = EventForm(instance=request.user)
+        return render(request, 'manage_event/create_event.html', {'form': form})
     elif request.method == 'POST':
-        event_name = request.POST.get('event_name')
-        time_range_start = request.POST.get('time_range_start')
-        time_range_end = request.POST.get('time_range_end')
-        duration = request.POST.get('duration')
-        deadline = request.POST.get('deadline')
-
-        if time_range_start is '' or time_range_end is '' or deadline is '' or event_name is '':
-            return render(request, 'manage_event/create_event.html', context=None)
-        else:
-            event = Events()
-            event.event_name = event_name
-            event.time_range_start = time_range_start
-            event.time_range_end = time_range_end
-            event.duration = duration
-            event.deadline = deadline
-            event.save()
-            # Always return an HttpResponseRedirect after successfully dealing
-            # with POST data. This prevents data from being posted twice if a
-            # user hits the Back button.
-            return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
+        form = EventForm(request.POST)
+        # event_name = request.POST.get('event_name')
+        # time_range_start = request.POST.get('time_range_start')
+        # time_range_end = request.POST.get('time_range_end')
+        # duration = request.POST.get('duration')
+        # deadline = request.POST.get('deadline')
+        #
+        # if time_range_start is '' or time_range_end is '' or deadline is '' or event_name is '':
+        #     return render(request, 'manage_event/create_event.html', context=None)
+        # else:
+        #     event = Events()
+        #     event.event_name = event_name
+        #     event.time_range_start = time_range_start
+        #     event.time_range_end = time_range_end
+        #     event.duration = duration
+        #     event.deadline = deadline
+        #     event.save()
+        #     # Always return an HttpResponseRedirect after successfully dealing
+        #     # with POST data. This prevents data from being posted twice if a
+        #     # user hits the Back button.
+        return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
 
 
 @login_required

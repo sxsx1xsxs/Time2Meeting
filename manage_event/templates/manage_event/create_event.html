@@ -2,8 +2,9 @@
 {% block content %}
 
 
-<form action= "{% url 'manage_event:create_event' %}" method="post">
+<form method="post">
     {% csrf_token %}
+    {{ form }}
     <br>
     Event name:<br>
     <input type="text" name="event_name">
