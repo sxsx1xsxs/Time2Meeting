@@ -18,25 +18,17 @@ from .models import Profile
 from .forms import UserForm, ProfileForm
 
 
-from .models import Users, Events, TimeSlots
+from .models import Events, TimeSlots
 
 
 # Create your views here.
 from django.shortcuts import render
 
 
+
 @login_required
 def index(request):
-    user_email = request.COOKIES.get('email')
-    if not user_email:
-        return render(request, 'manage_event/index.html')
-    else:
-
-        # return render(request, 'manage_event/index.html', context=None)
-        # event_wait_for_decision = Events.objects.all()
-        # latest_event_list = Events.objects.order_by('-event_date')[:5]
-        # output = ', '.join([q.event_name for q in latest_event_list])
-        return render(request, 'manage_event/index.html')
+    return render(request, 'manage_event/index.html')
 
 # def index(request):
 #     get cookie by key
@@ -239,56 +231,57 @@ def show_decision_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     return render(request, 'manage_event/show_decision_result.html', {'event': event})
 
+#
+# @login_required
+# def get_each_user_timeslots(request, user, event_id):
+#     event = get_object_or_404(Events, pk=event_id)
+#     time_range_start = event.time_range_start
+#     time_range_end = event.time_range_end
+#     q1 = TimeSlots.objects.filter(event_id__gte = event_id)
+#     user_timeslots = q1.objects.filter(user_email__gte = user_email)
+#
+#     # Make json data according to contract
+#     user_data = {}
+#     time = time_range_start
+#     thirty_mins = datetime.timedelta(minutes=30)
+#
+#     while time < time_range_end:
+#         if not user_timeslots.get(time):
+#             user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
+#         else:
+#             user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Selected"
+#         time = thirty_mins
+#     dumps = json.dumps(user_data)
+#     return HttpResponse(dumps, content_type='application/json')
 
-@login_required
-def get_each_user_timeslots(request, user_email, event_id):
-    event = get_object_or_404(Events, pk=event_id)
-    time_range_start = event.time_range_start
-    time_range_end = event.time_range_end
-    q1 = TimeSlots.objects.filter(event_id__gte = event_id)
-    user_timeslots = q1.objects.filter(user_email__gte = user_email)
 
-    # Make json data according to contract
-    user_data = {}
-    time = time_range_start
-    thirty_mins = datetime.timedelta(minutes=30)
-
-    while time < time_range_end:
-        if not user_timeslots.get(time):
-            user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
-        else:
-            user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Selected"
-        time = thirty_mins
-    dumps = json.dumps(user_data)
-    return HttpResponse(dumps, content_type='application/json')
-
-
-@login_required
-def all_user_timeslots(request, useruser_email, event_id):
-
-    event = get_object_or_404(Events, pk=event_id)
-
-    time_range_start = event.time_range_start
-    time_range_end = event.time_range_end
-    result = get_result(event_id)
-
-    all_user_data = {}
-    all_user_timeslots = TimeSlots.objects.filter(event_id__gte = event_id)
-
-    while time < time_range_end:
-        if not all_user_timeslots.get(time):
-            user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
-        else:
-            user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
-        time = thirty_mins
-    dumps = json.dumps(user_data)
-    return HttpResponse(simplejson.dumps(all_user_timeslots), content_type='application/json')
+#
+#
+# @login_required
+# def all_user_timeslots(request, useruser_email, event_id):
+#
+#     event = get_object_or_404(Events, pk=event_id)
+#
+#     time_range_start = event.time_range_start
+#     time_range_end = event.time_range_end
+#     result = get_result(event_id)
+#
+#     all_user_data = {}
+#     all_user_timeslots = TimeSlots.objects.filter(event_id__gte = event_id)
+#
+#     while time < time_range_end:
+#         if not all_user_timeslots.get(time):
+#             user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
+#         else:
+#             user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
+#         time = thirty_mins
+#     dumps = json.dumps(user_data)
+#     return HttpResponse(simplejson.dumps(all_user_timeslots), content_type='application/json')
 
 
 @login_required
 def Home(request):
     return render(request, 'manage_event/index.html')
-
 
 @login_required
 @transaction.atomic
@@ -325,12 +318,21 @@ def select_timeslots(request, event_id):
 
 
 @login_required
+def modify_timeslots(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    #return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))
+    return render(request, 'manage_event/modify_timeslots.html', {'event': event})
+
+
+@login_required
 def read_timeslots(request, event_id):
+    print('read time slots')
     event = get_object_or_404(Events, pk=event_id)
     # user = request.user.email
     # user = Users.objects.create(pk = "qimenghan77@gmail.com", user_name = "qimeng")
     # user.save()
-    user = get_object_or_404(Users, pk=request.user.email)
+    print(request.user.email)
+    user = request.user
     """
     Read the Json file includes user selection information and update the database
     """
@@ -339,6 +341,7 @@ def read_timeslots(request, event_id):
     #json.loads retruns a list that contains a dictionary
     # data = json.loads(json_string)
     # f.close()
+
     s = """{
   	"2017-10-10 18:30:00": "Selected",
   	"2017-10-10 19:00:00": "Blank",
@@ -361,8 +364,8 @@ def read_timeslots(request, event_id):
     print(TimeSlots.objects.all())
     for key, value in dict_data.items():
         if (value == "Selected"):
-            user_time_slot = TimeSlots.objects.update_or_create(event_id = event,
-            user_email = user, time_slot_start = key)
+            user_time_slot = TimeSlots.objects.update_or_create(event= event,
+            user = user, time_slot_start = key)
     # return redirect("")
     return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))
 
@@ -388,9 +391,18 @@ def initialize_timeslots(request, event_id):
 
 @login_required
 def select_publish(request, event_id):
+    name = request.POST.get('name')
+    dict = {'name': name}
+    return HttpResponse(json.dumps(dict), content_type='application/json')
+    # return HttpResponse("OK")
+    # return render(request, 'manage_event/select_timeslots.html', context)
+
+
+def select_publish_render(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
+
     #pass the event name to the html page
-    timeslots = TimeSlots.objects.filter(event_id= event_id)
+    timeslots = TimeSlots.objects.filter(event= event)
     show_timeslots = []
     for t in timeslots:
         show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
@@ -402,16 +414,17 @@ def select_publish(request, event_id):
     # print(type(timeslots.all()))
     # print(timeslots.all())
     context = {'event': event, 'timeslots': show_timeslots}
+    print("select publish render")
+    print(context)
     return render(request, 'manage_event/select_publish.html', context)
 
 @login_required
 def modify_timeslots_read(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    user_email = request.user.email
     time_range_start = event.time_range_start
     time_range_end = event.time_range_end
-    q1 = TimeSlots.objects.filter(event_id__gte = event_id)
-    user_timeslots = q1.filter(user_email__gte = user_email)
+    q1 = TimeSlots.objects.filter(event=event)
+    user_timeslots = q1.filter(user= request.user)
     # Make json data according to contract
     user_data = {}
     time = time_range_start
@@ -428,12 +441,13 @@ def modify_timeslots_read(request, event_id):
     dumps = json.dumps(user_data)
     return HttpResponse(dumps, content_type='application/json')
 
+
 @login_required
 def modify_timeslots_update(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    user = get_object_or_404(Users, pk=request.user.email)
-    q1 = TimeSlots.objects.filter(event_id__gte = event_id)
-    user_timeslots = q1.filter(user_email__gte = request.user.email)
+    user = request.user
+    q1 = TimeSlots.objects.filter(event=event)
+    user_timeslots = q1.filter(user=user)
     user_timeslots.delete()
 
     if request.method == 'POST':
@@ -461,6 +475,6 @@ def modify_timeslots_update(request, event_id):
     #print(TimeSlots.objects.all())
     for key, value in dict_data.items():
         if (value == "Selected"):
-            user_time_slot = TimeSlots.objects.update_or_create(event_id = event,
-            user_email = user, time_slot_start = key)
+            user_time_slot = TimeSlots.objects.update_or_create(event = event,
+            user = user, time_slot_start = key)
     return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))

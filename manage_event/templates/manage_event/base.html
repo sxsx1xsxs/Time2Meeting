@@ -11,12 +11,21 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
-<button onclick="location.href='{% url 'home:homepage' %}'">Time2Meeting</button>
+<button onclick="location.href='{% url 'manage_event:index' %}'">Time2Meeting</button>
 <button onclick="location.href='{% url 'home:guidance' %}'">Guidance</button>
 <button onclick="location.href='{% url 'home:team' %}'">Team</button>
+
+<style type="text/css" media="screen">
+.right {
+    text-align: right;
+    float: right;
+}
+</style>
+
 {% if user.is_authenticated %}
-<div><a href="/manage_event/logout">Log out</a></div>
+<a class="right" href="/manage_event/logout">Log out</a>
 {% endif %}
+{% csrf_token %}
 
 <div class="page-header">
     <h1><a href="/">Time2Meeting</a></h1>

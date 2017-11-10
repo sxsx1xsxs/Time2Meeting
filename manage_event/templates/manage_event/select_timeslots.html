@@ -58,39 +58,23 @@
         <!--</tr>-->
     </table>
 
-
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js" type="text/javascript"></script>
     <script>
 
- var originaltimeslotsjson ='{'+
-	'"2017-10-10 18:30:00": "Selected",'+
-	'"2017-10-10 19:00:00": "Blank",'+
-	'"2017-10-11 18:30:00": "Selected",'+
-	'"2017-10-11 19:00:00": "Blank",'+
-	'"2017-10-12 18:30:00": "Selected",'+
-	'"2017-10-12 19:00:00": "Blank"'+
-    '}';
+ <!--var originaltimeslotsjson ='{'+-->
+	<!--'"2017-10-10 18:30:00": "Selected",'+-->
+	<!--'"2017-10-10 19:00:00": "Blank",'+-->
+	<!--'"2017-10-11 18:30:00": "Selected",'+-->
+	<!--'"2017-10-11 19:00:00": "Blank",'+-->
+	<!--'"2017-10-12 18:30:00": "Selected",'+-->
+	<!--'"2017-10-12 19:00:00": "Blank"'+-->
+    <!--'}';-->
 
- var originalTimeslots = JSON.parse(originaltimeslotsjson);
-
- <!--var timeslotsjson = '{'+-->
-	<!--'"2017-10-10":'+-->
-	<!--'{'+-->
-	 	<!--'"18:30:00": "Selected",'+-->
-	 	<!--'"19:00:00": "Blank"'+-->
-	<!--'},'+-->
-	<!--'"2017-10-11":'+-->
-	<!--'{'+-->
-	 	<!--'"18:30:00": "Selected",'+-->
-	 	<!--'"19:00:00": "Blank"'+-->
-	<!--'},'+-->
-	<!--'"2017-10-12":'+-->
-	<!--'{'+-->
-	 	<!--'"18:30:00": "Selected",'+-->
-	 	<!--'"19:00:00": "Blank"'+-->
-	<!--'}'+-->
- <!--'}';-->
-
- <!--var timeslots = JSON.parse(timeslotsjson);-->
+    var originalTimeslots;
+    var originaltimeslotsjson = $.getJSON( "../initialize_timeslots", function(json) {
+  console.log( "success" );
+  console.log(json);
+  originalTimeslots = json;
 
  var timeslots = {};
  var date;
@@ -124,31 +108,14 @@
           }
     }
  }
-
-function myFunction(){
-
-    for(entry in originalTimeslots) {
-        var currentcell = document.getElementById(entry);
-        if (currentcell.className.includes("highlighted")) {
-            originalTimeslots[entry] = "Selected";
-        }
-        else {
-            originalTimeslots[entry] = "Blank";
-        }
-    }
-
-    console.log(originalTimeslots);
-}
-
-    </script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js" type="text/javascript"></script>
-    <script type="text/javascript" charset="utf-8">
-    $(function() {
+ $(function() {
         // Create table dragging functionality
         var isMouseDown = false;
         var highlighted
+        console.log("event listner");
         $("table#power_schedule td.selectable")
             .mousedown(function() {
+                console.log("mouse down");
                 isMouseDown = true;
                 highlighted = $(this).hasClass('highlighted')
 
@@ -194,6 +161,51 @@ function myFunction(){
                 isMouseDown = false
             })
     });
+})
+  <!--.done(function() {-->
+    <!--console.log( "second success" );-->
+  <!--})-->
+  <!--.fail(function() {-->
+    <!--console.log( "error" );-->
+  <!--})-->
+  <!--.always(function() {-->
+    <!--console.log( "complete" );-->
+  <!--});-->
+  <!---->
+
+
+
+
+function myFunction(){
+
+    for(entry in originalTimeslots) {
+        var currentcell = document.getElementById(entry);
+        if (currentcell.className.includes("highlighted")) {
+            originalTimeslots[entry] = "Selected";
+        }
+        else {
+            originalTimeslots[entry] = "Blank";
+        }
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "../read_timeslots/",
+        data: JSON.stringify(originalTimeslots),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"
+  })
+        .done(function (data) {
+         console.log("Response");
+         window.location = "../select_publish_render";
+         });
+    console.log(originalTimeslots);
+}
+
+    </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" charset="utf-8">
+
     </script>
     <button onclick="myFunction()"> submit</button>
 
