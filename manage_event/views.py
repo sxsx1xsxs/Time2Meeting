@@ -18,7 +18,7 @@ from .models import Profile
 from .forms import UserForm, ProfileForm
 
 
-from .models import Events, TimeSlots
+from .models import Events, TimeSlots, EventUser
 
 
 # Create your views here.
@@ -51,9 +51,15 @@ def index(request):
 def organize_index(request):
 
     print (request.user.email)
-    event_wait_for_decision = Events.objects.filter(final_time_start__isnull = True).filter(deadline__lte= timezone.now())
-    event_on_going = Events.objects.filter(deadline__gte= timezone.now())
-    event_history = Events.objects.filter(final_time_start__isnull = False)
+
+    organized_events = EventUser.objects.filter(user = request.user).filter(role = "o")
+    organized_events_id = []
+    for organized_event in organized_events:
+        organized_events_id.append(organized_event.event.id)
+
+    event_wait_for_decision = Events.objects.filter(id__in = organized_events_id).filter(final_time_start__isnull = True).filter(deadline__lte= timezone.now())
+    event_on_going = Events.objects.filter(id__in = organized_events_id).filter(deadline__gte= timezone.now())
+    event_history = Events.objects.filter(id__in = organized_events_id).filter(final_time_start__isnull = False)
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/organize_index.html', {
@@ -65,13 +71,30 @@ def organize_index(request):
 
 @login_required
 def participate_index(request):
-    event_to_do = Events.objects.filter(deadline__gte= timezone.now())
-    event_result = Events.objects.filter(final_time_start__isnull = False)
-    event_pending = Events.objects.all()
+
+    participate_events = EventUser.objects.filter(user=request.user)
+    participate_events_id = []
+    for participate_event in participate_events:
+        participate_events_id.append(participate_event.event.id)
+
+    to_do_events_id = []
+    done_events_id = []
+    for participate_event_id in participate_events_id:
+        if TimeSlots.objects.filter(user=request.user).filter(event_id = participate_event_id).count() == 0:
+            #print(TimeSlots.objects.filter(user=request.user).filter(event_id = participate_event_id))
+            to_do_events_id.append(participate_event_id)
+        else:
+            done_events_id.append(participate_event_id)
+
+    event_to_do = Events.objects.filter(id__in = to_do_events_id).filter(deadline__gte= timezone.now())
+    event_done = Events.objects.filter(id__in = done_events_id).filter(deadline__gte=timezone.now())
+    event_result = Events.objects.filter(id__in = participate_events_id).filter(final_time_start__isnull = False)
+    event_pending = Events.objects.filter(id__in = participate_events_id).filter(deadline__lte= timezone.now()).exclude(final_time_start__isnull = False)
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/participate_index.html', {
         'event_to_do' : event_to_do,
+        'event_done' : event_done,
         'event_result': event_result,
         'event_pending': event_pending,
 
@@ -111,6 +134,9 @@ def create_event(request):
             event.duration = duration
             event.deadline = deadline
             event.save()
+
+            event_user = EventUser.objects.update_or_create(event = event, user = request.user, role = "o")
+
             # Always return an HttpResponseRedirect after successfully dealing
             # with POST data. This prevents data from being posted twice if a
             # user hits the Back button.
