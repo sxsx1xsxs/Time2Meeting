@@ -318,6 +318,13 @@ def select_timeslots(request, event_id):
 
 
 @login_required
+def modify_timeslots(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    #return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))
+    return render(request, 'manage_event/modify_timeslots.html', {'event': event})
+
+
+@login_required
 def read_timeslots(request, event_id):
     print('read time slots')
     event = get_object_or_404(Events, pk=event_id)
@@ -390,6 +397,7 @@ def select_publish(request, event_id):
     # return HttpResponse("OK")
     # return render(request, 'manage_event/select_timeslots.html', context)
 
+
 def select_publish_render(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
 
@@ -416,7 +424,7 @@ def modify_timeslots_read(request, event_id):
     time_range_start = event.time_range_start
     time_range_end = event.time_range_end
     q1 = TimeSlots.objects.filter(event=event)
-    user_timeslots = q1.filter(user= user)
+    user_timeslots = q1.filter(user= request.user)
     # Make json data according to contract
     user_data = {}
     time = time_range_start
@@ -432,6 +440,7 @@ def modify_timeslots_read(request, event_id):
         time += thirty_mins
     dumps = json.dumps(user_data)
     return HttpResponse(dumps, content_type='application/json')
+
 
 @login_required
 def modify_timeslots_update(request, event_id):
