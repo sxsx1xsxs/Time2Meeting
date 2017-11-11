@@ -12,6 +12,7 @@
 {% endif %}
 
 <h1>Event Created Successfully!</h1>
+
 <h2>Input their emails to invite your friends to join the event:</h2>
 
 <form method="post">
@@ -19,6 +20,11 @@
     {{ form }}
     <input type="submit" value="Invite">
 </form>
+
+<p>Share this link to invite your friends to join the event:</p>
+
+<p>http://localhost:8000/manage_event/{{ event_id }}/select_timeslots</p>
+
 
 <button onclick="location.href='{% url 'manage_event:select_timeslots' event_id %}'">Select your time slots</button>
 <br>
