@@ -3,8 +3,6 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.exceptions import ValidationError
-from datetime import timedelta
 
 
 class Profile(models.Model):
@@ -37,15 +35,7 @@ class Events(models.Model):
 
     # record the status of the event, "Available' or 'Abort'
     status = models.CharField(max_length=10, default='Available')
-
-    def clean(self):
-        # if self.time_range_start < timezone.now():
-        #     raise ValidationError('invalid time range start point')
-        if self.time_range_end < self.time_range_start:
-            raise ValidationError('invalid time range')
-        if self.deadline > self.time_range_start:
-            raise ValidationError('invalid deadline')
-    info = models.TextField(null=True)
+    info = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.event_name
@@ -58,9 +48,12 @@ class EventUser(models.Model):
     class Meta:
         unique_together = ("event", "user")
 
-    # two roles: "o" for organizer, "p" for participant
-    role = models.CharField(max_length=1)
-    status = models.CharField(max_length=30, default='todo')
+    # two roles: "O" for organizer, "P" for participant
+    USER_ROLE = (
+        ('O', 'Organizer'),
+        ('P', 'Participant'),
+    )
+    role = models.CharField(max_length=1, choices=USER_ROLE, default='P')
 
 
 class TimeSlots(models.Model):
@@ -70,9 +63,3 @@ class TimeSlots(models.Model):
 
     class Meta:
         unique_together = (("event", "user", "time_slot_start"),)
-
-    def clean(self):
-        if self.time_slot_start < self.event.time_range_start:
-            raise ValidationError('invalid time slot')
-        if self.time_slot_start + timedelta(minutes=30) > self.event.time_range:
-            raise ValidationError('invalid time slot')

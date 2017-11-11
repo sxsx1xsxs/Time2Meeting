@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .models import Events, EventUser, TimeSlots
+from .forms import EventForm
+from .models import Events
 from django.core.exceptions import ValidationError
 
 # Create your tests here.
@@ -57,7 +58,6 @@ class EventsTestCase(TestCase):
     def test_dealine(self):
         event = Events.objects.filter(event_name=481).update(time_range_start='')
         assertRaises(ValidationError)
-
 
 
 class TimeSlotsTestCase(TestCase):

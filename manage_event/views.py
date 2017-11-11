@@ -4,6 +4,7 @@ from django.views import generic
 from django.utils import timezone
 import datetime, json
 import sys
+import re
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
@@ -11,8 +12,11 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.db import transaction
 from .models import Profile
-from .forms import UserForm, ProfileForm
+
+from .forms import UserForm, ProfileForm, EventForm, InvitationForm
 from .models import Events, TimeSlots, EventUser
+from django.contrib import messages
+from django.utils.translation import ugettext_lazy as _
 
 
 @login_required
@@ -39,16 +43,11 @@ def index(request):
 @login_required
 def organize_index(request):
 
-    print (request.user.email)
+    print(request.user.email)
 
-    organized_events = EventUser.objects.filter(user = request.user).filter(role = "o")
-    organized_events_id = []
-    for organized_event in organized_events:
-        organized_events_id.append(organized_event.event.id)
-
-    event_wait_for_decision = Events.objects.filter(id__in = organized_events_id).filter(final_time_start__isnull = True).filter(deadline__lte= timezone.now())
-    event_on_going = Events.objects.filter(id__in = organized_events_id).filter(deadline__gte= timezone.now())
-    event_history = Events.objects.filter(id__in = organized_events_id).filter(final_time_start__isnull = False)
+    event_wait_for_decision = Events.objects.filter(final_time_start__isnull=True).filter(deadline__lte=timezone.now())
+    event_on_going = Events.objects.filter(deadline__gte=timezone.now())
+    event_history = Events.objects.filter(final_time_start__isnull = False)
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/organize_index.html', {
@@ -103,45 +102,51 @@ def participate_index(request):
 
 @login_required
 def create_event(request):
-    # need add exception
-    if request.method == 'GET':
-        return render(request, 'manage_event/create_event.html', context=None)
-    elif request.method == 'POST':
-        event_name = request.POST.get('event_name')
-        time_range_start = request.POST.get('time_range_start')
-        time_range_end = request.POST.get('time_range_end')
-        duration = request.POST.get('duration')
-        deadline = request.POST.get('deadline')
-
-        if time_range_start is '' or time_range_end is '' or deadline is '' or event_name is '':
-            return render(request, 'manage_event/create_event.html', context=None)
-        else:
-            event = Events()
-            event.event_name = event_name
-            event.time_range_start = time_range_start
-            event.time_range_end = time_range_end
-            event.duration = duration
-            event.deadline = deadline
+    if request.method == 'POST':
+        form = EventForm(request.POST)
+        if form.is_valid():
+            event_data = form.cleaned_data
+            event = Events.objects.create(**event_data)
             event.save()
 
-            event_user = EventUser.objects.update_or_create(event = event, user = request.user, role = "o")
-
-            # Always return an HttpResponseRedirect after successfully dealing
-            # with POST data. This prevents data from being posted twice if a
-            # user hits the Back button.
-            return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
+            # create corresponding EventUser tuple.
+            eventuser_data = {'event': event,
+                              'user': request.user,
+                              'role': 'O'
+                              }
+            eventuser = EventUser.objects.create(**eventuser_data)
+            eventuser.save()
+            return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.pk,)))
+    else:
+        form = EventForm(initial={'info': 'description of this event.'})
+    return render(request, 'manage_event/create_event.html', {'form': form.as_p()})
 
 
 @login_required
 def create_publish(request, event_id):
-    event = get_object_or_404(Events, pk=event_id)
-    if request.method == 'GET':
-        return render(request, 'manage_event/create_publish.html', {'event_id': event_id})
+    if request.method == 'POST':
+        form = InvitationForm(request.POST)
+        if form.is_valid():
+            emails = form.cleaned_data
+            for email in emails:
+                user_name = email.rsplit('@', 1)[0]
+                user = User.objects.get_or_create(username=user_name, email=email)[0]
+                event = Events.objects.get(pk=event_id)
+                EventUser.objects.get_or_create(user=user, event=event)
+
+                messages.success(request, _('Invite Success!'))
+            return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event_id,)))
+    else:
+        form = InvitationForm()
+    return render(request, 'manage_event/create_publish.html', {'event_id': event_id, 'form': form})
+# =======
+#     event = get_object_or_404(Events, pk=event_id)
+#     if request.method == 'GET':
+#         return render(request, 'manage_event/create_publish.html', {'event_id': event_id})
 
 
 @login_required
-def delete_event(request, event_name, user_name):
-
+def delete_event(request, event_id):
 
     return HttpResponseRedirect("You're deleting.")
 
@@ -164,12 +169,14 @@ def pending(request, event_id):
     context = {'event': event, 'timeslots': show_timeslots}
     return render(request, 'manage_event/pending.html', context)
 
+
 @login_required
 def on_going(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     #return HttpResponse(json.loads(result_json).values())
 
     return render(request, 'manage_event/on_going.html', {'event': event})
+
 
 def get_result(event_id):
     """
@@ -189,6 +196,7 @@ def get_result(event_id):
             result[time_slot_start] += 1
 
     return result
+
 
 @login_required
 def make_decision_detail(request, event_id):
@@ -231,6 +239,7 @@ def make_decision_json(request, event_id):
 
     return HttpResponse(result_json, content_type='application/json')
 
+
 @login_required
 def make_decision(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
@@ -253,6 +262,7 @@ def make_decision(request, event_id):
     name = request.POST.get('name')
     dict = {'name': name}
     return HttpResponse(json.dumps(dict), content_type='application/json')
+
 
 @login_required
 def make_decision_render(request, event_id):
