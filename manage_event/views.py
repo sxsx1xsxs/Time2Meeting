@@ -50,7 +50,7 @@ def index(request):
 @login_required
 def organize_index(request):
     print(request.user.email)
-    event_wait_for_decision = Events.objects.filter(final_time_start__isnull = True).filter(deadline__lte= timezone.now())
+    event_wait_for_decision = Events.objects.filter(final_time_start__isnull=True).filter(deadline__lte=timezone.now())
     event_on_going = Events.objects.filter(deadline__gte= timezone.now())
     event_history = Events.objects.filter(final_time_start__isnull = False)
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
@@ -243,6 +243,7 @@ def make_decision(request, event_id):
     name = request.POST.get('name')
     dict = {'name': name}
     return HttpResponse(json.dumps(dict), content_type='application/json')
+
 
 @login_required
 def make_decision_render(request, event_id):
