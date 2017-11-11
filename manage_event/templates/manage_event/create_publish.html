@@ -1,12 +1,23 @@
 {% extends 'manage_event/sidebar.html' %}
 {% block content %}
 
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}" {% endif %} >
+        {{ message }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
 
 <h1>Event Created Successfully!</h1>
-<h2>Share this link to invite your friends to join the event:</h2>
+<h2>Input their emails to invite your friends to join the event:</h2>
 
-<form>
-    <input type="text" name="share_link" value="https://">
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Invite">
 </form>
 
 <button onclick="location.href='{% url 'manage_event:select_timeslots' event_id %}'">Select your time slots</button>

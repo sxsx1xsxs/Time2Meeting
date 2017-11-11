@@ -35,7 +35,7 @@ class Events(models.Model):
 
     # record the status of the event, "Available' or 'Abort'
     status = models.CharField(max_length=10, default='Available')
-    info = models.TextField(null=True)
+    info = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.event_name
@@ -48,9 +48,12 @@ class EventUser(models.Model):
     class Meta:
         unique_together = ("event", "user")
 
-    # two roles: "o" for organizer, "p" for participant
-    role = models.CharField(max_length=1)
-    status = models.CharField(max_length=30, default='todo')
+    # two roles: "O" for organizer, "P" for participant
+    USER_ROLE = (
+        ('O', 'Organizer'),
+        ('P', 'Participant'),
+    )
+    role = models.CharField(max_length=1, choices=USER_ROLE, default='P')
 
 
 class TimeSlots(models.Model):
