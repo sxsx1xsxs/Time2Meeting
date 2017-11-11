@@ -8,6 +8,8 @@ urlpatterns = [
     url(r'^organize/$', views.organize_index, name='organize_index'),
     url(r'^participate/$', views.participate_index, name='participate_index'),
 
+    url(r'^(?P<event_id>[0-9]+)/on_going/$', views.on_going, name='on_going'),
+    url(r'^(?P<event_id>[0-9]+)/pending/$', views.pending, name='pending'),
 
     url(r'^(?P<event_id>[0-9]+)/make_decision/$', views.make_decision, name='make_decision'),
     url(r'^(?P<event_id>[0-9]+)/make_decision_render/$', views.make_decision_render, name='make_decision_render'),

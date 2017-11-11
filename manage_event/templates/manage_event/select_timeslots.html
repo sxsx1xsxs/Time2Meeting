@@ -10,21 +10,21 @@
 
     table#power_schedule td.selectable,
     table#power_schedule th {
-        font-size: 12px;
+        font-size: 8px;
         width: 70px;
-        height: 25px;
+        height: 15px;
         text-align: center;
     }
 
     table#power_schedule td.selectable {
         width: 60px;
-        background-color: #77DD77;
-        border: 1px solid #68C168;
+        background-color: #FFFFFF;
+        border: 1px solid #D9D9D9;
     }
 
     table#power_schedule td.highlighted {
-        background-color: #FF6961;
-        border: 1px solid #E8615A;
+        background-color: #99E6FF;
+        border: 1px solid #00ACE6;
     }
 
     table#power_schedule td:first-child {
@@ -83,6 +83,7 @@
  }
 
  var firstColumn = timeslots[Object.keys(timeslots)[0]];
+ var counter = 0;
 
  for (day in timeslots) {
      firstColumn = timeslots[day];
@@ -90,8 +91,11 @@
  }
 
  for (time in firstColumn) {
+    if (counter % 2 == 0){
     document.getElementById("power_schedule").innerHTML += "<tr id= "+time+">" + "<td>"+time+"</td>" +"</tr>";
-
+    } else {
+    document.getElementById("power_schedule").innerHTML += "<tr id= "+time+">" + "<td>"+ "" +"</td>" +"</tr>";
+    }
     for (day in timeslots) {
           if (timeslots[day][time] == "Blank") {
           document.getElementById(time).innerHTML += "<td class='selectable' id='" +day+" "+time+"'> </td>";
@@ -99,6 +103,7 @@
           document.getElementById(time).innerHTML += "<td class='selectable highlighted' id='" +day+" "+time+"'> </td>";
           }
     }
+    counter += 1;
  }
  $(function() {
         // Create table dragging functionality
@@ -199,6 +204,6 @@ function myFunction(){
     <script type="text/javascript" charset="utf-8">
 
     </script>
-    <button onclick="myFunction()"> submit</button>
+    <br><button onclick="myFunction()"> submit</button>
 
 {% endblock%}

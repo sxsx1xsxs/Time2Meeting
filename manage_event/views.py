@@ -1,28 +1,18 @@
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 import datetime, json
-# from django.utils import json
 import sys
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
-from django.http import HttpResponseRedirect
 from django.db import transaction
 from .models import Profile
-from .forms import UserForm, ProfileForm, EventForm
-
-
+from .forms import UserForm, ProfileForm
 from .models import Events, TimeSlots, EventUser
-
-
-# Create your views here.
-from django.shortcuts import render
 
 
 @login_required
@@ -115,8 +105,7 @@ def participate_index(request):
 def create_event(request):
     # need add exception
     if request.method == 'GET':
-        form = EventForm(instance=request.user)
-        return render(request, 'manage_event/create_event.html', {'form': form})
+        return render(request, 'manage_event/create_event.html', context=None)
     elif request.method == 'POST':
         event_name = request.POST.get('event_name')
         time_range_start = request.POST.get('time_range_start')
@@ -141,16 +130,11 @@ def create_event(request):
             # with POST data. This prevents data from being posted twice if a
             # user hits the Back button.
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
-        form = EventForm(request.POST)
-        if form.is_valid():
-            event = form.save()
-            return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
-    else:
-        return
 
 
 @login_required
 def create_publish(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
     if request.method == 'GET':
         return render(request, 'manage_event/create_publish.html', {'event_id': event_id})
 
@@ -162,12 +146,30 @@ def delete_event(request, event_name, user_name):
     return HttpResponseRedirect("You're deleting.")
 
 
-@login_required
-def select_timeslots(request, event_id):
-    event = get_object_or_404(Events, pk=event_id)
-    return render(request, 'manage_event/select_timeslots.html', {'event': event})
-    # get timeslots and compute
+# @login_required
+# def select_timeslots(request, event_id):
+#     event = get_object_or_404(Events, pk=event_id)
+#     return render(request, 'manage_event/select_timeslots.html', {'event': event})
+#     # get timeslots and compute
 
+@login_required
+def pending(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+
+    timeslots = TimeSlots.objects.filter(event= event)
+    show_timeslots = []
+    for t in timeslots:
+        show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
+
+    context = {'event': event, 'timeslots': show_timeslots}
+    return render(request, 'manage_event/pending.html', context)
+
+@login_required
+def on_going(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    #return HttpResponse(json.loads(result_json).values())
+
+    return render(request, 'manage_event/on_going.html', {'event': event})
 
 def get_result(event_id):
     """
@@ -186,10 +188,7 @@ def get_result(event_id):
         else:
             result[time_slot_start] += 1
 
-    # get timeslots and compute
-
     return result
-
 
 @login_required
 def make_decision_detail(request, event_id):
@@ -356,6 +355,9 @@ def webLogout(request):
 @login_required
 def select_timeslots(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
+    # used for join event through link
+    if EventUser.objects.filter(user = request.user).filter(event = event).count() == 0:
+        event_user, create= EventUser.objects.update_or_create(event = event, user = request.user, role = "p")
     #return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))
     return render(request, 'manage_event/select_timeslots.html', {'event': event})
 
@@ -371,11 +373,19 @@ def modify_timeslots(request, event_id):
 def read_timeslots(request, event_id):
     print('read time slots')
     event = get_object_or_404(Events, pk=event_id)
+    # user = request.user.email
+    # user = Users.objects.create(pk = "qimenghan77@gmail.com", user_name = "qimeng")
+    # user.save()
     print(request.user.email)
     user = request.user
     """
     Read the Json file includes user selection information and update the database
     """
+    # f = open('user_timeslots.json')
+    # json_string = f.read()
+    #json.loads retruns a list that contains a dictionary
+    # data = json.loads(json_string)
+    # f.close()
 
     s = """{
   	"2017-10-10 18:30:00": "Selected",
@@ -416,6 +426,8 @@ def initialize_timeslots(request, event_id):
 
     while time < time_range_end:
         user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
+            #print(time.strftime("%Y-%m-%d %H:%M:%S"))
+            #print(user_data[time.strftime("%Y-%m-%d %H:%M:%S")])
         time += thirty_mins
     dumps = json.dumps(user_data)
     return HttpResponse(dumps, content_type='application/json')
@@ -427,6 +439,8 @@ def select_publish(request, event_id):
     name = request.POST.get('name')
     dict = {'name': name}
     return HttpResponse(json.dumps(dict), content_type='application/json')
+    # return HttpResponse("OK")
+    # return render(request, 'manage_event/select_timeslots.html', context)
 
 
 def select_publish_render(request, event_id):
