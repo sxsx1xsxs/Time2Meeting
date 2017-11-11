@@ -58,6 +58,7 @@ class EventUser(models.Model):
     class Meta:
         unique_together = ("event", "user")
 
+    # two roles: "o" for organizer, "p" for participant
     role = models.CharField(max_length=1)
     status = models.CharField(max_length=30, default='todo')
 

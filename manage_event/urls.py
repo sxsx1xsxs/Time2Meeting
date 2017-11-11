@@ -10,8 +10,9 @@ urlpatterns = [
 
 
     url(r'^(?P<event_id>[0-9]+)/make_decision/$', views.make_decision, name='make_decision'),
+    url(r'^(?P<event_id>[0-9]+)/make_decision_render/$', views.make_decision_render, name='make_decision_render'),
     url(r'^(?P<event_id>[0-9]+)/make_decision_results/$', views.make_decision_results, name='make_decision_results'),
-    url(r'^(?P<event_id>[0-9]+)/$', views.make_decision_detail, name='make_decision_detail'),
+    url(r'^(?P<event_id>[0-9]+)/make_decision_detail/$', views.make_decision_detail, name='make_decision_detail'),
     url(r'^(?P<event_id>[0-9]+)/show_decision_result/$', views.show_decision_result, name='show_decision_result'),
 
     url(r'^create_event/$', views.create_event, name='create_event'),
@@ -24,9 +25,14 @@ urlpatterns = [
     url(r'^(?P<event_id>[0-9]+)/select_publish/$', views.select_publish, name="select_publish"),
     url(r'^(?P<event_id>[0-9]+)/modify_timeslots_read/$',views.modify_timeslots_read, name= "modify_timeslots_read"),
     url(r'^(?P<event_id>[0-9]+)/read_timeslots/$', views.read_timeslots, name='read_timeslots'),
+
+
+    url(r'^(?P<event_id>[0-9]+)/make_decision_json/$', views.make_decision_json, name='make_decision_json'),
+
     url(r'^(?P<event_id>[0-9]+)/initialize_timeslots/$', views.initialize_timeslots, name='initialize_timeslots'),
     url(r'^(?P<event_id>[0-9]+)/modify_timeslots_update/$', views.modify_timeslots_update, name='modify_timeslots_update'),
     url(r'^(?P<event_id>[0-9]+)/select_publish_render/$', views.select_publish_render, name="select_publish_render"),
 
     #url(r'^(?P<event_id>[0-9]+)/read_timeslots/$', views.get_each_user_timeslots, name='get_each_user_timeslots'),
+
 ]
