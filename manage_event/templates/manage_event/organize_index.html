@@ -6,11 +6,11 @@
 
     <h1>Welcome to Time2Meeting!</h1>
 
-    <p>Organize index page.</p>
-
+    <br>
     <button onclick="location.href='{% url 'manage_event:create_event' %}'">Create event</button>
+    <br>
 
-    <p>Wait for decision:</p>
+    <br><h3>Wait for decision:</h3>
 
     <ul>
     {% for event in event_wait_for_decision %}
@@ -18,15 +18,15 @@
     {% endfor %}
     </ul>
 
-    <p>On going:</p>
+    <br><h3>On going:</h3>
 
     <ul>
     {% for event in event_on_going %}
-        <li><a href="{% url 'manage_event:make_decision_detail' event.id%}">{{ event.event_name }}</a></li>
+        <li><a href="{% url 'manage_event:on_going' event.id%}">{{ event.event_name }}</a></li>
     {% endfor %}
     </ul>
 
-    <p>History:</p>
+    <br><h3>History:</h3>
 
     <ul>
     {% for event in event_history %}

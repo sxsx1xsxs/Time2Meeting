@@ -1,0 +1,19 @@
+{% extends 'manage_event/sidebar.html' %}
+{% block content %}
+
+<h3>{{ event.event_name }}</h3>
+
+<p>This event is waiting for the final decision of organizer.</p>
+<p>You have submitted your time slots: </p>
+
+<ul>
+{% for slot in timeslots %}
+    <li>{{ slot}}</li>
+{% endfor %}
+</ul>
+
+<br>
+<button onclick="location.href='{% url 'manage_event:participate_index' %}'">Back to Participate Events</button>
+<br>
+
+{% endblock%}
