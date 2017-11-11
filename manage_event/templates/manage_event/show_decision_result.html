@@ -5,7 +5,7 @@
 <div align="center">
 <h1>{{ event.event_name }}</h1>
 
-<p> The final time is {{ event.decision_set.get.timeslot }}.</p>
+<p> The final time is {{ event.final_time_start }} to {{ event.final_time_end }}.</p>
 
 <a href="{% url 'manage_event:participate_index' %}">Back to Participate Event</a>
 </div>

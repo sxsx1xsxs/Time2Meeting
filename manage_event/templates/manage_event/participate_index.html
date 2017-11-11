@@ -2,7 +2,7 @@
 {% block content %}
 
 
-<div align="center">
+<div>
 
     <h1>Welcome to Time2Meeting!</h1>
 
@@ -13,6 +13,13 @@
     <ul>
     {% for event in event_to_do %}
         <li><a href="{% url 'manage_event:select_timeslots' event.id%}">{{ event.event_name }}</a></li>
+    {% endfor %}
+    </ul>
+
+
+    <ul>
+    {% for event in event_done %}
+        {{ event.event_name }} &nbsp <a href="{% url 'manage_event:modify_timeslots' event.id%}">Click to modify</a>
     {% endfor %}
     </ul>
 

@@ -1,20 +1,212 @@
 {% extends 'manage_event/sidebar.html' %}
 {% block content %}
 
-<div align="center">
-<h1>{{ event.event_name }}</h1>
-
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-    <form action="{% url 'manage_event:make_decision' event.id %}" method="post">
-{% csrf_token %}
-{% for time_slot in event.timeslots_set.all %}
-    <input type="radio" name="time_slot" id="time_slot{{ forloop.counter }}" value="{{ time_slot.id }}" />
-    <label for="time_slot{{ forloop.counter }}">{{ time_slot.timeslot }}</label><br />
-{% endfor %}
-<input type="submit" value="Decide" />
-</form>
-</div>
+<h1>Make a decision for {{ event.event_name }}</h1>
+    <style type="text/css" media="screen">
+    table#power_schedule td {
+        width: 140px;
+    }
 
+    table#power_schedule td.selectable,
+    table#power_schedule th {
+        font-size: 12px;
+        width: 70px;
+        height: 25px;
+        text-align: center;
+    }
+
+    table#power_schedule td.selectable {
+        width: 60px;
+        background-color: #77DD77;
+        border: 1px solid #68C168;
+    }
+
+    table#power_schedule td.highlighted {
+        background-color: #FF6961;
+        border: 1px solid #E8615A;
+    }
+
+    table#power_schedule td.Masked {
+        background-color: #5AACE8;
+        border: 1px solid #5AACE8;
+    }
+
+
+    table#power_schedule td:first-child {
+        cursor: pointer;
+    }
+
+
+    </style>
+
+    <table cellpadding="0" cellspacing="0" id="power_schedule">
+        <tr id="firstRow">
+            <th/>
+            <!--<th>Mon</th>-->
+            <!--<th>Tue</th>-->
+            <!--<th>Wed</th>-->
+            <!--<th>Thu</th>-->
+            <!--<th>Fri</th>-->
+            <!--<th>Sat</th>-->
+            <!--<th>Sun</th>-->
+
+        </tr>
+        <!--<tr id="secondRow">-->
+            <!--<td>08:00-09:00</td>-->
+            <!--<td class="selectable"> </td>-->
+            <!--<td class="selectable"> </td>-->
+            <!--<td class="selectable"> </td>-->
+            <!--<td class="selectable"> </td>-->
+            <!--<td class="selectable"> </td>-->
+            <!--<td class="selectable"> </td>-->
+            <!--<td class="selectable"> </td>-->
+        <!--</tr>-->
+    </table>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js" type="text/javascript"></script>
+    <script>
+
+
+    var originalTimeslots;
+    var originaltimeslotsjson = $.getJSON( "../make_decision_json", function(json) {
+
+  console.log( "success" );
+  console.log(json);
+  originalTimeslots = json;
+
+ var timeslots = {};
+ var date;
+
+ for (entry in originalTimeslots) {
+    var items = entry.split(" ");
+    if (date != items[0]) {
+        date = items[0];
+        timeslots[date] = {};
+        timeslots[date][items[1]] = originalTimeslots[entry];
+    }else {
+        timeslots[date][items[1]] = originalTimeslots[entry];
+    }
+ }
+
+ var firstColumn = timeslots[Object.keys(timeslots)[0]];
+
+ for (day in timeslots) {
+     firstColumn = timeslots[day];
+     document.getElementById("firstRow").innerHTML += "<td>"+day+"</td>";
+ }
+
+ for (time in firstColumn) {
+    document.getElementById("power_schedule").innerHTML += "<tr id= "+time+">" + "<td>"+time+"</td>" +"</tr>";
+
+    for (day in timeslots) {
+          if (timeslots[day][time] == "0") {
+          document.getElementById(time).innerHTML += "<td class='selectable' id='" +day+" "+time+"'> </td>";
+          } else {
+          document.getElementById(time).innerHTML += "<td class='selectable highlighted' id='" +day+" "+time+"'> " + timeslots[day][time] + " </td>";
+          }
+    }
+ }
+ $(function() {
+        // Create table dragging functionality
+        var isMouseDown = false;
+        var Masked
+        console.log("event listner");
+        $("table#power_schedule td.selectable")
+            .mousedown(function() {
+                console.log("mouse down");
+                isMouseDown = true;
+                Masked = $(this).hasClass('Masked')
+
+                if (Masked) {
+                    $(this).removeClass('Masked')
+                } else {
+                    $(this).addClass('Masked')
+                }
+                return false; // prevent text selection
+            })
+            .mouseover(function() {
+                if (isMouseDown) {
+                    if (Masked) {
+                        $(this).removeClass('Masked')
+                    } else {
+                        $(this).addClass('Masked')
+                    }
+                }
+            })
+            .bind("selectstart", function() {
+                return false; // prevent text selection in IE
+            })
+
+        $('table#power_schedule td:first-child')
+            .mousedown(function() {
+                isMouseDown = true;
+
+                $(this).parent().find('td:not(:first-of-type)').toggleClass('Masked')
+                $(this).css('cursor', 'pointer')
+                return false
+            })
+            .mouseover(function() {
+                if (isMouseDown) {
+                    $(this).parent().find('td:not(:first-of-type)').toggleClass('Masked')
+                }
+            })
+            .bind("selectstart", function() {
+                return false; // prevent text selection in IE
+            })
+
+        $(document)
+            .mouseup(function() {
+                isMouseDown = false
+            })
+    });
+})
+  <!--.done(function() {-->
+    <!--console.log( "second success" );-->
+  <!--})-->
+  <!--.fail(function() {-->
+    <!--console.log( "error" );-->
+  <!--})-->
+  <!--.always(function() {-->
+    <!--console.log( "complete" );-->
+  <!--});-->
+  <!---->
+
+
+
+
+function myFunction(){
+
+    for(entry in originalTimeslots) {
+        var currentcell = document.getElementById(entry);
+        if (currentcell.className.includes("Masked")) {
+            originalTimeslots[entry] = "Selected";
+        }
+        else {
+            originalTimeslots[entry] = "Blank";
+        }
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "../make_decision/",
+        data: JSON.stringify(originalTimeslots),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"
+  })
+        .done(function (data) {
+         console.log("Response");
+         window.location = "../make_decision_render";
+         });
+    console.log(originalTimeslots);
+}
+
+    </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" charset="utf-8">
+
+    </script>
+    <button onclick="myFunction()"> submit</button>
 
 {% endblock%}
