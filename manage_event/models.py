@@ -50,10 +50,10 @@ class EventUser(models.Model):
 
     # two roles: "O" for organizer, "P" for participant
     USER_ROLE = (
-        ('O', 'Organizer'),
-        ('P', 'Participant'),
+        ('o', 'Organizer'),
+        ('p', 'Participant'),
     )
-    role = models.CharField(max_length=1, choices=USER_ROLE, default='P')
+    role = models.CharField(max_length=1, choices=USER_ROLE, default='p')
 
 
 class TimeSlots(models.Model):
