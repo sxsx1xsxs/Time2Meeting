@@ -112,7 +112,7 @@ def create_event(request):
             # create corresponding EventUser tuple.
             eventuser_data = {'event': event,
                               'user': request.user,
-                              'role': 'O'
+                              'role': 'o'
                               }
             eventuser = EventUser.objects.create(**eventuser_data)
             eventuser.save()
