@@ -134,6 +134,7 @@ def create_event(request):
 
 @login_required
 def create_publish(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
     if request.method == 'GET':
         return render(request, 'manage_event/create_publish.html', {'event_id': event_id})
 
@@ -354,6 +355,9 @@ def webLogout(request):
 @login_required
 def select_timeslots(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
+    # used for join event through link
+    if EventUser.objects.filter(user = request.user).filter(event = event).count() == 0:
+        event_user, create= EventUser.objects.update_or_create(event = event, user = request.user, role = "p")
     #return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))
     return render(request, 'manage_event/select_timeslots.html', {'event': event})
 
