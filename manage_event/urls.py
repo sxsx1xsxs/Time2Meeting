@@ -19,7 +19,6 @@ urlpatterns = [
     url(r'^(?P<event_id>[0-9]+)/create_publish/$', views.create_publish, name='create_publish'),
     url(r'^(?P<event_id>[0-9]+)/select_timeslots/$', views.select_timeslots, name='select_timeslots'),
     url(r'^(?P<event_id>[0-9]+)/modify_timeslots/$', views.modify_timeslots, name='modify_timeslots'),
-    # url(r'^$', views.Home),
     url(r'^profile/$', views.update_profile),
     url(r'^logout/$', views.webLogout),
     url(r'^(?P<event_id>[0-9]+)/select_publish/$', views.select_publish, name="select_publish"),

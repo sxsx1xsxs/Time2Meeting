@@ -39,8 +39,8 @@ class Events(models.Model):
     status = models.CharField(max_length=10, default='Available')
 
     def clean(self):
-        if self.time_range_start < timezone.now():
-            raise ValidationError('invalid time range start point')
+        # if self.time_range_start < timezone.now():
+        #     raise ValidationError('invalid time range start point')
         if self.time_range_end < self.time_range_start:
             raise ValidationError('invalid time range')
         if self.deadline > self.time_range_start:

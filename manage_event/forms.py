@@ -19,4 +19,5 @@ class ProfileForm(forms.ModelForm):
 class EventForm(forms.ModelForm):
     class Meta:
         model = Events
-        fields = ('event_name', 'time_range_start', 'time_range_end', 'deadline')
+        fields = ('event_name', 'time_range_start', 'time_range_end', 'duration', 'deadline')
+

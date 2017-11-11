@@ -5,22 +5,7 @@
 <form method="post">
     {% csrf_token %}
     {{ form }}
-    <br>
-    Event name:<br>
-    <input type="text" name="event_name">
-    <br>
-    Time range:<br>
-    <input type="date" name="time_range_start"> to <input type="date" name="time_range_end">
-    <br>
-    Duration:<br>
-    <input type="range" name="duration" min="30" max="100">
-    <br>
-    Deadline: <br>
-    <input type="date" name="deadline">
-    <br>
     <input type="submit" value="Create">
-    <br>
-
 </form>
 
 

@@ -25,7 +25,6 @@ from .models import Events, TimeSlots, EventUser
 from django.shortcuts import render
 
 
-
 @login_required
 def index(request):
     return render(request, 'manage_event/index.html')
@@ -143,26 +142,11 @@ def create_event(request):
             # user hits the Back button.
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
         form = EventForm(request.POST)
-        # event_name = request.POST.get('event_name')
-        # time_range_start = request.POST.get('time_range_start')
-        # time_range_end = request.POST.get('time_range_end')
-        # duration = request.POST.get('duration')
-        # deadline = request.POST.get('deadline')
-        #
-        # if time_range_start is '' or time_range_end is '' or deadline is '' or event_name is '':
-        #     return render(request, 'manage_event/create_event.html', context=None)
-        # else:
-        #     event = Events()
-        #     event.event_name = event_name
-        #     event.time_range_start = time_range_start
-        #     event.time_range_end = time_range_end
-        #     event.duration = duration
-        #     event.deadline = deadline
-        #     event.save()
-        #     # Always return an HttpResponseRedirect after successfully dealing
-        #     # with POST data. This prevents data from being posted twice if a
-        #     # user hits the Back button.
-        return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
+        if form.is_valid():
+            event = form.save()
+            return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
+    else:
+        return
 
 
 @login_required
@@ -387,19 +371,11 @@ def modify_timeslots(request, event_id):
 def read_timeslots(request, event_id):
     print('read time slots')
     event = get_object_or_404(Events, pk=event_id)
-    # user = request.user.email
-    # user = Users.objects.create(pk = "qimenghan77@gmail.com", user_name = "qimeng")
-    # user.save()
     print(request.user.email)
     user = request.user
     """
     Read the Json file includes user selection information and update the database
     """
-    # f = open('user_timeslots.json')
-    # json_string = f.read()
-    #json.loads retruns a list that contains a dictionary
-    # data = json.loads(json_string)
-    # f.close()
 
     s = """{
   	"2017-10-10 18:30:00": "Selected",
@@ -440,8 +416,6 @@ def initialize_timeslots(request, event_id):
 
     while time < time_range_end:
         user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
-            #print(time.strftime("%Y-%m-%d %H:%M:%S"))
-            #print(user_data[time.strftime("%Y-%m-%d %H:%M:%S")])
         time += thirty_mins
     dumps = json.dumps(user_data)
     return HttpResponse(dumps, content_type='application/json')
@@ -453,8 +427,6 @@ def select_publish(request, event_id):
     name = request.POST.get('name')
     dict = {'name': name}
     return HttpResponse(json.dumps(dict), content_type='application/json')
-    # return HttpResponse("OK")
-    # return render(request, 'manage_event/select_timeslots.html', context)
 
 
 def select_publish_render(request, event_id):
