@@ -6,6 +6,7 @@ python:
 install:
     # Install the Python dependencies
   - pip install -r requirements.txt
+  - pip install coveralls
 
 services:
   - postgresql
@@ -17,5 +18,6 @@ script:
   - python manage.py makemigrations
   - python manage.py migrate
   - python manage.py test
+  - coverage run --source=manage_event manage.py test manage_event
 
 
