@@ -1,29 +1,22 @@
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 import datetime, json
-# from django.utils import json
 import sys
+import re
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
-from django.http import HttpResponseRedirect
 from django.db import transaction
 from .models import Profile
-from .forms import UserForm, ProfileForm
 
-
-from .models import Events, TimeSlots
-
-
-# Create your views here.
-from django.shortcuts import render
-
+from .forms import UserForm, ProfileForm, EventForm, InvitationForm
+from .models import Events, TimeSlots, EventUser
+from django.contrib import messages
+from django.utils.translation import ugettext_lazy as _
 
 
 @login_required
@@ -50,9 +43,10 @@ def index(request):
 @login_required
 def organize_index(request):
 
-    print (request.user.email)
-    event_wait_for_decision = Events.objects.filter(final_time_start__isnull = True).filter(deadline__lte= timezone.now())
-    event_on_going = Events.objects.filter(deadline__gte= timezone.now())
+    print(request.user.email)
+
+    event_wait_for_decision = Events.objects.filter(final_time_start__isnull=True).filter(deadline__lte=timezone.now())
+    event_on_going = Events.objects.filter(deadline__gte=timezone.now())
     event_history = Events.objects.filter(final_time_start__isnull = False)
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
@@ -65,13 +59,30 @@ def organize_index(request):
 
 @login_required
 def participate_index(request):
-    event_to_do = Events.objects.filter(deadline__gte= timezone.now())
-    event_result = Events.objects.filter(final_time_start__isnull = False)
-    event_pending = Events.objects.all()
+
+    participate_events = EventUser.objects.filter(user=request.user)
+    participate_events_id = []
+    for participate_event in participate_events:
+        participate_events_id.append(participate_event.event.id)
+
+    to_do_events_id = []
+    done_events_id = []
+    for participate_event_id in participate_events_id:
+        if TimeSlots.objects.filter(user=request.user).filter(event_id = participate_event_id).count() == 0:
+            #print(TimeSlots.objects.filter(user=request.user).filter(event_id = participate_event_id))
+            to_do_events_id.append(participate_event_id)
+        else:
+            done_events_id.append(participate_event_id)
+
+    event_to_do = Events.objects.filter(id__in = to_do_events_id).filter(deadline__gte= timezone.now())
+    event_done = Events.objects.filter(id__in = done_events_id).filter(deadline__gte=timezone.now())
+    event_result = Events.objects.filter(id__in = participate_events_id).filter(final_time_start__isnull = False)
+    event_pending = Events.objects.filter(id__in = participate_events_id).filter(deadline__lte= timezone.now()).exclude(final_time_start__isnull = False)
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/participate_index.html', {
         'event_to_do' : event_to_do,
+        'event_done' : event_done,
         'event_result': event_result,
         'event_pending': event_pending,
 
@@ -91,50 +102,80 @@ def participate_index(request):
 
 @login_required
 def create_event(request):
-    # need add exception
-    if request.method == 'GET':
-        return render(request, 'manage_event/create_event.html', context=None)
-    elif request.method == 'POST':
-        event_name = request.POST.get('event_name')
-        time_range_start = request.POST.get('time_range_start')
-        time_range_end = request.POST.get('time_range_end')
-        duration = request.POST.get('duration')
-        deadline = request.POST.get('deadline')
-
-        if time_range_start is '' or time_range_end is '' or deadline is '' or event_name is '':
-            return render(request, 'manage_event/create_event.html', context=None)
-        else:
-            event = Events()
-            event.event_name = event_name
-            event.time_range_start = time_range_start
-            event.time_range_end = time_range_end
-            event.duration = duration
-            event.deadline = deadline
+    if request.method == 'POST':
+        form = EventForm(request.POST)
+        if form.is_valid():
+            event_data = form.cleaned_data
+            event = Events.objects.create(**event_data)
             event.save()
-            # Always return an HttpResponseRedirect after successfully dealing
-            # with POST data. This prevents data from being posted twice if a
-            # user hits the Back button.
-            return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
+
+            # create corresponding EventUser tuple.
+            eventuser_data = {'event': event,
+                              'user': request.user,
+                              'role': 'o'
+                              }
+            eventuser = EventUser.objects.create(**eventuser_data)
+            eventuser.save()
+            return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.pk,)))
+    else:
+        form = EventForm(initial={'info': 'description of this event.'})
+    return render(request, 'manage_event/create_event.html', {'form': form.as_p()})
 
 
 @login_required
 def create_publish(request, event_id):
-    if request.method == 'GET':
-        return render(request, 'manage_event/create_publish.html', {'event_id': event_id})
+    if request.method == 'POST':
+        form = InvitationForm(request.POST)
+        if form.is_valid():
+            emails = form.cleaned_data
+            for email in emails:
+                user_name = email.rsplit('@', 1)[0]
+                user = User.objects.get_or_create(username=user_name, email=email)[0]
+                event = Events.objects.get(pk=event_id)
+                EventUser.objects.get_or_create(user=user, event=event)
+
+                messages.success(request, _('Invite Success!'))
+            return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event_id,)))
+    else:
+        form = InvitationForm()
+    return render(request, 'manage_event/create_publish.html', {'event_id': event_id, 'form': form})
+# =======
+#     event = get_object_or_404(Events, pk=event_id)
+#     if request.method == 'GET':
+#         return render(request, 'manage_event/create_publish.html', {'event_id': event_id})
 
 
 @login_required
-def delete_event(request, event_name, user_name):
-
+def delete_event(request, event_id):
 
     return HttpResponseRedirect("You're deleting.")
 
 
+# @login_required
+# def select_timeslots(request, event_id):
+#     event = get_object_or_404(Events, pk=event_id)
+#     return render(request, 'manage_event/select_timeslots.html', {'event': event})
+#     # get timeslots and compute
+
 @login_required
-def select_timeslots(request, event_id):
+def pending(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    return render(request, 'manage_event/select_timeslots.html', {'event': event})
-    # get timeslots and compute
+
+    timeslots = TimeSlots.objects.filter(event= event)
+    show_timeslots = []
+    for t in timeslots:
+        show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
+
+    context = {'event': event, 'timeslots': show_timeslots}
+    return render(request, 'manage_event/pending.html', context)
+
+
+@login_required
+def on_going(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    #return HttpResponse(json.loads(result_json).values())
+
+    return render(request, 'manage_event/on_going.html', {'event': event})
 
 
 def get_result(event_id):
@@ -152,33 +193,17 @@ def get_result(event_id):
         if not result.get(time_slot_start):
             result[time_slot_start] = 1
         else:
-            result[time_slot_start] = 1
+            result[time_slot_start] += 1
+
     return result
 
 
 @login_required
 def make_decision_detail(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    result = get_result(event_id)
-    #result = {datetime.datetime(2017, 10, 20, 23, 30):1}
-    time_range_start = event.time_range_start
-    time_range_end = event.time_range_end
+    #return HttpResponse(json.loads(result_json).values())
 
-    # Make json data according to contract
-    result_data = {}
-    time = time_range_start
-    thirty_mins = datetime.timedelta(minutes=30)
-
-    while time < time_range_end:
-        if not result.get(time):
-            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = 0
-        else:
-            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
-        time = thirty_mins
-    result_json = json.dumps(result_data)
-
-    return HttpResponse(json.loads(result_json).values())
-    #return render(request, 'manage_event/make_decision.html', {'event': event})
+    return render(request, 'manage_event/make_decision.html', {'event': event})
 
 
 @login_required
@@ -187,8 +212,13 @@ def make_decision_results(request, event_id):
     return render(request, 'manage_event/make_decision_results.html', {'event': event})
 
 
-@login_required
-def make_decision(request, event_id):
+def make_decision_json(request, event_id):
+    """
+    Used for .js parsing json by ajax.
+    :param request:
+    :param event_id:
+    :return:
+    """
     event = get_object_or_404(Events, pk=event_id)
     result = get_result(event_id)
     # result = {datetime.datetime(2017, 10, 20, 23, 30):1}
@@ -201,30 +231,52 @@ def make_decision(request, event_id):
     thirty_mins = datetime.timedelta(minutes=30)
     while time < time_range_end:
         if not result.get(time):
-            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = 0
+            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = '0'
         else:
-            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = result[time]
-        time = thirty_mins
+            result_data[time.strftime("%Y-%m-%d %H:%M:%S")] = str(result[time])
+        time += thirty_mins
     result_json = json.dumps(result_data)
 
-    try:
-        selected_timeslot = event.timeslots_set.get(pk=request.POST['time_slot'])
-    except (KeyError, TimeSlots.DoesNotExist):
-        # Redisplay the question voting form.
-        return render(request, 'manage_event/make_decision.html', {
-            'event': event,
-            'error_message': "You didn't select a choice.",
-        })
-    else:
-        decision = event.decision_set.create(timeslot=selected_timeslot.timeslot)
-        decision.save()
-        event.final_decision = True
-        event.save()
+    return HttpResponse(result_json, content_type='application/json')
+
+
+@login_required
+def make_decision(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+
+    if request.method == 'POST':
+        decision_json = json.loads(request.body.decode("utf-8"))
+        for key in decision_json:
+            if decision_json[key] == "Selected":
+                event.final_time_start = datetime.datetime.strptime(key, "%Y-%m-%d %H:%M:%S")
+                event.save()
+                for key_1 in decision_json:
+                    if decision_json[key_1] == "Selected":
+                        event.final_time_end = datetime.datetime.strptime(key_1, "%Y-%m-%d %H:%M:%S") + datetime.timedelta(minutes=30)
+                        event.save()
+
+                name = request.POST.get('name')
+                dict = {'name': name}
+                return HttpResponse(json.dumps(dict), content_type='application/json')
+
+    name = request.POST.get('name')
+    dict = {'name': name}
+    return HttpResponse(json.dumps(dict), content_type='application/json')
+
+
+@login_required
+def make_decision_render(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    if event.final_time_start and event.final_time_end:
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('manage_event:make_decision_results', args=(event.id,)))
-
+    else:
+        return render(request, 'manage_event/make_decision.html', {
+            'event': event,
+            'error_message': "You didn't make a decision.",
+        })
 
 @login_required
 def show_decision_result(request, event_id):
@@ -254,10 +306,14 @@ def show_decision_result(request, event_id):
 #     dumps = json.dumps(user_data)
 #     return HttpResponse(dumps, content_type='application/json')
 
+
+#
 #
 # @login_required
 # def all_user_timeslots(request, useruser_email, event_id):
+#
 #     event = get_object_or_404(Events, pk=event_id)
+#
 #     time_range_start = event.time_range_start
 #     time_range_end = event.time_range_end
 #     result = get_result(event_id)
@@ -274,6 +330,10 @@ def show_decision_result(request, event_id):
 #     dumps = json.dumps(user_data)
 #     return HttpResponse(simplejson.dumps(all_user_timeslots), content_type='application/json')
 
+
+@login_required
+def Home(request):
+    return render(request, 'manage_event/index.html')
 
 @login_required
 @transaction.atomic
@@ -305,6 +365,9 @@ def webLogout(request):
 @login_required
 def select_timeslots(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
+    # used for join event through link
+    if EventUser.objects.filter(user = request.user).filter(event = event).count() == 0:
+        event_user, create= EventUser.objects.update_or_create(event = event, user = request.user, role = "p")
     #return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))
     return render(request, 'manage_event/select_timeslots.html', {'event': event})
 

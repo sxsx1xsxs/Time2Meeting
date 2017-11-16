@@ -2,24 +2,11 @@
 {% block content %}
 
 
-<form action= "{% url 'manage_event:create_event' %}" method="post">
+<form method="post">
     {% csrf_token %}
-    <br>
-    Event name:<br>
-    <input type="text" name="event_name">
-    <br>
-    Time range:<br>
-    <input type="date" name="time_range_start"> to <input type="date" name="time_range_end">
-    <br>
-    Duration:<br>
-    <input type="range" name="duration" min="30" max="100">
-    <br>
-    Deadline: <br>
-    <input type="date" name="deadline">
+    {{ form }}
     <br>
     <input type="submit" value="Create">
-    <br>
-
 </form>
 
 

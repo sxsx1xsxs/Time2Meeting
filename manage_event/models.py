@@ -11,9 +11,6 @@ class Profile(models.Model):
     location = models.CharField(max_length=30, blank=True)
     birth_date = models.DateField(null=True, blank=True)
 
-    def __str__(self):
-        return self.user.email
-
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -27,7 +24,7 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 class Events(models.Model):
-    event_name = models.CharField(max_length=300)
+    event_name = models.CharField(max_length=300, blank=False)
     create_time = models.DateTimeField(default=timezone.now)
     time_range_start = models.DateTimeField()
     time_range_end = models.DateTimeField()
@@ -35,10 +32,10 @@ class Events(models.Model):
     final_time_end = models.DateTimeField(null=True, blank=True)
     deadline = models.DateTimeField()
     duration = models.DurationField()
-    status = models.CharField(max_length=10, default='Available')
-    # record the status of the event, "Available' or 'Abort'
 
-    info = models.TextField(null=True)
+    # record the status of the event, "Available' or 'Abort'
+    status = models.CharField(max_length=10, default='Available')
+    info = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.event_name
@@ -51,7 +48,12 @@ class EventUser(models.Model):
     class Meta:
         unique_together = ("event", "user")
 
-    role = models.CharField(max_length=1)
+    # two roles: "O" for organizer, "P" for participant
+    USER_ROLE = (
+        ('o', 'Organizer'),
+        ('p', 'Participant'),
+    )
+    role = models.CharField(max_length=1, choices=USER_ROLE, default='p')
 
 
 class TimeSlots(models.Model):

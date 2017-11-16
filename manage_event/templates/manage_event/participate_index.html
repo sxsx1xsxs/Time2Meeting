@@ -2,13 +2,12 @@
 {% block content %}
 
 
-<div align="center">
+<div>
 
     <h1>Welcome to Time2Meeting!</h1>
 
-    <p>Participate index page.</p>
 
-    <p>To do:</p>
+    <br><h3>To do:</h3>
 
     <ul>
     {% for event in event_to_do %}
@@ -16,7 +15,14 @@
     {% endfor %}
     </ul>
 
-    <p>Result:</p>
+
+    <ul>
+    {% for event in event_done %}
+        <p>{{ event.event_name }} &nbsp <a href="{% url 'manage_event:modify_timeslots' event.id%}">Click to modify</a></p>
+    {% endfor %}
+    </ul>
+
+    <br><h3>Result:</h3>
 
     <ul>
     {% for event in event_result %}
@@ -24,11 +30,11 @@
     {% endfor %}
     </ul>
 
-    <p>Pending:</p>
+    <br><h3>Pending:</h3>
 
     <ul>
     {% for event in event_pending %}
-        <li><a href="{% url 'manage_event:make_decision_detail' event.id%}">{{ event.event_name }}</a></li>
+        <li><a href="{% url 'manage_event:pending' event.id%}">{{ event.event_name }}</a></li>
     {% endfor %}
     </ul>
 
