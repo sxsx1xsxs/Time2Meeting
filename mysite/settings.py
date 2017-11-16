@@ -26,7 +26,7 @@ SECRET_KEY = '_)fy9xxe29+yvv$qiu*+x&cg&c%377y$3tp@kd#w11wstgmw8l'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -54,7 +54,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'http://storage.googleapis.com/time2meeting-184004/static/'
+
+STATIC_ROOT = 'static/'
 
 
 
@@ -163,7 +165,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'awesomedb',
         'USER': 'postgres',
-        'PASSWORD': '',
+        'PASSWORD': '123456',
         'HOST': '127.0.0.1',
         'PORT': '5432',
         'TEST': {
@@ -171,6 +173,11 @@ DATABASES = {
         },
     }
 }
+DATABASES['default']['HOST'] = '/cloudsql/time2meeting-184004:us-east1:polls-instance'
+if os.getenv('GAE_INSTANCE'):
+    pass
+else:
+    DATABASES['default']['HOST'] = '127.0.0.1'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
