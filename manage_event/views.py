@@ -44,10 +44,15 @@ def index(request):
 def organize_index(request):
 
     print(request.user.email)
+    organized_events = EventUser.objects.filter(user=request.user).filter(role="o")
+    organized_events_id = []
 
-    event_wait_for_decision = Events.objects.filter(final_time_start__isnull=True).filter(deadline__lte=timezone.now())
-    event_on_going = Events.objects.filter(deadline__gte=timezone.now())
-    event_history = Events.objects.filter(final_time_start__isnull = False)
+    for organized_event in organized_events:
+        organized_events_id.append(organized_event.event.id)
+
+    event_wait_for_decision = Events.objects.filter(id__in=organized_events_id).filter(final_time_start__isnull=True).filter(deadline__lte=timezone.now())
+    event_on_going = Events.objects.filter(id__in=organized_events_id).filter(deadline__gte=timezone.now())
+    event_history = Events.objects.filter(id__in=organized_events_id).filter(final_time_start__isnull=False)
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/organize_index.html', {
