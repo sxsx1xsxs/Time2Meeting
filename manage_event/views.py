@@ -93,18 +93,6 @@ def participate_index(request):
 
     })
 
-
-# def detail(request, event_id):
-#     return HttpResponse("You're looking at event %s." % event_id)
-#
-# def results(request, event_id):
-#     response = "You're looking at the results of event %s."
-#     return HttpResponse(response % question_id)
-#
-# def select(request, question_id):
-#     return HttpResponse("You're selecting on timeslots %s." % question_id)
-
-
 @login_required
 def create_event(request):
     if request.method == 'POST':
@@ -144,10 +132,6 @@ def create_publish(request, event_id):
     else:
         form = InvitationForm()
     return render(request, 'manage_event/create_publish.html', {'event_id': event_id, 'form': form})
-# =======
-#     event = get_object_or_404(Events, pk=event_id)
-#     if request.method == 'GET':
-#         return render(request, 'manage_event/create_publish.html', {'event_id': event_id})
 
 
 @login_required
@@ -155,18 +139,11 @@ def delete_event(request, event_id):
 
     return HttpResponseRedirect("You're deleting.")
 
-
-# @login_required
-# def select_timeslots(request, event_id):
-#     event = get_object_or_404(Events, pk=event_id)
-#     return render(request, 'manage_event/select_timeslots.html', {'event': event})
-#     # get timeslots and compute
-
 @login_required
 def pending(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
 
-    timeslots = TimeSlots.objects.filter(event= event)
+    timeslots = TimeSlots.objects.filter(event= event).filter(user=request.user)
     show_timeslots = []
     for t in timeslots:
         show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
@@ -174,14 +151,11 @@ def pending(request, event_id):
     context = {'event': event, 'timeslots': show_timeslots}
     return render(request, 'manage_event/pending.html', context)
 
-
 @login_required
 def on_going(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    #return HttpResponse(json.loads(result_json).values())
-
+    # on_going.html will call make_decision_json for data
     return render(request, 'manage_event/on_going.html', {'event': event})
-
 
 def get_result(event_id):
     """
@@ -202,12 +176,10 @@ def get_result(event_id):
 
     return result
 
-
 @login_required
 def make_decision_detail(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    #return HttpResponse(json.loads(result_json).values())
-
+    # make_decision.html will call make_decision_json for data
     return render(request, 'manage_event/make_decision.html', {'event': event})
 
 
