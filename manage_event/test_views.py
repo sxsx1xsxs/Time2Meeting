@@ -137,7 +137,6 @@ class viewTestCase(TestCase):
     def test_make_decision_post(self):
         """
         Test the modification of DB of a POST request when calling make_decision.
-        Still not work.
 
         """
         thirty_mins = datetime.timedelta(minutes=30)
@@ -153,9 +152,18 @@ class viewTestCase(TestCase):
                                     json.dumps(decision),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 200)
-        # self.assertEqual(event.final_time_start, self.timeslot2.time_slot_start)
-        # self.assertEqual(event.final_time_end, self.timeslot2.time_slot_start + datetime.timedelta(minutes=30))
+        # At this point, event in DB has updated, but the object here is not updated, it needs to be reloaded from DB
+        event.refresh_from_db()
+        self.assertEqual(event.final_time_start, self.timeslot2.time_slot_start)
+        self.assertEqual(event.final_time_end, self.timeslot2.time_slot_start + datetime.timedelta(minutes=30))
 
+    def test_make_decision_get(self):
+        """
+        Test the response of a GET request when calling make_decision.
+
+        """
+        response = self.client.get(reverse('manage_event:make_decision_render', args=(self.event.id,)))
+        self.assertEqual(response.status_code, 200)
 
     def test_make_decision_render_error(self):
         """
