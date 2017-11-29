@@ -62,7 +62,7 @@ spec_files:
 #
 # src_dir: public
 #
-src_dir: "static"
+src_dir: "manage_event/static/"
 
 # spec_dir
 #

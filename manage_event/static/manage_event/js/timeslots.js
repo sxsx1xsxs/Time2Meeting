@@ -1,3 +1,4 @@
+var TestVariable = 1;
 var originalTimeslots;
 var originaltimeslotsjson = $.getJSON("../initialize_timeslots", function(json) {
     console.log("success");
