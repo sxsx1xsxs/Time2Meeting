@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from manage_event.models import Profile, Events
+from manage_event.models import Profile, Events, AbortMessage
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
@@ -32,6 +32,10 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ('bio', 'location', 'birth_date')
 
+class AbortForm(forms.ModelForm):
+    class Meta:
+        model = AbortMessage
+        fields = ('Abortion_message',)
 
 class EventForm(forms.ModelForm):
     class Meta:

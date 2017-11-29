@@ -13,8 +13,8 @@ from django.contrib.auth import logout
 from django.db import transaction
 from .models import Profile
 
-from .forms import UserForm, ProfileForm, EventForm, InvitationForm
-from .models import Events, TimeSlots, EventUser
+from .forms import UserForm, ProfileForm, EventForm, InvitationForm, AbortForm
+from .models import Events, TimeSlots, EventUser, AbortMessage
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 
@@ -133,6 +133,32 @@ def create_publish(request, event_id):
         form = InvitationForm()
     return render(request, 'manage_event/create_publish.html', {'event_id': event_id, 'form': form})
 
+@login_required
+def abort_event_detail(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+
+    if EventUser.objects.get(event = event, user= request.user).role == 'o':
+        if request.method == 'POST':
+            form = AbortForm(request.POST)
+            if form.is_valid():
+                AbortMessage.objects.get_or_create(event=event, Abortion_message=form.cleaned_data['Abortion_message'])
+                event.status = 'Abort'
+                event.save()
+            return HttpResponseRedirect(reverse('manage_event:abort_event_result', args=(event_id,)))
+        else:
+            form = AbortForm()
+            contents = {'event': event,
+                        'message': "Cautious: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abortion message.)",
+                        'form': form.as_p()}
+    else:
+        contents = {'event': event,
+                    'error_message': "Sorry, you didn't have the access to abort this event."}
+    return render(request, 'manage_event/abort_event_detail.html', contents)
+
+@login_required
+def abort_event_result(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    return render(request, 'manage_event/abort_event_result.html', {'event': event})
 
 @login_required
 def delete_event(request, event_id):
