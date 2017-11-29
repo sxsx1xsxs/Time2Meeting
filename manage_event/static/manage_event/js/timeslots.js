@@ -8,6 +8,11 @@ var originalTimeslots;
 //timeslots[day][time] = something
 var timeslots = {};
 
+//"highlighted" for select_timeslots.html and modify_timeslots.html
+//"marked" for make_decision.html
+//"" for on_going.html
+
+//the string describing what class name a single cell will have if mouse is pressed down
 var MouseMarkName;
 
 var loadTimeSlotsAndCreateTimeTable = function(url, markName) {
@@ -72,6 +77,7 @@ var markTimeTableWithNumberOfPeople = function() {
 };
 
 
+//add interaction to the calendar
 function selectAction(markName) {
     if (markName == "") return;
     MouseMarkName = markName;
