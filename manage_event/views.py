@@ -43,15 +43,15 @@ def index(request):
 @login_required
 def organize_index(request):
 
-    print(request.user.email)
+    #print(request.user.email)
     organized_events = EventUser.objects.filter(user=request.user).filter(role="o")
     organized_events_id = []
 
     for organized_event in organized_events:
         organized_events_id.append(organized_event.event.id)
 
-    event_wait_for_decision = Events.objects.filter(id__in=organized_events_id).filter(final_time_start__isnull=True).filter(deadline__lte=timezone.now())
-    event_on_going = Events.objects.filter(id__in=organized_events_id).filter(deadline__gte=timezone.now())
+    event_wait_for_decision = Events.objects.filter(id__in=organized_events_id).filter(final_time_start__isnull=True).filter(deadline__lte=datetime.datetime.now())
+    event_on_going = Events.objects.filter(id__in=organized_events_id).filter(deadline__gte=datetime.datetime.now())
     event_history = Events.objects.filter(id__in=organized_events_id).filter(final_time_start__isnull=False)
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
@@ -79,10 +79,10 @@ def participate_index(request):
         else:
             done_events_id.append(participate_event_id)
 
-    event_to_do = Events.objects.filter(id__in = to_do_events_id).filter(deadline__gte= timezone.now())
-    event_done = Events.objects.filter(id__in = done_events_id).filter(deadline__gte=timezone.now())
+    event_to_do = Events.objects.filter(id__in = to_do_events_id).filter(deadline__gte= datetime.datetime.now())
+    event_done = Events.objects.filter(id__in = done_events_id).filter(deadline__gte=datetime.datetime.now())
     event_result = Events.objects.filter(id__in = participate_events_id).filter(final_time_start__isnull = False)
-    event_pending = Events.objects.filter(id__in = participate_events_id).filter(deadline__lte= timezone.now()).exclude(final_time_start__isnull = False)
+    event_pending = Events.objects.filter(id__in = participate_events_id).filter(deadline__lte=datetime.datetime.now()).exclude(final_time_start__isnull = False)
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/participate_index.html', {
@@ -110,6 +110,7 @@ def create_event(request):
             eventuser = EventUser.objects.create(**eventuser_data)
             eventuser.save()
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.pk,)))
+        print(form.errors)
     else:
         form = EventForm(initial={'info': 'description of this event.'})
     return render(request, 'manage_event/create_event.html', {'form': form})

@@ -44,7 +44,6 @@ class viewTestCase(TestCase):
         self.timeslot = TimeSlots.objects.create(event = self.event,
                                                  user = self.organizer,
                                                  time_slot_start = time_now + thirty_mins * 4)
-        print(self.timeslot)
         self.timeslot1 = TimeSlots.objects.create(event=self.event,
                                                   user=self.participant1,
                                                   time_slot_start=time_now + thirty_mins * 4)
