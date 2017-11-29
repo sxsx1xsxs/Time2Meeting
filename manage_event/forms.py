@@ -60,7 +60,6 @@ class EventForm(forms.ModelForm):
         }
         help_texts = {
             'event_name': _('*No more than 300 characters.'),
-            'duration': _('h'),
             'info': _('(optional)'),
         }
 
