@@ -5,6 +5,7 @@ from django.utils import timezone
 import datetime
 from django.test import Client
 from .views import *
+import ast
 
 
 class viewTestCase(TestCase):
@@ -32,6 +33,7 @@ class viewTestCase(TestCase):
                                            time_range_end = time_now + thirty_mins*6,
                                            deadline = time_now + thirty_mins*3,
                                            duration = thirty_mins)
+
         self.event_organizer = EventUser.objects.create(event=self.event,
                                                         user=self.organizer,
                                                         role='o')
@@ -119,9 +121,18 @@ class viewTestCase(TestCase):
         Test the response of a GET request when calling make_decision_results.
 
         """
-        response = self.client.get(reverse('manage_event:make_decision_results', args=(self.event.id,)))
+        thirty_mins = datetime.timedelta(minutes=30)
+        time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
+        event = Events.objects.create(event_name="testEvent",
+                                      time_range_start=time_now + thirty_mins * 4,
+                                      time_range_end=time_now + thirty_mins * 6,
+                                      final_time_start=time_now + thirty_mins * 5,
+                                      final_time_end=time_now + thirty_mins * 6,
+                                      deadline=time_now + thirty_mins * 3,
+                                      duration=thirty_mins)
+        response = self.client.get(reverse('manage_event:make_decision_results', args=(event.id,)))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['event'], self.event)
+        self.assertEqual(response.context['event'], event)
 
     def test_make_decision_json(self):
         """
@@ -178,7 +189,6 @@ class viewTestCase(TestCase):
     def test_make_decision_render(self):
         """
         Test the response of a GET request when calling make_decision_render.
-
         """
         self.event.final_time_start = self.timeslot.time_slot_start.strftime('%Y-%m-%d %H:%M:%S')
         self.event.save()
@@ -196,6 +206,58 @@ class viewTestCase(TestCase):
         response = self.client.get(reverse('manage_event:show_decision_result', args=(self.event.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['event'], self.event)
+
+    def test_select_publish_render(self):
+        """
+        Test the response of a GET request when calling select_publish_render.
+        """
+        response = self.client.get(reverse('manage_event:select_publish_render', args=(self.event.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['event'], self.event)
+        show_timeslots = []
+        show_timeslots.append(self.timeslot.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
+        show_timeslots.append(self.timeslot1.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
+        show_timeslots.append(self.timeslot2.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
+        self.assertEqual(response.context['timeslots'], show_timeslots)
+
+    def test_modify_timeslots(self):
+        """
+        Test the response of a GET request when calling modify_timeslots.
+        """
+        response = self.client.get(reverse('manage_event:modify_timeslots', args=(self.event.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['event'], self.event)
+
+    def test_select_timeslots(self):
+        """
+        Test the response of a GET request when calling select_timeslots.
+        """
+        response = self.client.get(reverse('manage_event:select_timeslots', args=(self.event.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['event'], self.event)
+
+    def test_initialize_timeslots(self):
+        """
+        Test the json of a GET request when calling initialize_timeslots.
+        """
+        thirty_mins = datetime.timedelta(minutes=30)
+        time_now = timezone.now().replace(hour = 0, minute = 0,second=0, microsecond=0)
+        self.event1 = Events.objects.create(event_name = "testEvent",
+                                   time_range_start = time_now + thirty_mins*30,
+                                   time_range_end = time_now + thirty_mins*144,
+                                   deadline = time_now + thirty_mins*24,
+                                   duration = thirty_mins*2)
+
+        # self.time_range_middle1 = time_now  + thirty_mins*50
+        # self.time_range_middle2 = time_now + thirty_mins*60
+        # self.time_range_middle3 = time_now  + thirty_mins*96
+        # string1 = self.timeslot.time_slot_start.strftime('%Y-%m-%d %H:%M:%S')
+        # self.assertEqual(json.get(string1), "Blank")
+        response = self.client.get(reverse('manage_event:initialize_timeslots', args=(self.event1.id,)))
+        jsonstring = str(response.content, encoding='utf8')
+        json = ast.literal_eval(jsonstring)
+        for key, value in json.items():
+            self.assertEqual(value, "Blank")
 
     def test_create_event_get(self):
         """
