@@ -1,0 +1,14 @@
+{% extends 'manage_event/sidebar.html' %}
+{% block content %}
+
+<div align="center">
+<h1>{{ event.event_name }}</h1>
+
+<p> You have aborted this event. Your abortion message has informed of each participant.</p>
+    <p>Abortion message:</p>
+    <p>{{ message }}</p>
+
+<a href="{% url 'manage_event:organize_index' %}">Back to Organize Event</a>
+</div>
+
+{% endblock%}

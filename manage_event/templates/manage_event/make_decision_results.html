@@ -1,6 +1,11 @@
 {% extends 'manage_event/sidebar.html' %}
 {% block content %}
 
+{% if can_abort %}
+<br>
+<button onclick="location.href='{% url 'manage_event:abort_event_detail' event.id %}'">Abort event</button>
+<br>
+{% endif %}
 
 <div align="center">
 <h1>{{ event.event_name }}</h1>

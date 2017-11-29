@@ -1,12 +1,12 @@
 {% extends 'manage_event/sidebar.html' %}
 {% block content %}
+{{ form.media }}
 
-
-<form method="post">
+<form action="" method="post">
     {% csrf_token %}
-    {{ form }}
+    {{ form.as_p }}
     <br>
-    <input type="submit" value="Create">
+    <input id="create" type="submit" value="Create">
 </form>
 
 

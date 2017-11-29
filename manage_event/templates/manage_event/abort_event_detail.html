@@ -1,0 +1,28 @@
+{% extends 'manage_event/sidebar.html' %}
+{% block content %}
+
+{% if error_message %}
+<p><strong>{{ error_message }}</strong></p>
+
+<br>
+<button onclick="location.href='{% url 'manage_event:organize_index' %}'">Back to Organize Events</button>
+<br>
+{% endif %}
+{% if message %}
+<p>
+<p><strong>{{ message }}</strong></p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <br>
+    <input type="submit" value="Abort">
+</form>
+
+<br>
+<button onclick="location.href='{% url 'manage_event:organize_index' %}'">Back to Organize Events</button>
+<br>
+
+{% endif %}
+
+{% endblock%}
