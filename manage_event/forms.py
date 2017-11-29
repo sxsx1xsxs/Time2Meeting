@@ -2,11 +2,10 @@ from django.contrib.auth.models import User
 from manage_event.models import Profile, Events, AbortMessage
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from django.utils import timezone
-import datetime
-import re
 from django.core.validators import validate_email
 from datetimewidget.widgets import DateTimeWidget
+import datetime
+import re
 
 
 class InvitationForm(forms.Form):
@@ -52,9 +51,9 @@ class EventForm(forms.ModelForm):
 
         DURATION = (
             ('30:00', '30 min'),
-            ('1:00:00', '60 min'),
-            ('1:30:00', '90 min'),
-            ('2:00:00', '120 min'),
+            ('1:00:00', '1 h'),
+            ('1:30:00', '1.5 h'),
+            ('2:00:00', '2 h'),
             ('2:30:00', '2.5 h'),
             ('3:00:00', '3 h'),
             ('3:30:00', '3.5 h'),
@@ -64,10 +63,10 @@ class EventForm(forms.ModelForm):
         )
 
         widgets = {
-            'time_range_start': DateTimeWidget(bootstrap_version=2, options=dateTimeOptions),
-            'time_range_end': DateTimeWidget(bootstrap_version=2, options=dateTimeOptions),
+            'time_range_start': DateTimeWidget(bootstrap_version=3, options=dateTimeOptions),
+            'time_range_end': DateTimeWidget(bootstrap_version=3, options=dateTimeOptions),
             'duration': forms.Select(choices=DURATION),
-            'deadline': DateTimeWidget(bootstrap_version=2, options=dateTimeOptions),
+            'deadline': DateTimeWidget(bootstrap_version=3, options=dateTimeOptions),
             'info': forms.Textarea(attrs={'rows': 5, 'cols': 30})
         }
         help_texts = {
@@ -81,56 +80,49 @@ class EventForm(forms.ModelForm):
         time_range_end = cleaned_data.get('time_range_end')
         duration = cleaned_data.get('duration')
         deadline = self.cleaned_data.get('deadline')
+        time_range = time_range_end - time_range_start
 
         error_list = []
 
-        if duration > (time_range_end - time_range_start):
+        if time_range_end > time_range_start and duration > time_range:
             error = forms.ValidationError(
                 _("%(value1)s should be smaller than %(value2)s!"),
-                code='smaller than',
+                code='duration error',
                 params={'value1': 'duration',
                         'value2': 'time range'})
             error_list.append(error)
 
-        if time_range_start <= timezone.now():
+        if time_range_end <= time_range_start:
             error = forms.ValidationError(
                 _("%(value1)s should be later than %(value2)s!"),
-                code='later than',
-                params={'value1': 'time range start',
-                        'value2': 'current time'})
-            error_list.append(error)
-
-        if time_range_start >= time_range_end:
-            error = forms.ValidationError(
-                _("%(value1)s should be later than %(value2)s!"),
-                code='earlier than',
-                params={'value1': 'time range start',
-                        'value2': 'time range end'})
-            error_list.append(error)
-
-        if deadline > time_range_start:
-            error = forms.ValidationError(
-                _("%(value1)s should be earlier than %(value2)s!"),
-                code='earlier than',
-                params={'value1': 'deadline',
+                code='end error',
+                params={'value1': 'time range end',
                         'value2': 'time range start'})
             error_list.append(error)
 
-        if deadline <= timezone.now():
+        if time_range_start <= deadline:
             error = forms.ValidationError(
                 _("%(value1)s should be later than %(value2)s!"),
-                code='later than',
+                code='start error',
+                params={'value1': 'time range start',
+                        'value2': 'deadline'})
+            error_list.append(error)
+
+        if deadline <= datetime.datetime.now():
+            error = forms.ValidationError(
+                _("%(value1)s should be later than %(value2)s!"),
+                code='deadline error',
                 params={'value1': 'deadline',
                         'value2': 'current time'})
             error_list.append(error)
 
-        if time_range_end > time_range_start + datetime.timedelta(days=7):
+        if time_range > datetime.timedelta(days=7):
             error = forms.ValidationError(
                 _("time range should be no more than %(value)s days!"),
-                code='earlier than',
+                code='time range error',
                 params={'value': '7'})
             error_list.append(error)
 
         if error_list:
-            raise forms.ValidationError(error_list)
-
+            for error in error_list:
+                raise forms.ValidationError(error)
