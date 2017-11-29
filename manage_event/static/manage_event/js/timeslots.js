@@ -42,7 +42,7 @@ var loadTimeSlotsAndCreateTimeTable = function(url, markName) {
                 document.getElementById("power_schedule").innerHTML += "<tr id= " + time + ">" + "<td>" + "" + "</td>" + "</tr>";
             }
             for (day in timeslots) {
-                if (timeslots[day][time] == "Blank") {
+                if (timeslots[day][time] == "Blank" || timeslots[day][time] == "0") {
                     document.getElementById(time).innerHTML += "<td class='selectable' id='" + day + " " + time + "'> </td>";
                 } else {
                     document.getElementById(time).innerHTML += "<td class='selectable highlighted' id='" + day + " " + time + "'> </td>";
@@ -52,6 +52,9 @@ var loadTimeSlotsAndCreateTimeTable = function(url, markName) {
         }
 
         selectAction(markName);
+        if (markName != "highlighted"){
+            markTimeTableWithNumberOfPeople();
+        }
 
     });
 };
@@ -62,7 +65,7 @@ var markTimeTableWithNumberOfPeople = function() {
     for (time in firstColumn) {
         for (day in timeslots) {
             if (timeslots[day][time] != "0") {
-                document.getElementById(day + " " +time).innerHTML =  timeslots[day][time];
+                document.getElementById(day + " " +time).innerHTML +=  timeslots[day][time];
             }
         }
     }
@@ -70,6 +73,7 @@ var markTimeTableWithNumberOfPeople = function() {
 
 
 function selectAction(markName) {
+    if (markName == "") return;
     MouseMarkName = markName;
 
     // Create table dragging functionality
