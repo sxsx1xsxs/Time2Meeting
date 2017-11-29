@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
-from manage_event.models import Profile, Events
+from manage_event.models import Profile, Events, AbortMessage
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 import datetime
 import re
 from django.core.validators import validate_email
+from datetimewidget.widgets import DateTimeWidget
 
 
 class InvitationForm(forms.Form):
@@ -33,10 +34,21 @@ class ProfileForm(forms.ModelForm):
         fields = ('bio', 'location', 'birth_date')
 
 
+class AbortForm(forms.ModelForm):
+    class Meta:
+        model = AbortMessage
+        fields = ('Abortion_message',)
+
+
 class EventForm(forms.ModelForm):
     class Meta:
         model = Events
         fields = ('event_name', 'time_range_start', 'time_range_end', 'duration', 'deadline', 'info')
+        dateTimeOptions = {
+            'format': 'yyyy-mm-dd hh:ii',
+            'minuteStep': 30,
+            'showMeridian': True
+        }
 
         DURATION = (
             ('30:00', '30 min'),
@@ -52,10 +64,10 @@ class EventForm(forms.ModelForm):
         )
 
         widgets = {
-            'time_range_start': forms.SelectDateWidget,
-            'time_range_end': forms.SelectDateWidget,
+            'time_range_start': DateTimeWidget(bootstrap_version=2, options=dateTimeOptions),
+            'time_range_end': DateTimeWidget(bootstrap_version=2, options=dateTimeOptions),
             'duration': forms.Select(choices=DURATION),
-            'deadline': forms.SelectDateWidget,
+            'deadline': DateTimeWidget(bootstrap_version=2, options=dateTimeOptions),
             'info': forms.Textarea(attrs={'rows': 5, 'cols': 30})
         }
         help_texts = {

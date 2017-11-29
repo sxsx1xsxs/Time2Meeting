@@ -2,6 +2,10 @@
 
 
 {% block head %}
+<br>
+<button onclick="location.href='{% url 'manage_event:abort_event_detail' event.id %}'">Abort event</button>
+<br>
+
 <h1>{{ event.event_name }} is on going, and the current status is: </h1>
 {% endblock %}
 
