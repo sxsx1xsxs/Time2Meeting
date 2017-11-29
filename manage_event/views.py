@@ -17,6 +17,7 @@ from .forms import UserForm, ProfileForm, EventForm, InvitationForm, AbortForm
 from .models import Events, TimeSlots, EventUser, AbortMessage
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Q
 
 
 @login_required
@@ -50,9 +51,16 @@ def organize_index(request):
     for organized_event in organized_events:
         organized_events_id.append(organized_event.event.id)
 
-    event_wait_for_decision = Events.objects.filter(id__in=organized_events_id).filter(final_time_start__isnull=True).filter(deadline__lte=datetime.datetime.now())
-    event_on_going = Events.objects.filter(id__in=organized_events_id).filter(deadline__gte=datetime.datetime.now())
-    event_history = Events.objects.filter(id__in=organized_events_id).filter(final_time_start__isnull=False)
+    #event_wait_for_decision = Events.objects.filter(id__in=organized_events_id).filter(final_time_start__isnull=True).filter(deadline__lte=datetime.datetime.now())
+    event_wait_for_decision = Events.objects.filter(Q(id__in=organized_events_id),
+                                                    Q(status = 'Available'),
+                                                    Q(final_time_start__isnull=True),
+                                                    Q(deadline__lte=datetime.datetime.now()))
+    event_on_going = Events.objects.filter(Q(id__in=organized_events_id),
+                                           Q(status = 'Available'),
+                                           Q(deadline__gte=datetime.datetime.now()))
+    event_history = Events.objects.filter(Q(id__in=organized_events_id),
+                                          Q(final_time_start__isnull=False) | Q(status = 'Abort'))
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/organize_index.html', {
@@ -79,10 +87,11 @@ def participate_index(request):
         else:
             done_events_id.append(participate_event_id)
 
-    event_to_do = Events.objects.filter(id__in = to_do_events_id).filter(deadline__gte= datetime.datetime.now())
-    event_done = Events.objects.filter(id__in = done_events_id).filter(deadline__gte=datetime.datetime.now())
-    event_result = Events.objects.filter(id__in = participate_events_id).filter(final_time_start__isnull = False)
-    event_pending = Events.objects.filter(id__in = participate_events_id).filter(deadline__lte=datetime.datetime.now()).exclude(final_time_start__isnull = False)
+    event_to_do = Events.objects.filter(id__in = to_do_events_id).filter(status = 'Available').filter(deadline__gte= datetime.datetime.now())
+    event_done = Events.objects.filter(id__in = done_events_id).filter(status = 'Available').filter(deadline__gte=datetime.datetime.now())
+    event_result = Events.objects.filter(Q(id__in=participate_events_id),
+                                         Q(final_time_start__isnull=False) | Q(status = 'Abort'))
+    event_pending = Events.objects.filter(id__in = participate_events_id).filter(status = 'Available').filter(deadline__lte=datetime.datetime.now()).exclude(final_time_start__isnull = False)
     #latest_event_list = Events.objects.order_by('-event_date')[:5]
     #output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/participate_index.html', {
@@ -159,7 +168,8 @@ def abort_event_detail(request, event_id):
 @login_required
 def abort_event_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    return render(request, 'manage_event/abort_event_result.html', {'event': event})
+    message = AbortMessage.objects.get(event=event).Abortion_message
+    return render(request, 'manage_event/abort_event_result.html', {'event': event, 'message': message})
 
 @login_required
 def delete_event(request, event_id):
@@ -213,7 +223,15 @@ def make_decision_detail(request, event_id):
 @login_required
 def make_decision_results(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    return render(request, 'manage_event/make_decision_results.html', {'event': event})
+    if event.status == 'Abort':
+        message = AbortMessage.objects.get(event=event).Abortion_message
+        return render(request, 'manage_event/abort_event_result.html', {'event': event, 'message': message})
+    else:
+        if event.final_time_end > datetime.datetime.now():
+            contents = {'event': event, 'can_abort': '1'}
+        else:
+            contents = {'event': event}
+        return render(request, 'manage_event/make_decision_results.html', contents)
 
 
 def make_decision_json(request, event_id):
@@ -286,7 +304,11 @@ def make_decision_render(request, event_id):
 @login_required
 def show_decision_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    return render(request, 'manage_event/show_decision_result.html', {'event': event})
+    if event.status == 'Abort':
+        message = AbortMessage.objects.get(event = event).Abortion_message
+        return render(request, 'manage_event/show_abort_event_result.html', {'event': event, 'message': message})
+    else:
+        return render(request, 'manage_event/show_decision_result.html', {'event': event})
 
 #
 # @login_required
