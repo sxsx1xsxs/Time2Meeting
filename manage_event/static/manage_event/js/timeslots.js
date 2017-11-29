@@ -40,20 +40,25 @@ var loadTimeSlotsAndCreateTimeTable = function(url, markName) {
             document.getElementById("firstRow").innerHTML += "<td>" + day + "</td>";
         }
 
-        for (time in firstColumn) {
-            if (counter % 2 == 0) {
-                document.getElementById("power_schedule").innerHTML += "<tr id= " + time + ">" + "<td>" + time + "</td>" + "</tr>";
-            } else {
-                document.getElementById("power_schedule").innerHTML += "<tr id= " + time + ">" + "<td>" + "" + "</td>" + "</tr>";
+        var timeInHalfHours = dayHalfHoursGeneratorHelper();
+        for (index in timeInHalfHours){
+            var time = timeInHalfHours[index];
+            if(time.includes(":30:")){
+                 document.getElementById("power_schedule").innerHTML += "<tr id= " + time + ">" + "<td>" + "" + "</td>" + "</tr>";
+            }else {
+                 document.getElementById("power_schedule").innerHTML += "<tr id= " + time + ">" + "<td>" + timeFormat(time.slice(0,2)) + "</td>" + "</tr>";
             }
+
             for (day in timeslots) {
-                if (timeslots[day][time] == "Blank" || timeslots[day][time] == "0") {
+                if (timeslots[day][time] == undefined) {
+                  document.getElementById(time).innerHTML += "<td class='unselectable' id='" + day + " " + time + "'> </td>";
+                }
+                else if (timeslots[day][time] == "Blank" || timeslots[day][time] == "0") {
                     document.getElementById(time).innerHTML += "<td class='selectable' id='" + day + " " + time + "'> </td>";
                 } else {
                     document.getElementById(time).innerHTML += "<td class='selectable highlighted' id='" + day + " " + time + "'> </td>";
                 }
             }
-            counter += 1;
         }
 
         selectAction(markName);
@@ -156,4 +161,38 @@ function postTimeSlotsAndRedirect(postURL, redirectURL) {
             console.log("Response");
             window.location = redirectURL;
         });
+}
+
+var dayHalfHoursGeneratorHelper = function(){
+    var times = [];
+    var zeroToNine = numberRange(0,10);
+    for (time in zeroToNine) {
+        times.push("0"+zeroToNine[time]+":00:00");
+        times.push("0"+zeroToNine[time]+":30:00");
+    }
+
+    var tenToTwentyThree = numberRange(10,24);
+    for (time in tenToTwentyThree) {
+        times.push(tenToTwentyThree[time]+":00:00");
+        times.push(tenToTwentyThree[time]+":30:00");
+    }
+
+    return times;
+}
+
+function numberRange (start, end) {
+  return new Array(end - start).fill().map((d, i) => i + start);
+}
+
+
+var timeFormat = function(timeStringInTwoDigit) {
+    if(timeStringInTwoDigit < 10) {
+        return " " + timeStringInTwoDigit.slice(1,2) + "AM";
+    } else if (timeStringInTwoDigit < 13) {
+        return timeStringInTwoDigit+"AM";
+    } else if (timeStringInTwoDigit < 22){
+        return " " + (timeStringInTwoDigit - 12) + "PM";
+    } else {
+        return (timeStringInTwoDigit - 12) + "PM";
+    }
 }
