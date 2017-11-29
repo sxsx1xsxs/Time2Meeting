@@ -112,7 +112,7 @@ def create_event(request):
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.pk,)))
     else:
         form = EventForm(initial={'info': 'description of this event.'})
-    return render(request, 'manage_event/create_event.html', {'form': form.as_p()})
+    return render(request, 'manage_event/create_event.html', {'form': form})
 
 
 @login_required
@@ -264,6 +264,7 @@ def make_decision(request, event_id):
 
     name = request.POST.get('name')
     dict = {'name': name}
+
     return HttpResponse(json.dumps(dict), content_type='application/json')
 
 

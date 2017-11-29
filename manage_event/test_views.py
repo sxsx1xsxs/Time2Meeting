@@ -6,6 +6,7 @@ import datetime
 from django.test import Client
 from .views import *
 
+
 class viewTestCase(TestCase):
 
     def setUp(self):
@@ -14,7 +15,7 @@ class viewTestCase(TestCase):
 
         """
         thirty_mins = datetime.timedelta(minutes=30)
-        time_now = timezone.now().replace(minute = 0,second=0, microsecond=0)
+        time_now = datetime.datetime.now().replace(minute = 0,second=0, microsecond=0)
 
         # setup database
         self.organizer = User.objects.create(username = "organizer",
@@ -43,13 +44,13 @@ class viewTestCase(TestCase):
         self.timeslot = TimeSlots.objects.create(event = self.event,
                                                  user = self.organizer,
                                                  time_slot_start = time_now + thirty_mins * 4)
+        print(self.timeslot)
         self.timeslot1 = TimeSlots.objects.create(event=self.event,
                                                   user=self.participant1,
                                                   time_slot_start=time_now + thirty_mins * 4)
         self.timeslot2 = TimeSlots.objects.create(event=self.event,
                                                   user=self.participant2,
                                                   time_slot_start=time_now + thirty_mins * 5)
-
         # setup client and login
         self.client = Client()
         login = self.client.login(username='organizer', password='12345')
@@ -140,7 +141,7 @@ class viewTestCase(TestCase):
 
         """
         thirty_mins = datetime.timedelta(minutes=30)
-        time_now = timezone.now().replace(minute=0, second=0, microsecond=0)
+        time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
         event = Events.objects.create(event_name="testEvent",
                                       time_range_start=time_now + thirty_mins * 4,
                                       time_range_end=time_now + thirty_mins * 6,
@@ -197,3 +198,34 @@ class viewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['event'], self.event)
 
+    def test_create_event_get(self):
+        """
+        Test the GET response of view create event
+        :return:
+        """
+        response = self.client.get(reverse('manage_event:create_event'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_create_event_post(self):
+        """
+        Test the POST response of view create event
+        :return:
+        """
+
+        thirty_mins = datetime.timedelta(minutes=30)
+        time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
+        event = Events.objects.create(event_name="testEvent",
+                                      time_range_start=time_now + thirty_mins * 4,
+                                      time_range_end=time_now + thirty_mins * 6,
+                                      deadline=time_now + thirty_mins * 3,
+                                      duration=thirty_mins)
+        decision = {self.timeslot.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'): "Blank",
+                    self.timeslot2.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'): "Selected"}
+        response = self.client.post(reverse('manage_event:make_decision', args=(event.id,)),
+                                    json.dumps(decision),
+                                    content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        # At this point, event in DB has updated, but the object here is not updated, it needs to be reloaded from DB
+        event.refresh_from_db()
+        self.assertEqual(event.final_time_start, self.timeslot2.time_slot_start)
+        self.assertEqual(event.final_time_end, self.timeslot2.time_slot_start + datetime.timedelta(minutes=30))

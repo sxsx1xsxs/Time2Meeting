@@ -42,19 +42,21 @@ ALLOWED_HOSTS = ['*']
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = 'http://storage.googleapis.com/time2meeting-184004/static/'
+# STATIC_URL = 'http://storage.googleapis.com/time2meeting-184004/static/'
+
+STATIC_URL = '/static/'
 
 STATIC_ROOT = 'static/'
 
@@ -107,6 +109,7 @@ INSTALLED_APPS = [
     'social_django',
     'manage_event.apps.ManageEventConfig',
     'home.apps.HomeConfig',
+    'datetimewidget'
     # 'manage_event'
 ]
 
@@ -121,6 +124,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware'
 ]
 
 

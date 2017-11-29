@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import datetime
 
 
 class Profile(models.Model):
@@ -25,7 +26,7 @@ def save_user_profile(sender, instance, **kwargs):
 
 class Events(models.Model):
     event_name = models.CharField(max_length=300, blank=False)
-    create_time = models.DateTimeField(default=timezone.now)
+    create_time = models.DateTimeField(default=datetime.datetime.now)
     time_range_start = models.DateTimeField()
     time_range_end = models.DateTimeField()
     final_time_start = models.DateTimeField(null=True, blank=True)

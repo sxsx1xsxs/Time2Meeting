@@ -47,6 +47,7 @@ def create_user(**kwargs):
 
 
 class EventsTestCase(TestCase):
+
     def test_time_range_start(self):
         # event = Events.objects.filter(event_name=481).update(time_range_start='')
         # assertRaises(ValidationError)
