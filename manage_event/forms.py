@@ -33,15 +33,22 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ('bio', 'location', 'birth_date')
 
+
 class AbortForm(forms.ModelForm):
     class Meta:
         model = AbortMessage
         fields = ('Abortion_message',)
 
+
 class EventForm(forms.ModelForm):
     class Meta:
         model = Events
         fields = ('event_name', 'time_range_start', 'time_range_end', 'duration', 'deadline', 'info')
+        dateTimeOptions = {
+            'format': 'yyyy-mm-dd hh:ii',
+            'minuteStep': 30,
+            'showMeridian': True
+        }
 
         DURATION = (
             ('30:00', '30 min'),
@@ -57,10 +64,10 @@ class EventForm(forms.ModelForm):
         )
 
         widgets = {
-            'time_range_start': DateTimeWidget(attrs={'id': "time_range_start"}, usel10n=True, bootstrap_version=3),
-            'time_range_end': DateTimeWidget(attrs={'id': "time_range_end"}, usel10n=True, bootstrap_version=3),
+            'time_range_start': DateTimeWidget(bootstrap_version=2, options=dateTimeOptions),
+            'time_range_end': DateTimeWidget(bootstrap_version=2, options=dateTimeOptions),
             'duration': forms.Select(choices=DURATION),
-            'deadline': DateTimeWidget(attrs={'id': "deadline"}, usel10n=True, bootstrap_version=3),
+            'deadline': DateTimeWidget(bootstrap_version=2, options=dateTimeOptions),
             'info': forms.Textarea(attrs={'rows': 5, 'cols': 30})
         }
         help_texts = {

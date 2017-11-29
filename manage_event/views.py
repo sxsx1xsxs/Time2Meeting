@@ -110,7 +110,6 @@ def create_event(request):
             eventuser = EventUser.objects.create(**eventuser_data)
             eventuser.save()
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.pk,)))
-        print(form.errors)
     else:
         form = EventForm(initial={'info': 'description of this event.'})
     return render(request, 'manage_event/create_event.html', {'form': form})
