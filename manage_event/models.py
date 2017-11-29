@@ -41,6 +41,9 @@ class Events(models.Model):
     def __str__(self):
         return self.event_name
 
+class AbortMessage(models.Model):
+    event = models.ForeignKey(Events, on_delete=models.CASCADE)
+    Abortion_message = models.TextField(null=True, blank=True)
 
 class EventUser(models.Model):
     event = models.ForeignKey(Events, on_delete=models.CASCADE)

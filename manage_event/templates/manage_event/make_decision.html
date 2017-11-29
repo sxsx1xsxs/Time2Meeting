@@ -3,6 +3,10 @@
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
+<br>
+<button onclick="location.href='{% url 'manage_event:abort_event_detail' event.id %}'">Abort event</button>
+<br>
+
 <h1>Make a decision for {{ event.event_name }}</h1>
     <style type="text/css" media="screen">
     table#power_schedule td {

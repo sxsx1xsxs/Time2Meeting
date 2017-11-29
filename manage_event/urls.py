@@ -16,6 +16,8 @@ urlpatterns = [
     url(r'^(?P<event_id>[0-9]+)/make_decision_results/$', views.make_decision_results, name='make_decision_results'),
     url(r'^(?P<event_id>[0-9]+)/make_decision_detail/$', views.make_decision_detail, name='make_decision_detail'),
     url(r'^(?P<event_id>[0-9]+)/show_decision_result/$', views.show_decision_result, name='show_decision_result'),
+    url(r'^(?P<event_id>[0-9]+)/abort_event_detail/$', views.abort_event_detail, name='abort_event_detail'),
+    url(r'^(?P<event_id>[0-9]+)/abort_event_result/$', views.abort_event_result, name='abort_event_result'),
 
     url(r'^create_event/$', views.create_event, name='create_event'),
     url(r'^(?P<event_id>[0-9]+)/create_publish/$', views.create_publish, name='create_publish'),
