@@ -15,6 +15,8 @@ var timeslots = {};
 //the string describing what class name a single cell will have if mouse is pressed down
 var MouseMarkName;
 
+var timeInHalfHours = dayHalfHoursGeneratorHelper();
+
 var loadTimeSlotsAndCreateTimeTable = function(url, markName) {
     $.getJSON(url, function(json) {
         originalTimeslots = json;
@@ -40,7 +42,7 @@ var loadTimeSlotsAndCreateTimeTable = function(url, markName) {
             document.getElementById("firstRow").innerHTML += "<td>" + day + "</td>";
         }
 
-        var timeInHalfHours = dayHalfHoursGeneratorHelper();
+
         for (index in timeInHalfHours){
             var time = timeInHalfHours[index];
             if(time.includes(":30:")){
@@ -71,10 +73,11 @@ var loadTimeSlotsAndCreateTimeTable = function(url, markName) {
 
 
 var markTimeTableWithNumberOfPeople = function() {
-    var firstColumn = timeslots[Object.keys(timeslots)[0]];
-    for (time in firstColumn) {
+
+    for (index in timeInHalfHours){
+        var time = timeInHalfHours[index];
         for (day in timeslots) {
-            if (timeslots[day][time] != "0") {
+            if (timeslots[day][time] !=undefined && timeslots[day][time]!= "0") {
                 document.getElementById(day + " " +time).innerHTML +=  timeslots[day][time];
             }
         }
@@ -163,7 +166,7 @@ function postTimeSlotsAndRedirect(postURL, redirectURL) {
         });
 }
 
-var dayHalfHoursGeneratorHelper = function(){
+function dayHalfHoursGeneratorHelper(){
     var times = [];
     var zeroToNine = numberRange(0,10);
     for (time in zeroToNine) {
