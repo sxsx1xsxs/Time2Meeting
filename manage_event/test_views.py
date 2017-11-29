@@ -119,9 +119,18 @@ class viewTestCase(TestCase):
         Test the response of a GET request when calling make_decision_results.
 
         """
-        response = self.client.get(reverse('manage_event:make_decision_results', args=(self.event.id,)))
+        thirty_mins = datetime.timedelta(minutes=30)
+        time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
+        event = Events.objects.create(event_name="testEvent",
+                                      time_range_start=time_now + thirty_mins * 4,
+                                      time_range_end=time_now + thirty_mins * 6,
+                                      final_time_start=time_now + thirty_mins * 5,
+                                      final_time_end=time_now + thirty_mins * 6,
+                                      deadline=time_now + thirty_mins * 3,
+                                      duration=thirty_mins)
+        response = self.client.get(reverse('manage_event:make_decision_results', args=(event.id,)))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['event'], self.event)
+        self.assertEqual(response.context['event'], event)
 
     def test_make_decision_json(self):
         """
