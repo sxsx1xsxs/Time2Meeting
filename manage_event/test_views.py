@@ -6,6 +6,7 @@ import datetime
 from django.test import Client
 from .views import *
 
+
 class viewTestCase(TestCase):
 
     def setUp(self):
@@ -14,7 +15,7 @@ class viewTestCase(TestCase):
 
         """
         thirty_mins = datetime.timedelta(minutes=30)
-        time_now = timezone.now().replace(minute = 0,second=0, microsecond=0)
+        time_now = datetime.datetime.now().replace(minute = 0,second=0, microsecond=0)
 
         # setup database
         self.organizer = User.objects.create(username = "organizer",
@@ -43,13 +44,13 @@ class viewTestCase(TestCase):
         self.timeslot = TimeSlots.objects.create(event = self.event,
                                                  user = self.organizer,
                                                  time_slot_start = time_now + thirty_mins * 4)
+        print(self.timeslot)
         self.timeslot1 = TimeSlots.objects.create(event=self.event,
                                                   user=self.participant1,
                                                   time_slot_start=time_now + thirty_mins * 4)
         self.timeslot2 = TimeSlots.objects.create(event=self.event,
                                                   user=self.participant2,
                                                   time_slot_start=time_now + thirty_mins * 5)
-
         # setup client and login
         self.client = Client()
         login = self.client.login(username='organizer', password='12345')
@@ -140,7 +141,7 @@ class viewTestCase(TestCase):
 
         """
         thirty_mins = datetime.timedelta(minutes=30)
-        time_now = timezone.now().replace(minute=0, second=0, microsecond=0)
+        time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
         event = Events.objects.create(event_name="testEvent",
                                       time_range_start=time_now + thirty_mins * 4,
                                       time_range_end=time_now + thirty_mins * 6,
@@ -212,7 +213,7 @@ class viewTestCase(TestCase):
         """
 
         thirty_mins = datetime.timedelta(minutes=30)
-        time_now = timezone.now().replace(minute=0, second=0, microsecond=0)
+        time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
         event = Events.objects.create(event_name="testEvent",
                                       time_range_start=time_now + thirty_mins * 4,
                                       time_range_end=time_now + thirty_mins * 6,

@@ -238,6 +238,7 @@ def make_decision(request, event_id):
 
     name = request.POST.get('name')
     dict = {'name': name}
+
     return HttpResponse(json.dumps(dict), content_type='application/json')
 
 
