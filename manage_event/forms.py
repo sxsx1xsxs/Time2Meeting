@@ -6,6 +6,7 @@ from django.utils import timezone
 import datetime
 import re
 from django.core.validators import validate_email
+from datetimewidget.widgets import DateTimeWidget
 
 
 class InvitationForm(forms.Form):
@@ -52,10 +53,10 @@ class EventForm(forms.ModelForm):
         )
 
         widgets = {
-            'time_range_start': forms.SelectDateWidget,
-            'time_range_end': forms.SelectDateWidget,
+            'time_range_start': DateTimeWidget(attrs={'id': "time_range_start"}, usel10n=True, bootstrap_version=3),
+            'time_range_end': DateTimeWidget(attrs={'id': "time_range_end"}, usel10n=True, bootstrap_version=3),
             'duration': forms.Select(choices=DURATION),
-            'deadline': forms.SelectDateWidget,
+            'deadline': DateTimeWidget(attrs={'id': "deadline"}, usel10n=True, bootstrap_version=3),
             'info': forms.Textarea(attrs={'rows': 5, 'cols': 30})
         }
         help_texts = {
