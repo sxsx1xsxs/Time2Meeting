@@ -247,17 +247,131 @@ class viewTestCase(TestCase):
                                    time_range_end = time_now + thirty_mins*144,
                                    deadline = time_now + thirty_mins*24,
                                    duration = thirty_mins*2)
-
-        # self.time_range_middle1 = time_now  + thirty_mins*50
-        # self.time_range_middle2 = time_now + thirty_mins*60
-        # self.time_range_middle3 = time_now  + thirty_mins*96
-        # string1 = self.timeslot.time_slot_start.strftime('%Y-%m-%d %H:%M:%S')
-        # self.assertEqual(json.get(string1), "Blank")
         response = self.client.get(reverse('manage_event:initialize_timeslots', args=(self.event1.id,)))
         jsonstring = str(response.content, encoding='utf8')
         json = ast.literal_eval(jsonstring)
         for key, value in json.items():
             self.assertEqual(value, "Blank")
+
+    def test_read_timeslots(self):
+        """
+        Test the POST response of read timeslots from json file and change database.
+        """
+        thirty_mins = datetime.timedelta(minutes=30)
+        time_range_start = datetime.datetime(2018, 2, 10, 2, 0, 0, 0)
+        time_range_end = datetime.datetime(2018, 2, 15, 20, 0, 0, 0)
+        deadline = datetime.datetime(2018, 1, 1, 0, 0, 0, 0)
+        self.event1 = Events.objects.create(event_name = "testEvent",
+                                   time_range_start = time_range_start,
+                                   time_range_end = time_range_end,
+                                   deadline = deadline,
+                                   duration = thirty_mins*2)
+        jsondict = {
+      	"2018-02-10 18:30:00": "Selected",
+      	"2018-02-10 19:00:00": "Blank",
+      	"2018-02-11 18:30:00": "Selected",
+      	"2018-02-11 19:00:00": "Blank",
+      	"2018-02-12 18:30:00": "Selected",
+      	"2018-02-12 19:00:00": "Blank",
+      	"2018-02-13 18:30:00": "Selected",
+      	"2018-02-13 19:00:00": "Blank",
+      	"2018-02-14 18:30:00": "Selected",
+      	"2018-02-14 19:00:00": "Blank",
+      	"2018-02-15 18:30:00": "Selected",
+      	"2018-02-15 19:00:00": "Blank"
+          }
+        response = self.client.post(reverse('manage_event:read_timeslots', args=(self.event1.id,)),
+                                    json.dumps(jsondict),content_type="application/json")
+        event_timeslots = TimeSlots.objects.filter(event= self.event1,user = self.organizer)
+        self.event1.refresh_from_db()
+        q = TimeSlots.objects.filter(event = self.event1, user = self.organizer)
+        d = []
+        for Q in q:
+            d.append(Q.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
+        for key, value in jsondict.items():
+            if (value == "Selected"):
+                self.assertIn(key, d)
+            if (value == "Blank"):
+                self.assertNotIn(key,d)
+
+    def test_modify_timeslots_read(self):
+        """
+        Test the json of a GET request when calling modify_timeslots_read.
+        """
+        thirty_mins = datetime.timedelta(minutes=30)
+        time_range_start = datetime.datetime(2018, 2, 10, 2, 0, 0, 0)
+        time_range_end = datetime.datetime(2018, 2, 10, 6, 0, 0, 0)
+        deadline = datetime.datetime(2018, 1, 1, 0, 0, 0, 0)
+        self.event1 = Events.objects.create(event_name = "testEvent",
+                                   time_range_start = time_range_start,
+                                   time_range_end = time_range_end,
+                                   deadline = deadline,
+                                   duration = thirty_mins*2)
+        self.timeslot1 = TimeSlots.objects.create(event = self.event1,
+                                                 user = self.organizer,
+                                                 time_slot_start = datetime.datetime(2018, 2, 10, 2, 0, 0, 0))
+        self.timeslot2 = TimeSlots.objects.create(event = self.event1,
+                                                 user = self.organizer,
+                                                 time_slot_start = datetime.datetime(2018, 2, 10, 2, 30, 0, 0))
+        self.timeslot2 = TimeSlots.objects.create(event = self.event1,
+                                                 user = self.organizer,
+                                                 time_slot_start = datetime.datetime(2018, 2, 10, 3, 0, 0, 0))
+        expected_json = {"2018-02-10 02:00:00": "Selected",
+      	"2018-02-10 02:30:00": "Selected",
+      	"2018-02-10 03:00:00": "Selected",
+      	"2018-02-10 03:30:00": "Blank",
+      	"2018-02-10 04:00:00": "Blank",
+        "2018-02-10 04:30:00": "Blank",
+      	"2018-02-10 05:00:00": "Blank",
+        "2018-02-10 05:30:00": "Blank",}
+        response = self.client.get(reverse('manage_event:modify_timeslots_read', args=(self.event1.id,)))
+        jsonstring = str(response.content, encoding='utf8')
+        json = ast.literal_eval(jsonstring)
+        self.assertEqual(expected_json, json)
+
+    def test_modify_timeslots_update(self):
+        """
+        Test the POST response of modify timeslots from json file and change database.
+        """
+        thirty_mins = datetime.timedelta(minutes=30)
+        time_range_start = datetime.datetime(2018, 2, 10, 2, 0, 0, 0)
+        time_range_end = datetime.datetime(2018, 2, 10, 6, 0, 0, 0)
+        deadline = datetime.datetime(2018, 1, 1, 0, 0, 0, 0)
+        self.event1 = Events.objects.create(event_name = "testEvent",
+                                   time_range_start = time_range_start,
+                                   time_range_end = time_range_end,
+                                   deadline = deadline,
+                                   duration = thirty_mins*2)
+        self.timeslot1 = TimeSlots.objects.create(event = self.event1,
+                                                  user = self.organizer,
+                                                  time_slot_start = datetime.datetime(2018, 2, 10, 2, 0, 0, 0))
+        self.timeslot2 = TimeSlots.objects.create(event = self.event1,
+                                                  user = self.organizer,
+                                                  time_slot_start = datetime.datetime(2018, 2, 10, 2, 30, 0, 0))
+        self.timeslot2 = TimeSlots.objects.create(event = self.event1,
+                                                  user = self.organizer,
+                                                  time_slot_start = datetime.datetime(2018, 2, 10, 3, 0, 0, 0))
+        modified_json = {"2018-02-10 02:00:00": "Blank",
+      	"2018-02-10 02:30:00": "Selected",
+      	"2018-02-10 03:00:00": "Selected",
+      	"2018-02-10 03:30:00": "Blank",
+      	"2018-02-10 04:00:00": "Blank",
+        "2018-02-10 04:30:00": "Blank",
+      	"2018-02-10 05:00:00": "Blank",
+        "2018-02-10 05:30:00": "Selected",}
+        response = self.client.post(reverse('manage_event:modify_timeslots_update', args=(self.event1.id,)),
+                                    json.dumps(modified_json),content_type="application/json")
+        event_timeslots = TimeSlots.objects.filter(event= self.event1,user = self.organizer)
+        self.event1.refresh_from_db()
+        q = TimeSlots.objects.filter(event = self.event1, user = self.organizer)
+        d = []
+        for Q in q:
+            d.append(Q.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
+        for key, value in modified_json.items():
+            if (value == "Selected"):
+                self.assertIn(key, d)
+            if (value == "Blank"):
+                self.assertNotIn(key,d)
 
     def test_create_event_get(self):
         """
