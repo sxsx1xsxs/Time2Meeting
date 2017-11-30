@@ -19,6 +19,8 @@ from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
+from django.core.mail import send_mail
+
 
 @login_required
 def index(request):
@@ -480,3 +482,9 @@ def modify_timeslots_update(request, event_id):
             user_time_slot = TimeSlots.objects.update_or_create(event = event,
             user = user, time_slot_start = key)
     return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))
+
+
+def testsendemail(request):
+    send_mail('subject', 'body of the message', 'timetomeeting@gmail.com',
+              ['shadow.lzd@gmail.com'], fail_silently=False)
+    return render(request, '')

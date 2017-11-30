@@ -259,34 +259,55 @@ class viewTestCase(TestCase):
         for key, value in json.items():
             self.assertEqual(value, "Blank")
 
-    def test_create_event_get(self):
-        """
-        Test the GET response of view create event
-        :return:
-        """
-        response = self.client.get(reverse('manage_event:create_event'))
-        self.assertEqual(response.status_code, 200)
 
-    def test_create_event_post(self):
+class CreateEventViewTests(TestCase):
+    def setUp(self):
         """
-        Test the POST response of view create event
-        :return:
+            Setup time_delta, time_now, max_time_range for manipulating data, then set up a valid form data.
         """
+        self.organizer = User.objects.create(username="organizer",
+                                             email="organizer@test.com")
+        self.organizer.set_password('12345')
+        self.organizer.save()
 
-        thirty_mins = datetime.timedelta(minutes=30)
-        time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
-        event = Events.objects.create(event_name="testEvent",
-                                      time_range_start=time_now + thirty_mins * 4,
-                                      time_range_end=time_now + thirty_mins * 6,
-                                      deadline=time_now + thirty_mins * 3,
-                                      duration=thirty_mins)
-        decision = {self.timeslot.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'): "Blank",
-                    self.timeslot2.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'): "Selected"}
-        response = self.client.post(reverse('manage_event:make_decision', args=(event.id,)),
-                                    json.dumps(decision),
-                                    content_type="application/json")
-        self.assertEqual(response.status_code, 200)
+        self.client = Client()
+        login = self.client.login(username='organizer', password='12345')
+        self.assertTrue(login)
+
+        self.time_delta = datetime.timedelta(hours=1)
+        self.time_now = datetime.datetime.now()
+
+        self.data = {'event_name': 'shadow',
+                     'time_range_start': self.time_now + 2 * self.time_delta,
+                     'time_range_end': self.time_now + 4 * self.time_delta,
+                     'duration': self.time_delta,
+                     'deadline': self.time_now + self.time_delta,
+                     'info': '',
+                     }
+
+    # def test_create_event_get(self):
+    #     """
+    #     Test the GET response of view create event
+    #     """
+    #     response = self.client.get(reverse('manage_event:create_event', self.data))
+    #     self.assertEqual(response.status_code, 200)
+    #
+    # def test_create_event_post(self):
+    #     """
+    #     Test the POST response of view create event
+    #     """
+    #     response = self.client.post('/manage_event/create_event', self.data)
+    #     self.assertEqual(response.status_code, 200)
         # At this point, event in DB has updated, but the object here is not updated, it needs to be reloaded from DB
-        event.refresh_from_db()
-        self.assertEqual(event.final_time_start, self.timeslot2.time_slot_start)
-        self.assertEqual(event.final_time_end, self.timeslot2.time_slot_start + datetime.timedelta(minutes=30))
+        # event.refresh_from_db()
+        # self.assertEqual(event.final_time_start, self.timeslot2.time_slot_start)
+        # self.assertEqual(event.final_time_end, self.timeslot2.time_slot_start + datetime.timedelta(minutes=30))
+
+
+# class CreatePublishViewTests(TestCase):
+#     def test_create_event_get(self):
+#         """
+#         Test the GET response of view create publish
+#         """
+#         response = self.client.get(reverse('manage_event:create_publish', args=(self)))
+#         self.assertEqual(response.status_code, 200)
