@@ -25,6 +25,8 @@ class viewTestCase(TestCase):
         self.organizer.save()
         self.participant1 = User.objects.create(username="participant1",
                                                 email="participant1@test.com")
+        self.participant1.set_password('12345')
+        self.participant1.save()
         self.participant2 = User.objects.create(username="participant2",
                                                 email="participant2@test.com")
         # Question: time_range_end represents the start or end of the half hour, currently regards as the end.
@@ -106,6 +108,49 @@ class viewTestCase(TestCase):
         response = self.client.get(reverse('manage_event:on_going', args=(self.event.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['event'], self.event)
+
+    def test_abort_event_detail_get(self):
+        """
+        Test the response of a GET request when calling abort_event_detail.
+
+        """
+        client1 = Client()
+        login = client1.login(username='participant1', password='12345')
+        self.assertEqual(login, True)
+        response = client1.get(reverse('manage_event:abort_event_detail', args=(self.event.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('error_message', response.context)
+        response= self.client.get(reverse('manage_event:abort_event_detail', args=(self.event.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('message', response.context)
+
+    def test_abort_event_detail_post(self):
+        """
+        Test the response of a POST request when calling abort_event_detail.
+
+        """
+
+        response = self.client.post(reverse('manage_event:abort_event_detail', args=(self.event.id,)))
+        self.assertRedirects(response, reverse('manage_event:abort_event_result', args=(self.event.id,)))
+
+    def test_abort_event_result(self):
+        """
+        Test the response of a GET request when calling abort_event_result.
+
+        """
+        thirty_mins = datetime.timedelta(minutes=30)
+        time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
+        event = Events.objects.create(event_name="testEvent",
+                                      time_range_start=time_now + thirty_mins * 4,
+                                      time_range_end=time_now + thirty_mins * 6,
+                                      deadline=time_now + thirty_mins * 3,
+                                      duration=thirty_mins)
+
+        abort_message = AbortMessage.objects.create(event=event,
+                                                    Abortion_message="this is aborted.")
+        response = self.client.get(reverse('manage_event:abort_event_result', args=(event.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['message'], abort_message.Abortion_message)
 
     def test_make_decision_detail(self):
         """
