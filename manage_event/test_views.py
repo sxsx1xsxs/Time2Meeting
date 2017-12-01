@@ -261,8 +261,6 @@ class viewTestCase(TestCase):
         self.assertEqual(response.context['event'], self.event)
         show_timeslots = []
         show_timeslots.append(self.timeslot.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
-        show_timeslots.append(self.timeslot1.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
-        show_timeslots.append(self.timeslot2.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
         self.assertEqual(response.context['timeslots'], show_timeslots)
 
     def test_modify_timeslots(self):

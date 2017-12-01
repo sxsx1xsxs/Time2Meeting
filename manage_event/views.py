@@ -190,8 +190,22 @@ def pending(request, event_id):
 @login_required
 def on_going(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    # on_going.html will call make_decision_json for data
-    return render(request, 'manage_event/on_going.html', {'event': event})
+    if request.method == 'POST':
+        form = InvitationForm(request.POST)
+        if form.is_valid():
+            emails = form.cleaned_data
+            for email in emails:
+                user_name = email.rsplit('@', 1)[0]
+                user = User.objects.get_or_create(username=user_name, email=email)[0]
+                event = Events.objects.get(pk=event_id)
+                EventUser.objects.get_or_create(user=user, event=event)
+
+                messages.success(request, _('Invite Success!'))
+                return HttpResponseRedirect(reverse('manage_event:on_going', args=(event_id,)))
+    else:
+        form = InvitationForm()
+        # on_going.html will call make_decision_json for data
+    return render(request, 'manage_event/on_going.html', {'event': event, 'form': form})
 
 def get_result(event_id):
     """
@@ -394,7 +408,7 @@ def select_publish(request, event_id):
 @login_required
 def select_publish_render(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    timeslots = TimeSlots.objects.filter(event= event)
+    timeslots = TimeSlots.objects.filter(event= event).filter(user = request.user)
     show_timeslots = []
     for t in timeslots:
         show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
