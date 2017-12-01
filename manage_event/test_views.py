@@ -452,8 +452,7 @@ class CreateEventViewTests(TestCase):
                      'time_range_end': self.time_now + 4 * self.time_delta,
                      'duration': self.time_delta,
                      'deadline': self.time_now + self.time_delta,
-                     'info': '',
-                     }
+                     'info': ''}
 
     # def test_create_event_get(self):
     #     """
