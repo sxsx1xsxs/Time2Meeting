@@ -1,7 +1,6 @@
 from django.test import TestCase
-from django.contrib.auth.models import User
-from .forms import EventForm
-from .models import Events
+from .models import *
+from django.test import Client
 from django.core.exceptions import ValidationError
 
 # Create your tests here.
@@ -28,19 +27,21 @@ timeslots_data = {
 }
 
 
-def create_user(**kwargs):
-    return User.objects.create_user(**kwargs)
+class EventsModelTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        login = self.client.login(username='organizer', password='12345')
+        self.assertEqual(login, True)
+
+    def create_event(user, **kwargs):
+        event = Events.objects.create(**kwargs)
+        eventuser = EventUser.objects.create(user=user, event=event, role='o')
+        return {
+                'event': event,
+                'eventuser': eventuser
+        }
 
 
-# def create_event(user, **kwargs):
-#     event = Events.objects.create(**kwargs)
-#     eventuser = EventUser.objects.create(user=user, event=event, role='o')
-#     return {
-#             'event': event,
-#             'eventuser': eventuser
-#     }
-#
-#
 # def select_timeslots(**kwargs):
 #     timeslots = timeslots.objects.create()
 #     return

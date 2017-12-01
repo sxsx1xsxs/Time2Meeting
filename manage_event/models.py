@@ -38,7 +38,7 @@ class Events(models.Model):
     """
     event_name = models.CharField(max_length=300, blank=False)
     create_time = models.DateTimeField(default=datetime.datetime.now)
-    time_range_start = models.DateTimeField()
+    time_range_start = models.DateTimeField(blank=False)
     time_range_end = models.DateTimeField()
     final_time_start = models.DateTimeField(null=True, blank=True)
     final_time_end = models.DateTimeField(null=True, blank=True)

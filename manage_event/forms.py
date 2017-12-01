@@ -82,10 +82,10 @@ class EventForm(forms.ModelForm):
         )
 
         widgets = {
-            'time_range_start': DateTimeWidget(bootstrap_version=3, options=dateTimeOptions),
-            'time_range_end': DateTimeWidget(bootstrap_version=3, options=dateTimeOptions),
+            'time_range_start': DateTimeWidget(attrs={'placeholder': "yyyy-mm-dd hh:ii"}, bootstrap_version=3, options=dateTimeOptions),
+            'time_range_end': DateTimeWidget(attrs={'placeholder': "yyyy-mm-dd hh:ii"}, bootstrap_version=3, options=dateTimeOptions),
             'duration': forms.Select(choices=DURATION),
-            'deadline': DateTimeWidget(bootstrap_version=3, options=dateTimeOptions),
+            'deadline': DateTimeWidget(attrs={'placeholder': "yyyy-mm-dd hh:ii"}, bootstrap_version=3, options=dateTimeOptions),
             'info': forms.Textarea(attrs={'rows': 5, 'cols': 30})
         }
         help_texts = {

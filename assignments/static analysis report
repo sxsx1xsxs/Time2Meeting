@@ -1,0 +1,898 @@
+************* 
+F:  1, 0: error while code parsing: Unable to load file /Users/Shadow/Desktop/Time2Meeting/__init__.py:
+[Errno 2] No such file or directory: '/Users/Shadow/Desktop/Time2Meeting/__init__.py' (parse-error)
+(env4156) dyn-160-39-149-133:Desktop Shadow$ pylint /Users/Shadow/Desktop/Time2Meeting/manage_event 
+No config file found, using default configuration
+************* Module manage_event.test_forms
+C:  8, 0: Line too long (107/100) (line-too-long)
+C: 20, 0: Wrong continued indentation (remove 1 space).
+                     }
+                    |^ (bad-continuation)
+C: 24, 0: Line too long (117/100) (line-too-long)
+C: 28, 0: Line too long (104/100) (line-too-long)
+C: 39, 0: Line too long (120/100) (line-too-long)
+C: 63, 0: Line too long (116/100) (line-too-long)
+C: 87, 0: Line too long (106/100) (line-too-long)
+C:111, 0: Line too long (109/100) (line-too-long)
+C:114, 0: Line too long (105/100) (line-too-long)
+C:  1, 0: Missing module docstring (missing-docstring)
+W:  2, 0: Wildcard import forms (wildcard-import)
+C:  5, 0: Missing class docstring (missing-docstring)
+C: 22, 4: Invalid method name "test_clean_with_duration_greater_than_time_range" (invalid-name)
+C: 37, 4: Invalid method name "test_clean_with_time_range_end_earlier_than_or_equal_to_time_range_start" (invalid-name)
+C: 61, 4: Invalid method name "test_clean_with_time_range_start_earlier_than_or_equal_to_deadline" (invalid-name)
+C: 85, 4: Invalid method name "test_clean_with_deadline_earlier_than_or_equal_to_now" (invalid-name)
+C:109, 4: Invalid method name "test_clean_with_time_range_greater_than_max_time_range" (invalid-name)
+W:  2, 0: Unused import re from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import InvitationForm from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import UserForm from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import ProfileForm from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import AbortForm from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import User from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import Profile from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import Events from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import AbortMessage from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import validate_email from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import DateTimeWidget from wildcard import (unused-wildcard-import)
+************* Module manage_event.models
+C:  1, 0: Missing module docstring (missing-docstring)
+C:  9, 0: Missing class docstring (missing-docstring)
+C: 17, 0: Missing function docstring (missing-docstring)
+E: 19, 8: Class 'Profile' has no 'objects' member (no-member)
+W: 17,24: Unused argument 'sender' (unused-argument)
+W: 17, 0: Unused argument 'kwargs' (unused-argument)
+C: 23, 0: Missing function docstring (missing-docstring)
+W: 23,22: Unused argument 'sender' (unused-argument)
+W: 23, 0: Unused argument 'kwargs' (unused-argument)
+C: 27, 0: Missing class docstring (missing-docstring)
+C: 44, 0: Missing class docstring (missing-docstring)
+C: 48, 0: Missing class docstring (missing-docstring)
+C: 52, 4: Missing class docstring (missing-docstring)
+R: 52, 4: Too few public methods (0/2) (too-few-public-methods)
+C: 63, 0: Missing class docstring (missing-docstring)
+C: 68, 4: Missing class docstring (missing-docstring)
+R: 68, 4: Too few public methods (0/2) (too-few-public-methods)
+W:  2, 0: Unused timezone imported from django.utils (unused-import)
+C:  6, 0: standard import "import datetime" should be placed before "from django.db import models" (wrong-import-order)
+************* Module manage_event.apps
+C:  1, 0: Missing module docstring (missing-docstring)
+C:  4, 0: Missing class docstring (missing-docstring)
+************* Module manage_event.test_views
+C: 19, 0: No space allowed around keyword argument assignment
+        time_now = datetime.datetime.now().replace(minute = 0,second=0, microsecond=0)
+                                                          ^ (bad-whitespace)
+C: 19, 0: Exactly one space required after comma
+        time_now = datetime.datetime.now().replace(minute = 0,second=0, microsecond=0)
+                                                             ^ (bad-whitespace)
+C: 22, 0: No space allowed around keyword argument assignment
+        self.organizer = User.objects.create(username = "organizer",
+                                                      ^ (bad-whitespace)
+C: 23, 0: No space allowed around keyword argument assignment
+                                             email = "organizer@test.com")
+                                                   ^ (bad-whitespace)
+C: 32, 0: Line too long (110/100) (line-too-long)
+C: 33, 0: No space allowed around keyword argument assignment
+        self.event = Events.objects.create(event_name = "testEvent",
+                                                      ^ (bad-whitespace)
+C: 34, 0: No space allowed around keyword argument assignment
+                                           time_range_start = time_now + thirty_mins*4,
+                                                            ^ (bad-whitespace)
+C: 35, 0: No space allowed around keyword argument assignment
+                                           time_range_end = time_now + thirty_mins*6,
+                                                          ^ (bad-whitespace)
+C: 36, 0: No space allowed around keyword argument assignment
+                                           deadline = time_now + thirty_mins*3,
+                                                    ^ (bad-whitespace)
+C: 37, 0: No space allowed around keyword argument assignment
+                                           duration = thirty_mins)
+                                                    ^ (bad-whitespace)
+C: 48, 0: No space allowed around keyword argument assignment
+        self.timeslot = TimeSlots.objects.create(event = self.event,
+                                                       ^ (bad-whitespace)
+C: 49, 0: No space allowed around keyword argument assignment
+                                                 user = self.organizer,
+                                                      ^ (bad-whitespace)
+C: 50, 0: No space allowed around keyword argument assignment
+                                                 time_slot_start = time_now + thirty_mins * 4)
+                                                                 ^ (bad-whitespace)
+C: 68, 0: Line too long (101/100) (line-too-long)
+C:101, 0: Line too long (122/100) (line-too-long)
+C:123, 0: Exactly one space required before assignment
+        response= self.client.get(reverse('manage_event:abort_event_detail', args=(self.event.id,)))
+                ^ (bad-whitespace)
+C:133, 0: Line too long (102/100) (line-too-long)
+C:134, 0: Line too long (105/100) (line-too-long)
+C:160, 0: Line too long (103/100) (line-too-long)
+C:187, 0: Line too long (101/100) (line-too-long)
+C:211, 0: Line too long (117/100) (line-too-long)
+C:214, 0: Line too long (111/100) (line-too-long)
+C:221, 0: Line too long (103/100) (line-too-long)
+C:229, 0: Line too long (103/100) (line-too-long)
+C:243, 0: Line too long (103/100) (line-too-long)
+C:244, 0: Line too long (108/100) (line-too-long)
+C:251, 0: Line too long (103/100) (line-too-long)
+C:259, 0: Line too long (104/100) (line-too-long)
+C:287, 0: No space allowed around keyword argument assignment
+        time_now = timezone.now().replace(hour = 0, minute = 0,second=0, microsecond=0)
+                                               ^ (bad-whitespace)
+C:287, 0: No space allowed around keyword argument assignment
+        time_now = timezone.now().replace(hour = 0, minute = 0,second=0, microsecond=0)
+                                                           ^ (bad-whitespace)
+C:287, 0: Exactly one space required after comma
+        time_now = timezone.now().replace(hour = 0, minute = 0,second=0, microsecond=0)
+                                                              ^ (bad-whitespace)
+C:288, 0: No space allowed around keyword argument assignment
+        self.event1 = Events.objects.create(event_name = "testEvent",
+                                                       ^ (bad-whitespace)
+C:289, 0: Wrong continued indentation (add 9 spaces).
+                                   time_range_start = time_now + thirty_mins*30,
+                                   ^        | (bad-continuation)
+C:289, 0: No space allowed around keyword argument assignment
+                                   time_range_start = time_now + thirty_mins*30,
+                                                    ^ (bad-whitespace)
+C:290, 0: Wrong continued indentation (add 9 spaces).
+                                   time_range_end = time_now + thirty_mins*144,
+                                   ^        | (bad-continuation)
+C:290, 0: No space allowed around keyword argument assignment
+                                   time_range_end = time_now + thirty_mins*144,
+                                                  ^ (bad-whitespace)
+C:291, 0: Wrong continued indentation (add 9 spaces).
+                                   deadline = time_now + thirty_mins*24,
+                                   ^        | (bad-continuation)
+C:291, 0: No space allowed around keyword argument assignment
+                                   deadline = time_now + thirty_mins*24,
+                                            ^ (bad-whitespace)
+C:292, 0: Wrong continued indentation (add 9 spaces).
+                                   duration = thirty_mins*2)
+                                   ^        | (bad-continuation)
+C:292, 0: No space allowed around keyword argument assignment
+                                   duration = thirty_mins*2)
+                                            ^ (bad-whitespace)
+C:293, 0: Line too long (104/100) (line-too-long)
+C:307, 0: No space allowed around keyword argument assignment
+        self.event1 = Events.objects.create(event_name = "testEvent",
+                                                       ^ (bad-whitespace)
+C:308, 0: Wrong continued indentation (add 9 spaces).
+                                   time_range_start = time_range_start,
+                                   ^        | (bad-continuation)
+C:308, 0: No space allowed around keyword argument assignment
+                                   time_range_start = time_range_start,
+                                                    ^ (bad-whitespace)
+C:309, 0: Wrong continued indentation (add 9 spaces).
+                                   time_range_end = time_range_end,
+                                   ^        | (bad-continuation)
+C:309, 0: No space allowed around keyword argument assignment
+                                   time_range_end = time_range_end,
+                                                  ^ (bad-whitespace)
+C:310, 0: Wrong continued indentation (add 9 spaces).
+                                   deadline = deadline,
+                                   ^        | (bad-continuation)
+C:310, 0: No space allowed around keyword argument assignment
+                                   deadline = deadline,
+                                            ^ (bad-whitespace)
+C:311, 0: Wrong continued indentation (add 9 spaces).
+                                   duration = thirty_mins*2)
+                                   ^        | (bad-continuation)
+C:311, 0: No space allowed around keyword argument assignment
+                                   duration = thirty_mins*2)
+                                            ^ (bad-whitespace)
+C:313, 0: Wrong hanging indentation (add 5 spaces).
+      	"2018-02-10 18:30:00": "Selected",
+       ^    | (bad-continuation)
+C:314, 0: Wrong hanging indentation (add 5 spaces).
+      	"2018-02-10 19:00:00": "Blank",
+       ^    | (bad-continuation)
+C:315, 0: Wrong hanging indentation (add 5 spaces).
+      	"2018-02-11 18:30:00": "Selected",
+       ^    | (bad-continuation)
+C:316, 0: Wrong hanging indentation (add 5 spaces).
+      	"2018-02-11 19:00:00": "Blank",
+       ^    | (bad-continuation)
+C:317, 0: Wrong hanging indentation (add 5 spaces).
+      	"2018-02-12 18:30:00": "Selected",
+       ^    | (bad-continuation)
+C:318, 0: Wrong hanging indentation (add 5 spaces).
+      	"2018-02-12 19:00:00": "Blank",
+       ^    | (bad-continuation)
+C:319, 0: Wrong hanging indentation (add 5 spaces).
+      	"2018-02-13 18:30:00": "Selected",
+       ^    | (bad-continuation)
+C:320, 0: Wrong hanging indentation (add 5 spaces).
+      	"2018-02-13 19:00:00": "Blank",
+       ^    | (bad-continuation)
+C:321, 0: Wrong hanging indentation (add 5 spaces).
+      	"2018-02-14 18:30:00": "Selected",
+       ^    | (bad-continuation)
+C:322, 0: Wrong hanging indentation (add 5 spaces).
+      	"2018-02-14 19:00:00": "Blank",
+       ^    | (bad-continuation)
+C:323, 0: Wrong hanging indentation (add 5 spaces).
+      	"2018-02-15 18:30:00": "Selected",
+       ^    | (bad-continuation)
+C:324, 0: Wrong hanging indentation (add 5 spaces).
+      	"2018-02-15 19:00:00": "Blank"
+       ^    | (bad-continuation)
+C:325, 0: Wrong hanging indentation.
+          }
+        | ^ | (bad-continuation)
+C:327, 0: Exactly one space required after comma
+                                    json.dumps(jsondict),content_type="application/json")
+                                                        ^ (bad-whitespace)
+C:328, 0: No space allowed after keyword argument assignment
+        event_timeslots = TimeSlots.objects.filter(event= self.event1,user = self.organizer)
+                                                        ^ (bad-whitespace)
+C:328, 0: Exactly one space required after comma
+        event_timeslots = TimeSlots.objects.filter(event= self.event1,user = self.organizer)
+                                                                     ^ (bad-whitespace)
+C:328, 0: No space allowed around keyword argument assignment
+        event_timeslots = TimeSlots.objects.filter(event= self.event1,user = self.organizer)
+                                                                           ^ (bad-whitespace)
+C:330, 0: No space allowed around keyword argument assignment
+        q = TimeSlots.objects.filter(event = self.event1, user = self.organizer)
+                                           ^ (bad-whitespace)
+C:330, 0: No space allowed around keyword argument assignment
+        q = TimeSlots.objects.filter(event = self.event1, user = self.organizer)
+                                                               ^ (bad-whitespace)
+C:335, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:337, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:338, 0: Exactly one space required after comma
+                self.assertNotIn(key,d)
+                                    ^ (bad-whitespace)
+C:348, 0: No space allowed around keyword argument assignment
+        self.event1 = Events.objects.create(event_name = "testEvent",
+                                                       ^ (bad-whitespace)
+C:349, 0: Wrong continued indentation (add 9 spaces).
+                                   time_range_start = time_range_start,
+                                   ^        | (bad-continuation)
+C:349, 0: No space allowed around keyword argument assignment
+                                   time_range_start = time_range_start,
+                                                    ^ (bad-whitespace)
+C:350, 0: Wrong continued indentation (add 9 spaces).
+                                   time_range_end = time_range_end,
+                                   ^        | (bad-continuation)
+C:350, 0: No space allowed around keyword argument assignment
+                                   time_range_end = time_range_end,
+                                                  ^ (bad-whitespace)
+C:351, 0: Wrong continued indentation (add 9 spaces).
+                                   deadline = deadline,
+                                   ^        | (bad-continuation)
+C:351, 0: No space allowed around keyword argument assignment
+                                   deadline = deadline,
+                                            ^ (bad-whitespace)
+C:352, 0: Wrong continued indentation (add 9 spaces).
+                                   duration = thirty_mins*2)
+                                   ^        | (bad-continuation)
+C:352, 0: No space allowed around keyword argument assignment
+                                   duration = thirty_mins*2)
+                                            ^ (bad-whitespace)
+C:353, 0: No space allowed around keyword argument assignment
+        self.timeslot1 = TimeSlots.objects.create(event = self.event1,
+                                                        ^ (bad-whitespace)
+C:354, 0: Wrong continued indentation (add 1 space).
+                                                 user = self.organizer,
+                                                 ^| (bad-continuation)
+C:354, 0: No space allowed around keyword argument assignment
+                                                 user = self.organizer,
+                                                      ^ (bad-whitespace)
+C:355, 0: Wrong continued indentation (add 1 space).
+                                                 time_slot_start = datetime.datetime(2018, 2, 10, 2, 0, 0, 0))
+                                                 ^| (bad-continuation)
+C:355, 0: Line too long (110/100) (line-too-long)
+C:355, 0: No space allowed around keyword argument assignment
+                                                 time_slot_start = datetime.datetime(2018, 2, 10, 2, 0, 0, 0))
+                                                                 ^ (bad-whitespace)
+C:356, 0: No space allowed around keyword argument assignment
+        self.timeslot2 = TimeSlots.objects.create(event = self.event1,
+                                                        ^ (bad-whitespace)
+C:357, 0: Wrong continued indentation (add 1 space).
+                                                 user = self.organizer,
+                                                 ^| (bad-continuation)
+C:357, 0: No space allowed around keyword argument assignment
+                                                 user = self.organizer,
+                                                      ^ (bad-whitespace)
+C:358, 0: Wrong continued indentation (add 1 space).
+                                                 time_slot_start = datetime.datetime(2018, 2, 10, 2, 30, 0, 0))
+                                                 ^| (bad-continuation)
+C:358, 0: Line too long (111/100) (line-too-long)
+C:358, 0: No space allowed around keyword argument assignment
+                                                 time_slot_start = datetime.datetime(2018, 2, 10, 2, 30, 0, 0))
+                                                                 ^ (bad-whitespace)
+C:359, 0: No space allowed around keyword argument assignment
+        self.timeslot2 = TimeSlots.objects.create(event = self.event1,
+                                                        ^ (bad-whitespace)
+C:360, 0: Wrong continued indentation (add 1 space).
+                                                 user = self.organizer,
+                                                 ^| (bad-continuation)
+C:360, 0: No space allowed around keyword argument assignment
+                                                 user = self.organizer,
+                                                      ^ (bad-whitespace)
+C:361, 0: Wrong continued indentation (add 1 space).
+                                                 time_slot_start = datetime.datetime(2018, 2, 10, 3, 0, 0, 0))
+                                                 ^| (bad-continuation)
+C:361, 0: Line too long (110/100) (line-too-long)
+C:361, 0: No space allowed around keyword argument assignment
+                                                 time_slot_start = datetime.datetime(2018, 2, 10, 3, 0, 0, 0))
+                                                                 ^ (bad-whitespace)
+C:363, 0: Wrong continued indentation (add 18 spaces).
+      	"2018-02-10 02:30:00": "Selected",
+       ^                 | (bad-continuation)
+C:364, 0: Wrong continued indentation (add 18 spaces).
+      	"2018-02-10 03:00:00": "Selected",
+       ^                 | (bad-continuation)
+C:365, 0: Wrong continued indentation (add 18 spaces).
+      	"2018-02-10 03:30:00": "Blank",
+       ^                 | (bad-continuation)
+C:366, 0: Wrong continued indentation (add 18 spaces).
+      	"2018-02-10 04:00:00": "Blank",
+       ^                 | (bad-continuation)
+C:367, 0: Wrong continued indentation (add 17 spaces).
+        "2018-02-10 04:30:00": "Blank",
+        ^                | (bad-continuation)
+C:368, 0: Wrong continued indentation (add 18 spaces).
+      	"2018-02-10 05:00:00": "Blank",
+       ^                 | (bad-continuation)
+C:369, 0: Wrong continued indentation (add 17 spaces).
+        "2018-02-10 05:30:00": "Blank",}
+        ^                | (bad-continuation)
+C:370, 0: Line too long (105/100) (line-too-long)
+C:383, 0: No space allowed around keyword argument assignment
+        self.event1 = Events.objects.create(event_name = "testEvent",
+                                                       ^ (bad-whitespace)
+C:384, 0: Wrong continued indentation (add 9 spaces).
+                                   time_range_start = time_range_start,
+                                   ^        | (bad-continuation)
+C:384, 0: No space allowed around keyword argument assignment
+                                   time_range_start = time_range_start,
+                                                    ^ (bad-whitespace)
+C:385, 0: Wrong continued indentation (add 9 spaces).
+                                   time_range_end = time_range_end,
+                                   ^        | (bad-continuation)
+C:385, 0: No space allowed around keyword argument assignment
+                                   time_range_end = time_range_end,
+                                                  ^ (bad-whitespace)
+C:386, 0: Wrong continued indentation (add 9 spaces).
+                                   deadline = deadline,
+                                   ^        | (bad-continuation)
+C:386, 0: No space allowed around keyword argument assignment
+                                   deadline = deadline,
+                                            ^ (bad-whitespace)
+C:387, 0: Wrong continued indentation (add 9 spaces).
+                                   duration = thirty_mins*2)
+                                   ^        | (bad-continuation)
+C:387, 0: No space allowed around keyword argument assignment
+                                   duration = thirty_mins*2)
+                                            ^ (bad-whitespace)
+C:388, 0: No space allowed around keyword argument assignment
+        self.timeslot1 = TimeSlots.objects.create(event = self.event1,
+                                                        ^ (bad-whitespace)
+C:389, 0: No space allowed around keyword argument assignment
+                                                  user = self.organizer,
+                                                       ^ (bad-whitespace)
+C:390, 0: Line too long (111/100) (line-too-long)
+C:390, 0: No space allowed around keyword argument assignment
+                                                  time_slot_start = datetime.datetime(2018, 2, 10, 2, 0, 0, 0))
+                                                                  ^ (bad-whitespace)
+C:391, 0: No space allowed around keyword argument assignment
+        self.timeslot2 = TimeSlots.objects.create(event = self.event1,
+                                                        ^ (bad-whitespace)
+C:392, 0: No space allowed around keyword argument assignment
+                                                  user = self.organizer,
+                                                       ^ (bad-whitespace)
+C:393, 0: Line too long (112/100) (line-too-long)
+C:393, 0: No space allowed around keyword argument assignment
+                                                  time_slot_start = datetime.datetime(2018, 2, 10, 2, 30, 0, 0))
+                                                                  ^ (bad-whitespace)
+C:394, 0: No space allowed around keyword argument assignment
+        self.timeslot2 = TimeSlots.objects.create(event = self.event1,
+                                                        ^ (bad-whitespace)
+C:395, 0: No space allowed around keyword argument assignment
+                                                  user = self.organizer,
+                                                       ^ (bad-whitespace)
+C:396, 0: Line too long (111/100) (line-too-long)
+C:396, 0: No space allowed around keyword argument assignment
+                                                  time_slot_start = datetime.datetime(2018, 2, 10, 3, 0, 0, 0))
+                                                                  ^ (bad-whitespace)
+C:398, 0: Wrong continued indentation (add 18 spaces).
+      	"2018-02-10 02:30:00": "Selected",
+       ^                 | (bad-continuation)
+C:399, 0: Wrong continued indentation (add 18 spaces).
+      	"2018-02-10 03:00:00": "Selected",
+       ^                 | (bad-continuation)
+C:400, 0: Wrong continued indentation (add 18 spaces).
+      	"2018-02-10 03:30:00": "Blank",
+       ^                 | (bad-continuation)
+C:401, 0: Wrong continued indentation (add 18 spaces).
+      	"2018-02-10 04:00:00": "Blank",
+       ^                 | (bad-continuation)
+C:402, 0: Wrong continued indentation (add 17 spaces).
+        "2018-02-10 04:30:00": "Blank",
+        ^                | (bad-continuation)
+C:403, 0: Wrong continued indentation (add 18 spaces).
+      	"2018-02-10 05:00:00": "Blank",
+       ^                 | (bad-continuation)
+C:404, 0: Wrong continued indentation (add 17 spaces).
+        "2018-02-10 05:30:00": "Selected",}
+        ^                | (bad-continuation)
+C:405, 0: Line too long (108/100) (line-too-long)
+C:406, 0: Exactly one space required after comma
+                                    json.dumps(modified_json),content_type="application/json")
+                                                             ^ (bad-whitespace)
+C:407, 0: No space allowed after keyword argument assignment
+        event_timeslots = TimeSlots.objects.filter(event= self.event1,user = self.organizer)
+                                                        ^ (bad-whitespace)
+C:407, 0: Exactly one space required after comma
+        event_timeslots = TimeSlots.objects.filter(event= self.event1,user = self.organizer)
+                                                                     ^ (bad-whitespace)
+C:407, 0: No space allowed around keyword argument assignment
+        event_timeslots = TimeSlots.objects.filter(event= self.event1,user = self.organizer)
+                                                                           ^ (bad-whitespace)
+C:409, 0: No space allowed around keyword argument assignment
+        q = TimeSlots.objects.filter(event = self.event1, user = self.organizer)
+                                           ^ (bad-whitespace)
+C:409, 0: No space allowed around keyword argument assignment
+        q = TimeSlots.objects.filter(event = self.event1, user = self.organizer)
+                                                               ^ (bad-whitespace)
+C:414, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:416, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:417, 0: Exactly one space required after comma
+                self.assertNotIn(key,d)
+                                    ^ (bad-whitespace)
+C:430, 0: Line too long (108/100) (line-too-long)
+C:450, 0: Wrong continued indentation (remove 1 space).
+                     }
+                    |^ (bad-continuation)
+C:465, 0: Line too long (117/100) (line-too-long)
+C:468, 0: Line too long (113/100) (line-too-long)
+C:  1, 0: Missing module docstring (missing-docstring)
+W:  7, 0: Wildcard import views (wildcard-import)
+C: 11, 0: Invalid class name "viewTestCase" (invalid-name)
+C: 11, 0: Missing class docstring (missing-docstring)
+R: 11, 0: Too many instance attributes (12/7) (too-many-instance-attributes)
+E: 33,21: Class 'Events' has no 'objects' member (no-member)
+E: 39,31: Class 'EventUser' has no 'objects' member (no-member)
+E: 42,34: Class 'EventUser' has no 'objects' member (no-member)
+E: 45,34: Class 'EventUser' has no 'objects' member (no-member)
+E: 48,24: Class 'TimeSlots' has no 'objects' member (no-member)
+E: 51,25: Class 'TimeSlots' has no 'objects' member (no-member)
+E: 54,25: Class 'TimeSlots' has no 'objects' member (no-member)
+E:143,16: Class 'Events' has no 'objects' member (no-member)
+E:149,24: Class 'AbortMessage' has no 'objects' member (no-member)
+E:171,16: Class 'Events' has no 'objects' member (no-member)
+E:200,16: Class 'Events' has no 'objects' member (no-member)
+W:295, 8: Redefining name 'json' from outer scope (line 7) (redefined-outer-name)
+E:288,22: Class 'Events' has no 'objects' member (no-member)
+W:296,12: Unused variable 'key' (unused-variable)
+W:332,12: Redefining name 'Q' from outer scope (line 7) (redefined-outer-name)
+E:307,22: Class 'Events' has no 'objects' member (no-member)
+E:328,26: Class 'TimeSlots' has no 'objects' member (no-member)
+C:330, 8: Invalid variable name "q" (invalid-name)
+E:330,12: Class 'TimeSlots' has no 'objects' member (no-member)
+C:331, 8: Invalid variable name "d" (invalid-name)
+C:332,12: Invalid variable name "Q" (invalid-name)
+W:326, 8: Unused variable 'response' (unused-variable)
+W:328, 8: Unused variable 'event_timeslots' (unused-variable)
+W:372, 8: Redefining name 'json' from outer scope (line 7) (redefined-outer-name)
+E:348,22: Class 'Events' has no 'objects' member (no-member)
+E:353,25: Class 'TimeSlots' has no 'objects' member (no-member)
+E:356,25: Class 'TimeSlots' has no 'objects' member (no-member)
+E:359,25: Class 'TimeSlots' has no 'objects' member (no-member)
+W:411,12: Redefining name 'Q' from outer scope (line 7) (redefined-outer-name)
+E:383,22: Class 'Events' has no 'objects' member (no-member)
+E:388,25: Class 'TimeSlots' has no 'objects' member (no-member)
+E:391,25: Class 'TimeSlots' has no 'objects' member (no-member)
+E:394,25: Class 'TimeSlots' has no 'objects' member (no-member)
+E:407,26: Class 'TimeSlots' has no 'objects' member (no-member)
+C:409, 8: Invalid variable name "q" (invalid-name)
+E:409,12: Class 'TimeSlots' has no 'objects' member (no-member)
+C:410, 8: Invalid variable name "d" (invalid-name)
+C:411,12: Invalid variable name "Q" (invalid-name)
+W:405, 8: Unused variable 'response' (unused-variable)
+W:407, 8: Unused variable 'event_timeslots' (unused-variable)
+W:288, 8: Attribute 'event1' defined outside __init__ (attribute-defined-outside-init)
+W:307, 8: Attribute 'event1' defined outside __init__ (attribute-defined-outside-init)
+W:348, 8: Attribute 'event1' defined outside __init__ (attribute-defined-outside-init)
+W:383, 8: Attribute 'event1' defined outside __init__ (attribute-defined-outside-init)
+R: 11, 0: Too many public methods (25/20) (too-many-public-methods)
+C:427, 0: Missing class docstring (missing-docstring)
+W:  7, 0: Unused import sys from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import re from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import index from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import organize_index from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import participate_index from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import create_event from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import create_publish from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import abort_event_detail from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import abort_event_result from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import delete_event from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import pending from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import on_going from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import make_decision_detail from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import make_decision_results from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import make_decision_json from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import make_decision from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import make_decision_render from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import show_decision_result from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import Home from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import update_profile from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import webLogout from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import select_timeslots from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import modify_timeslots from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import read_timeslots from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import initialize_timeslots from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import select_publish from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import select_publish_render from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import modify_timeslots_read from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import modify_timeslots_update from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import testsendemail from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import HttpResponse from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import HttpResponseRedirect from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import generic from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import render from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import get_object_or_404 from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import redirect from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import Paginator from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import EmptyPage from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import PageNotAnInteger from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import login_required from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import logout from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import transaction from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import Profile from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import UserForm from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import ProfileForm from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import EventForm from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import InvitationForm from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import AbortForm from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import messages from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import Q from wildcard import (unused-wildcard-import)
+W:  7, 0: Unused import send_mail from wildcard import (unused-wildcard-import)
+C:  3, 0: external import "from django.contrib.auth.models import User" should be placed before "from .models import Events, TimeSlots, EventUser" (wrong-import-order)
+C:  4, 0: external import "from django.utils import timezone" should be placed before "from .models import Events, TimeSlots, EventUser" (wrong-import-order)
+C:  5, 0: standard import "import datetime" should be placed before "from django.test import TestCase" (wrong-import-order)
+C:  6, 0: external import "from django.test import Client" should be placed before "from .models import Events, TimeSlots, EventUser" (wrong-import-order)
+C:  8, 0: standard import "import ast" should be placed before "from django.test import TestCase" (wrong-import-order)
+************* Module manage_event.forms
+C: 45, 0: Line too long (101/100) (line-too-long)
+C:  1, 0: Missing module docstring (missing-docstring)
+C: 11, 0: Missing class docstring (missing-docstring)
+C: 24, 0: Missing class docstring (missing-docstring)
+C: 25, 4: Missing class docstring (missing-docstring)
+R: 25, 4: Too few public methods (0/2) (too-few-public-methods)
+C: 30, 0: Missing class docstring (missing-docstring)
+C: 31, 4: Missing class docstring (missing-docstring)
+R: 31, 4: Too few public methods (0/2) (too-few-public-methods)
+C: 36, 0: Missing class docstring (missing-docstring)
+C: 37, 4: Missing class docstring (missing-docstring)
+R: 37, 4: Too few public methods (0/2) (too-few-public-methods)
+C: 42, 0: Missing class docstring (missing-docstring)
+C: 43, 4: Missing class docstring (missing-docstring)
+R: 43, 4: Too few public methods (0/2) (too-few-public-methods)
+C:  7, 0: standard import "import datetime" should be placed before "from django.contrib.auth.models import User" (wrong-import-order)
+C:  8, 0: standard import "import re" should be placed before "from django.contrib.auth.models import User" (wrong-import-order)
+C:  3, 0: Imports from package django are not grouped (ungrouped-imports)
+************* Module manage_event.admin
+C:  1, 0: Missing module docstring (missing-docstring)
+************* Module manage_event.tests
+C: 40, 0: Wrong hanging indentation (remove 4 spaces).
+                'event': event,
+            |   ^ (bad-continuation)
+C: 41, 0: Wrong hanging indentation (remove 4 spaces).
+                'eventuser': eventuser
+            |   ^ (bad-continuation)
+C:  1, 0: Missing module docstring (missing-docstring)
+W:  2, 0: Wildcard import models (wildcard-import)
+C:  8, 0: Invalid constant name "user_data" (invalid-name)
+C: 13, 0: Invalid constant name "event_data" (invalid-name)
+C: 21, 0: Invalid constant name "timeslots_data" (invalid-name)
+C: 30, 0: Missing class docstring (missing-docstring)
+C: 36, 4: Missing method docstring (missing-docstring)
+E: 36, 4: Method should have "self" as first argument (no-self-argument)
+E: 37,16: Class 'Events' has no 'objects' member (no-member)
+E: 38,20: Class 'EventUser' has no 'objects' member (no-member)
+C: 50, 0: Missing class docstring (missing-docstring)
+C: 52, 4: Missing method docstring (missing-docstring)
+R: 52, 4: Method could be a function (no-self-use)
+W:  2, 0: Unused import datetime from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import Profile from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import create_user_profile from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import save_user_profile from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import AbortMessage from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import TimeSlots from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import models from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import timezone from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import User from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import post_save from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import receiver from wildcard import (unused-wildcard-import)
+W:  4, 0: Unused ValidationError imported from django.core.exceptions (unused-import)
+C:  3, 0: external import "from django.test import Client" should be placed before "from .models import *" (wrong-import-order)
+C:  4, 0: external import "from django.core.exceptions import ValidationError" should be placed before "from .models import *" (wrong-import-order)
+************* Module manage_event.urls
+C: 15, 0: Line too long (114/100) (line-too-long)
+C: 16, 0: Line too long (117/100) (line-too-long)
+C: 17, 0: Line too long (114/100) (line-too-long)
+C: 18, 0: Line too long (114/100) (line-too-long)
+C: 19, 0: Line too long (108/100) (line-too-long)
+C: 20, 0: Line too long (108/100) (line-too-long)
+C: 24, 0: Line too long (102/100) (line-too-long)
+C: 25, 0: Line too long (102/100) (line-too-long)
+C: 29, 0: Line too long (117/100) (line-too-long)
+C: 29, 0: Exactly one space required after comma
+    url(r'^(?P<event_id>[0-9]+)/modify_timeslots_read/$',views.modify_timeslots_read, name= "modify_timeslots_read"),
+                                                        ^ (bad-whitespace)
+C: 29, 0: No space allowed after keyword argument assignment
+    url(r'^(?P<event_id>[0-9]+)/modify_timeslots_read/$',views.modify_timeslots_read, name= "modify_timeslots_read"),
+                                                                                          ^ (bad-whitespace)
+C: 33, 0: Line too long (108/100) (line-too-long)
+C: 35, 0: Line too long (114/100) (line-too-long)
+C: 36, 0: Line too long (123/100) (line-too-long)
+C: 37, 0: Line too long (117/100) (line-too-long)
+C: 39, 0: Line too long (115/100) (line-too-long)
+C:  1, 0: Missing module docstring (missing-docstring)
+C:  5, 0: Invalid constant name "app_name" (invalid-name)
+C:  6, 0: Invalid constant name "urlpatterns" (invalid-name)
+************* Module manage_event.views
+C: 56, 0: Line too long (164/100) (line-too-long)
+C: 58, 0: No space allowed around keyword argument assignment
+                                                    Q(status = 'Available'),
+                                                             ^ (bad-whitespace)
+C: 62, 0: No space allowed around keyword argument assignment
+                                           Q(status = 'Available'),
+                                                    ^ (bad-whitespace)
+C: 65, 0: No space allowed around keyword argument assignment
+                                          Q(final_time_start__isnull=False) | Q(status = 'Abort'))
+                                                                                       ^ (bad-whitespace)
+C: 86, 0: Line too long (108/100) (line-too-long)
+C: 86, 0: No space allowed around keyword argument assignment
+        if TimeSlots.objects.filter(user=request.user).filter(event_id = participate_event_id).count() == 0:
+                                                                       ^ (bad-whitespace)
+C: 87, 0: Line too long (103/100) (line-too-long)
+C: 92, 0: Line too long (141/100) (line-too-long)
+C: 92, 0: No space allowed around keyword argument assignment
+    event_to_do = Events.objects.filter(id__in = to_do_events_id).filter(status = 'Available').filter(deadline__gte= datetime.datetime.now())
+                                               ^ (bad-whitespace)
+C: 92, 0: No space allowed around keyword argument assignment
+    event_to_do = Events.objects.filter(id__in = to_do_events_id).filter(status = 'Available').filter(deadline__gte= datetime.datetime.now())
+                                                                                ^ (bad-whitespace)
+C: 92, 0: No space allowed after keyword argument assignment
+    event_to_do = Events.objects.filter(id__in = to_do_events_id).filter(status = 'Available').filter(deadline__gte= datetime.datetime.now())
+                                                                                                                   ^ (bad-whitespace)
+C: 93, 0: Line too long (138/100) (line-too-long)
+C: 93, 0: No space allowed around keyword argument assignment
+    event_done = Events.objects.filter(id__in = done_events_id).filter(status = 'Available').filter(deadline__gte=datetime.datetime.now())
+                                              ^ (bad-whitespace)
+C: 93, 0: No space allowed around keyword argument assignment
+    event_done = Events.objects.filter(id__in = done_events_id).filter(status = 'Available').filter(deadline__gte=datetime.datetime.now())
+                                                                              ^ (bad-whitespace)
+C: 95, 0: No space allowed around keyword argument assignment
+                                         Q(final_time_start__isnull=False) | Q(status = 'Abort'))
+                                                                                      ^ (bad-whitespace)
+C: 96, 0: Line too long (190/100) (line-too-long)
+C: 96, 0: No space allowed around keyword argument assignment
+    event_pending = Events.objects.filter(id__in = participate_events_id).filter(status = 'Available').filter(deadline__lte=datetime.datetime.now()).exclude(final_time_start__isnull = False)
+                                                 ^ (bad-whitespace)
+C: 96, 0: No space allowed around keyword argument assignment
+    event_pending = Events.objects.filter(id__in = participate_events_id).filter(status = 'Available').filter(deadline__lte=datetime.datetime.now()).exclude(final_time_start__isnull = False)
+                                                                                        ^ (bad-whitespace)
+C: 96, 0: No space allowed around keyword argument assignment
+    event_pending = Events.objects.filter(id__in = participate_events_id).filter(status = 'Available').filter(deadline__lte=datetime.datetime.now()).exclude(final_time_start__isnull = False)
+                                                                                                                                                                                      ^ (bad-whitespace)
+C:120, 0: Wrong continued indentation (remove 1 space).
+                              }
+                             |^ (bad-continuation)
+C:151, 0: No space allowed around keyword argument assignment
+    if EventUser.objects.get(event = event, user= request.user).role == 'o':
+                                   ^ (bad-whitespace)
+C:151, 0: No space allowed after keyword argument assignment
+    if EventUser.objects.get(event = event, user= request.user).role == 'o':
+                                                ^ (bad-whitespace)
+C:155, 0: Line too long (113/100) (line-too-long)
+C:158, 0: Line too long (101/100) (line-too-long)
+C:162, 0: Line too long (153/100) (line-too-long)
+C:173, 0: Line too long (104/100) (line-too-long)
+C:184, 0: No space allowed after keyword argument assignment
+    timeslots = TimeSlots.objects.filter(event= event).filter(user=request.user)
+                                              ^ (bad-whitespace)
+C:243, 0: Line too long (108/100) (line-too-long)
+C:291, 0: Line too long (134/100) (line-too-long)
+C:322, 0: No space allowed around keyword argument assignment
+        message = AbortMessage.objects.get(event = event).Abort_message
+                                                 ^ (bad-whitespace)
+C:323, 0: Line too long (113/100) (line-too-long)
+C:361, 0: No space allowed around keyword argument assignment
+    if EventUser.objects.filter(user = request.user).filter(event = event).count() == 0:
+                                     ^ (bad-whitespace)
+C:361, 0: No space allowed around keyword argument assignment
+    if EventUser.objects.filter(user = request.user).filter(event = event).count() == 0:
+                                                                  ^ (bad-whitespace)
+C:362, 0: Line too long (110/100) (line-too-long)
+C:362, 0: Exactly one space required before assignment
+        event_user, create= EventUser.objects.update_or_create(event = event, user = request.user, role = "p")
+                          ^ (bad-whitespace)
+C:362, 0: No space allowed around keyword argument assignment
+        event_user, create= EventUser.objects.update_or_create(event = event, user = request.user, role = "p")
+                                                                     ^ (bad-whitespace)
+C:362, 0: No space allowed around keyword argument assignment
+        event_user, create= EventUser.objects.update_or_create(event = event, user = request.user, role = "p")
+                                                                                   ^ (bad-whitespace)
+C:362, 0: No space allowed around keyword argument assignment
+        event_user, create= EventUser.objects.update_or_create(event = event, user = request.user, role = "p")
+                                                                                                        ^ (bad-whitespace)
+C:383, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:384, 0: No space allowed after keyword argument assignment
+            user_time_slot = TimeSlots.objects.update_or_create(event= event,
+                                                                     ^ (bad-whitespace)
+C:385, 0: Wrong continued indentation (add 52 spaces).
+            user = user, time_slot_start = key)
+            ^                                                   | (bad-continuation)
+C:385, 0: No space allowed around keyword argument assignment
+            user = user, time_slot_start = key)
+                 ^ (bad-whitespace)
+C:385, 0: No space allowed around keyword argument assignment
+            user = user, time_slot_start = key)
+                                         ^ (bad-whitespace)
+C:413, 0: No space allowed after keyword argument assignment
+    timeslots = TimeSlots.objects.filter(event= event).filter(user = request.user)
+                                              ^ (bad-whitespace)
+C:413, 0: No space allowed around keyword argument assignment
+    timeslots = TimeSlots.objects.filter(event= event).filter(user = request.user)
+                                                                   ^ (bad-whitespace)
+C:426, 0: No space allowed after keyword argument assignment
+    user_timeslots = q1.filter(user= request.user)
+                                   ^ (bad-whitespace)
+C:433, 0: No space allowed around keyword argument assignment
+        if not user_timeslots.filter(time_slot_start = time):
+                                                     ^ (bad-whitespace)
+C:472, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:473, 0: No space allowed around keyword argument assignment
+            user_time_slot = TimeSlots.objects.update_or_create(event = event,
+                                                                      ^ (bad-whitespace)
+C:474, 0: Wrong continued indentation (add 52 spaces).
+            user = user, time_slot_start = key)
+            ^                                                   | (bad-continuation)
+C:474, 0: No space allowed around keyword argument assignment
+            user = user, time_slot_start = key)
+                 ^ (bad-whitespace)
+C:474, 0: No space allowed around keyword argument assignment
+            user = user, time_slot_start = key)
+                                         ^ (bad-whitespace)
+C:  1, 0: Missing module docstring (missing-docstring)
+C:  5, 0: Multiple imports on one line (datetime, json) (multiple-imports)
+C: 26, 0: Missing function docstring (missing-docstring)
+C: 47, 0: Missing function docstring (missing-docstring)
+E: 50,23: Class 'EventUser' has no 'objects' member (no-member)
+E: 57,30: Class 'Events' has no 'objects' member (no-member)
+E: 61,21: Class 'Events' has no 'objects' member (no-member)
+E: 64,20: Class 'Events' has no 'objects' member (no-member)
+C: 76, 0: Missing function docstring (missing-docstring)
+E: 78,25: Class 'EventUser' has no 'objects' member (no-member)
+E: 86,11: Class 'TimeSlots' has no 'objects' member (no-member)
+E: 92,18: Class 'Events' has no 'objects' member (no-member)
+E: 93,17: Class 'Events' has no 'objects' member (no-member)
+E: 94,19: Class 'Events' has no 'objects' member (no-member)
+E: 96,20: Class 'Events' has no 'objects' member (no-member)
+C:108, 0: Missing function docstring (missing-docstring)
+E:113,20: Class 'Events' has no 'objects' member (no-member)
+E:121,24: Class 'EventUser' has no 'objects' member (no-member)
+C:130, 0: Missing function docstring (missing-docstring)
+E:138,24: Class 'Events' has no 'objects' member (no-member)
+E:139,16: Class 'EventUser' has no 'objects' member (no-member)
+C:148, 0: Missing function docstring (missing-docstring)
+E:151, 7: Class 'EventUser' has no 'objects' member (no-member)
+E:155,16: Class 'AbortMessage' has no 'objects' member (no-member)
+C:170, 0: Missing function docstring (missing-docstring)
+E:172,14: Class 'AbortMessage' has no 'objects' member (no-member)
+C:176, 0: Missing function docstring (missing-docstring)
+W:176,17: Unused argument 'request' (unused-argument)
+W:176,26: Unused argument 'event_id' (unused-argument)
+C:181, 0: Missing function docstring (missing-docstring)
+E:184,16: Class 'TimeSlots' has no 'objects' member (no-member)
+C:186, 8: Invalid variable name "t" (invalid-name)
+C:193, 0: Missing function docstring (missing-docstring)
+E:202,24: Class 'Events' has no 'objects' member (no-member)
+E:203,16: Class 'EventUser' has no 'objects' member (no-member)
+C:232, 0: Missing function docstring (missing-docstring)
+C:239, 0: Missing function docstring (missing-docstring)
+E:242,18: Class 'AbortMessage' has no 'objects' member (no-member)
+W:252,23: Unused argument 'request' (unused-argument)
+W:295,16: Redefining built-in 'dict' (redefined-builtin)
+C:280, 0: Missing function docstring (missing-docstring)
+C:305, 0: Missing function docstring (missing-docstring)
+R:307, 4: Unnecessary "else" after "return" (no-else-return)
+C:319, 0: Missing function docstring (missing-docstring)
+R:321, 4: Unnecessary "else" after "return" (no-else-return)
+E:322,18: Class 'AbortMessage' has no 'objects' member (no-member)
+C:328, 0: Invalid function name "Home" (invalid-name)
+C:328, 0: Missing function docstring (missing-docstring)
+C:333, 0: Missing function docstring (missing-docstring)
+C:353, 0: Invalid function name "webLogout" (invalid-name)
+C:353, 0: Missing function docstring (missing-docstring)
+C:359, 0: Missing function docstring (missing-docstring)
+E:361, 7: Class 'EventUser' has no 'objects' member (no-member)
+E:362,28: Class 'EventUser' has no 'objects' member (no-member)
+W:362, 8: Unused variable 'event_user' (unused-variable)
+W:362,20: Unused variable 'create' (unused-variable)
+C:367, 0: Missing function docstring (missing-docstring)
+C:373, 0: Missing function docstring (missing-docstring)
+E:379,31: Undefined variable 's' (undefined-variable)
+E:384,29: Class 'TimeSlots' has no 'objects' member (no-member)
+W:384,12: Unused variable 'user_time_slot' (unused-variable)
+C:389, 0: Missing function docstring (missing-docstring)
+W:389,25: Unused argument 'request' (unused-argument)
+W:407, 4: Redefining built-in 'dict' (redefined-builtin)
+C:405, 0: Missing function docstring (missing-docstring)
+W:405,28: Unused argument 'event_id' (unused-argument)
+C:411, 0: Missing function docstring (missing-docstring)
+E:413,16: Class 'TimeSlots' has no 'objects' member (no-member)
+C:415, 8: Invalid variable name "t" (invalid-name)
+C:421, 0: Missing function docstring (missing-docstring)
+C:425, 4: Invalid variable name "q1" (invalid-name)
+E:425, 9: Class 'TimeSlots' has no 'objects' member (no-member)
+C:444, 0: Missing function docstring (missing-docstring)
+C:447, 4: Invalid variable name "q1" (invalid-name)
+E:447, 9: Class 'TimeSlots' has no 'objects' member (no-member)
+E:473,29: Class 'TimeSlots' has no 'objects' member (no-member)
+W:473,12: Unused variable 'user_time_slot' (unused-variable)
+C:478, 0: Missing function docstring (missing-docstring)
+W:  3, 0: Unused generic imported from django.views (unused-import)
+W:  4, 0: Unused timezone imported from django.utils (unused-import)
+W:  6, 0: Unused import sys (unused-import)
+W:  7, 0: Unused import re (unused-import)
+W:  8, 0: Unused redirect imported from django.shortcuts (unused-import)
+W:  9, 0: Unused Paginator imported from django.core.paginator (unused-import)
+W:  9, 0: Unused EmptyPage imported from django.core.paginator (unused-import)
+W:  9, 0: Unused PageNotAnInteger imported from django.core.paginator (unused-import)
+W: 14, 0: Unused Profile imported from models (unused-import)
+C:  5, 0: standard import "import datetime, json" should be placed before "from django.http import HttpResponse, HttpResponseRedirect" (wrong-import-order)
+C:  5, 0: standard import "import datetime, json" should be placed before "from django.http import HttpResponse, HttpResponseRedirect" (wrong-import-order)
+C:  6, 0: standard import "import sys" should be placed before "from django.http import HttpResponse, HttpResponseRedirect" (wrong-import-order)
+C:  7, 0: standard import "import re" should be placed before "from django.http import HttpResponse, HttpResponseRedirect" (wrong-import-order)
+C: 18, 0: external import "from django.contrib import messages" should be placed before "from .models import Profile" (wrong-import-order)
+C: 19, 0: external import "from django.utils.translation import ugettext_lazy as _" should be placed before "from .models import Profile" (wrong-import-order)
+C: 20, 0: external import "from django.db.models import Q" should be placed before "from .models import Profile" (wrong-import-order)
+C: 22, 0: external import "from django.core.mail import send_mail" should be placed before "from .models import Profile" (wrong-import-order)
+************* Module manage_event.migrations.0001_initial
+C: 23, 0: Line too long (114/100) (line-too-long)
+C: 39, 0: Line too long (114/100) (line-too-long)
+C: 40, 0: Line too long (122/100) (line-too-long)
+C: 41, 0: Line too long (116/100) (line-too-long)
+C: 42, 0: Line too long (129/100) (line-too-long)
+C: 48, 0: Line too long (114/100) (line-too-long)
+C: 52, 0: Line too long (121/100) (line-too-long)
+C: 58, 0: Line too long (114/100) (line-too-long)
+C: 60, 0: Line too long (116/100) (line-too-long)
+C: 61, 0: Line too long (129/100) (line-too-long)
+C:  1, 0: Invalid module name "0001_initial" (invalid-name)
+C:  1, 0: Missing module docstring (missing-docstring)
+C: 11, 0: Missing class docstring (missing-docstring)
+************* Module manage_event.migrations.0004_abortmessage
+C: 19, 0: Line too long (114/100) (line-too-long)
+C: 21, 0: Line too long (116/100) (line-too-long)
+C:  1, 0: Invalid module name "0004_abortmessage" (invalid-name)
+C:  1, 0: Missing module docstring (missing-docstring)
+C:  9, 0: Missing class docstring (missing-docstring)
+************* Module manage_event.migrations.0005_auto_20171130_2119
+C:  1, 0: Invalid module name "0005_auto_20171130_2119" (invalid-name)
+C:  1, 0: Missing module docstring (missing-docstring)
+C:  8, 0: Missing class docstring (missing-docstring)
+************* Module manage_event.migrations.0003_auto_20171128_2240
+C:  1, 0: Invalid module name "0003_auto_20171128_2240" (invalid-name)
+C:  1, 0: Missing module docstring (missing-docstring)
+C:  9, 0: Missing class docstring (missing-docstring)
+************* Module manage_event.migrations.0002_auto_20171114_1601
+C: 18, 0: Line too long (114/100) (line-too-long)
+C:  1, 0: Invalid module name "0002_auto_20171114_1601" (invalid-name)
+C:  1, 0: Missing module docstring (missing-docstring)
+C:  8, 0: Missing class docstring (missing-docstring)
+R:  1, 0: Similar lines in 2 files
+==manage_event.test_forms:13
+==manage_event.test_views:443
+        self.data = {'event_name': 'shadow',
+                     'time_range_start': self.time_now + 2 * self.time_delta,
+                     'time_range_end': self.time_now + 4 * self.time_delta,
+                     'duration': self.time_delta,
+                     'deadline': self.time_now + self.time_delta,
+                     'info': '',
+                     }
+ (duplicate-code)
+
+------------------------------------
+Your code has been rated at -0.67/10
