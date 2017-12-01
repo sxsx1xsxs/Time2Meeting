@@ -76,7 +76,6 @@ class EventForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(EventForm, self).clean()
-        print(cleaned_data)
         time_range_start = cleaned_data.get('time_range_start')
         time_range_end = cleaned_data.get('time_range_end')
         duration = cleaned_data.get('duration')
