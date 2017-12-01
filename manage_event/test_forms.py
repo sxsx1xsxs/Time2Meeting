@@ -3,9 +3,13 @@ from .forms import *
 
 
 class EventFormTestCase(TestCase):
+    """
+    This module is for testing forms.py
+    """
     def setUp(self):
         """
-           Setup time_delta, time_now, max_time_range for manipulating data, then set up a valid form data.
+           Setup time_delta, time_now, max_time_range for manipulating data,
+           then set up a valid form data.
         """
         self.time_delta = datetime.timedelta(hours=1)
         self.time_now = datetime.datetime.now()
@@ -16,16 +20,15 @@ class EventFormTestCase(TestCase):
                      'time_range_end': self.time_now + 4 * self.time_delta,
                      'duration': self.time_delta,
                      'deadline': self.time_now + self.time_delta,
-                     'info': '',
-                     }
+                     'info': ''}
 
     def test_clean_with_duration_greater_than_time_range(self):
         """
-            clean() raises error 'duration error' for form whose duration is greater than time range while time range
-            is positive.
+            clean() raises error 'duration error' for form whose duration is
+            greater than time range while time range is positive.
         """
         new_data = self.data
-        new_data['duration'] = new_data['time_range_end']-new_data['time_range_start'] + self.time_delta
+        new_data['duration'] = new_data['time_range_end'] - new_data['time_range_start'] + self.time_delta
         form = EventForm(new_data)
 
         self.assertFalse(form.is_valid())
@@ -36,7 +39,8 @@ class EventFormTestCase(TestCase):
 
     def test_clean_with_time_range_end_earlier_than_or_equal_to_time_range_start(self):
         """
-            clean() raises error 'end error' for form whose time range end is earlier than or equal to time range start.
+            clean() raises error 'end error' for form whose time range end is earlier than
+            or equal to time range start.
         """
         new_data1 = self.data
         new_data1['time_range_end'] = new_data1['time_range_start'] - self.time_delta
@@ -60,7 +64,8 @@ class EventFormTestCase(TestCase):
 
     def test_clean_with_time_range_start_earlier_than_or_equal_to_deadline(self):
         """
-            clean() raises error 'start error' for form whose time range start is earlier than or equal to deadline.
+            clean() raises error 'start error' for form whose time range start
+            is earlier than or equal to deadline.
         """
         new_data1 = self.data
         new_data1['time_range_start'] = new_data1['deadline'] - self.time_delta
@@ -84,7 +89,8 @@ class EventFormTestCase(TestCase):
 
     def test_clean_with_deadline_earlier_than_or_equal_to_now(self):
         """
-            clean() raises error 'deadline error' for form whose deadline is earlier than or equal to now.
+            clean() raises error 'deadline error' for form whose deadline
+            is earlier than or equal to now.
         """
         new_data1 = self.data
         new_data1['deadline'] = self.time_now - self.time_delta
@@ -108,7 +114,8 @@ class EventFormTestCase(TestCase):
 
     def test_clean_with_time_range_greater_than_max_time_range(self):
         """
-            clean() raises error 'time range error' for form whose time range is greater than max time range.
+            clean() raises error 'time range error' for form whose time range
+            is greater than max time range.
         """
         new_data = self.data
         new_data['time_range_end'] = new_data['time_range_start'] + self.max_time_range + self.time_delta
