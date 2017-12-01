@@ -356,28 +356,7 @@ def modify_timeslots(request, event_id):
 @login_required
 def read_timeslots(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    # user = request.user.email
-    # user = Users.objects.create(pk = "qimenghan77@gmail.com", user_name = "qimeng")
-    # user.save()
     user = request.user
-    """
-    Read the Json file includes user selection information and update the database
-    """
-
-    s = """{
-  	"2017-10-10 18:30:00": "Selected",
-  	"2017-10-10 19:00:00": "Blank",
-  	"2017-10-11 18:30:00": "Selected",
-  	"2017-10-11 19:00:00": "Blank",
-  	"2017-10-12 18:30:00": "Selected",
-  	"2017-10-12 19:00:00": "Blank",
-  	"2017-10-13 18:30:00": "Selected",
-  	"2017-10-13 19:00:00": "Blank",
-  	"2017-10-14 18:30:00": "Selected",
-  	"2017-10-14 19:00:00": "Blank",
-  	"2017-10-15 18:30:00": "Selected",
-  	"2017-10-15 19:00:00": "Blank"
-      }"""
     if request.method == 'POST':
         json_data = json.loads(request.body)
     if request.method == 'GET':
@@ -437,8 +416,7 @@ def modify_timeslots_read(request, event_id):
     while time < time_range_end:
         if not user_timeslots.filter(time_slot_start = time):
             user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
-            print(time.strftime("%Y-%m-%d %H:%M:%S"))
-            print(user_data[time.strftime("%Y-%m-%d %H:%M:%S")])
+
         else:
             user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Selected"
         time += thirty_mins
@@ -458,23 +436,22 @@ def modify_timeslots_update(request, event_id):
         json_data = json.loads(request.body)
         dict_data = json_data
 
-    if request.method == 'GET':
-        s = """{
-      	"2017-10-10 18:30:00": "Blank",
-      	"2017-10-10 19:00:00": "Blank",
-      	"2017-10-11 18:30:00": "Blank",
-      	"2017-10-11 19:00:00": "Blank",
-      	"2017-10-12 18:30:00": "Selected",
-      	"2017-10-12 19:00:00": "Selected",
-      	"2017-10-13 18:30:00": "Selected",
-      	"2017-10-13 19:00:00": "Blank",
-      	"2017-10-14 18:30:00": "Selected",
-      	"2017-10-14 19:00:00": "Blank",
-      	"2017-10-15 18:30:00": "Selected",
-      	"2017-10-15 19:00:00": "Blank"
-          }"""
-        dict_data = json.loads(s)
-    #print(TimeSlots.objects.all())
+    # if request.method == 'GET':
+    #     s = """{
+    #   	"2017-10-10 18:30:00": "Blank",
+    #   	"2017-10-10 19:00:00": "Blank",
+    #   	"2017-10-11 18:30:00": "Blank",
+    #   	"2017-10-11 19:00:00": "Blank",
+    #   	"2017-10-12 18:30:00": "Selected",
+    #   	"2017-10-12 19:00:00": "Selected",
+    #   	"2017-10-13 18:30:00": "Selected",
+    #   	"2017-10-13 19:00:00": "Blank",
+    #   	"2017-10-14 18:30:00": "Selected",
+    #   	"2017-10-14 19:00:00": "Blank",
+    #   	"2017-10-15 18:30:00": "Selected",
+    #   	"2017-10-15 19:00:00": "Blank"
+    #       }"""
+    #     dict_data = json.loads(s)
     for key, value in dict_data.items():
         if (value == "Selected"):
             user_time_slot = TimeSlots.objects.update_or_create(event = event,
