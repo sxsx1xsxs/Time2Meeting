@@ -1,8 +1,3 @@
-************* 
-F:  1, 0: error while code parsing: Unable to load file /Users/Shadow/Desktop/Time2Meeting/__init__.py:
-[Errno 2] No such file or directory: '/Users/Shadow/Desktop/Time2Meeting/__init__.py' (parse-error)
-(env4156) dyn-160-39-149-133:Desktop Shadow$ pylint /Users/Shadow/Desktop/Time2Meeting/manage_event 
-No config file found, using default configuration
 ************* Module manage_event.test_forms
 C:  8, 0: Line too long (107/100) (line-too-long)
 C: 20, 0: Wrong continued indentation (remove 1 space).
