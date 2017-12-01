@@ -150,14 +150,14 @@ def abort_event_detail(request, event_id):
         if request.method == 'POST':
             form = AbortForm(request.POST)
             if form.is_valid():
-                AbortMessage.objects.get_or_create(event=event, Abortion_message=form.cleaned_data['Abortion_message'])
+                AbortMessage.objects.get_or_create(event=event, Abort_message=form.cleaned_data['Abort_message'])
                 event.status = 'Abort'
                 event.save()
             return HttpResponseRedirect(reverse('manage_event:abort_event_result', args=(event_id,)))
         else:
             form = AbortForm()
             contents = {'event': event,
-                        'message': "Cautious: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abortion message.)",
+                        'message': "Cautious: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abort message.)",
                         'form': form.as_p()}
     else:
         contents = {'event': event,
@@ -167,7 +167,7 @@ def abort_event_detail(request, event_id):
 @login_required
 def abort_event_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    message = AbortMessage.objects.get(event=event).Abortion_message
+    message = AbortMessage.objects.get(event=event).Abort_message
     return render(request, 'manage_event/abort_event_result.html', {'event': event, 'message': message})
 
 @login_required
@@ -223,7 +223,7 @@ def make_decision_detail(request, event_id):
 def make_decision_results(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     if event.status == 'Abort':
-        message = AbortMessage.objects.get(event=event).Abortion_message
+        message = AbortMessage.objects.get(event=event).Abort_message
         return render(request, 'manage_event/abort_event_result.html', {'event': event, 'message': message})
     else:
         if event.final_time_end > datetime.datetime.now():
@@ -303,7 +303,7 @@ def make_decision_render(request, event_id):
 def show_decision_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     if event.status == 'Abort':
-        message = AbortMessage.objects.get(event = event).Abortion_message
+        message = AbortMessage.objects.get(event = event).Abort_message
         return render(request, 'manage_event/show_abort_event_result.html', {'event': event, 'message': message})
     else:
         return render(request, 'manage_event/show_decision_result.html', {'event': event})
