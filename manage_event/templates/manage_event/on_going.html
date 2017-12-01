@@ -2,9 +2,28 @@
 
 
 {% block head %}
+<h1>{{ event.event_name }}</h1>
+<p><i>Info: {{ event.info }}</i></p>
+<br>
+<p>Created time: {{ event.create_time }}</p>
+<p>Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
+<p>Duration: {{ event.duration }}</p>
+<p>Deadline: {{ event.deadline }}</p>
+<p>-------------------------------------------------------------</p>
+<br>
+
 <br>
 <button onclick="location.href='{% url 'manage_event:abort_event_detail' event.id %}'">Abort event</button>
 <br>
+
+<br>
+<p>Invite more friends to join the event via emails:</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Invite">
+</form>
 
 <h1>{{ event.event_name }} is on going, and the current status is: </h1>
 {% endblock %}

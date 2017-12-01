@@ -152,14 +152,14 @@ def abort_event_detail(request, event_id):
         if request.method == 'POST':
             form = AbortForm(request.POST)
             if form.is_valid():
-                AbortMessage.objects.get_or_create(event=event, Abortion_message=form.cleaned_data['Abortion_message'])
+                AbortMessage.objects.get_or_create(event=event, Abort_message=form.cleaned_data['Abort_message'])
                 event.status = 'Abort'
                 event.save()
             return HttpResponseRedirect(reverse('manage_event:abort_event_result', args=(event_id,)))
         else:
             form = AbortForm()
             contents = {'event': event,
-                        'message': "Cautious: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abortion message.)",
+                        'message': "Cautious: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abort message.)",
                         'form': form.as_p()}
     else:
         contents = {'event': event,
@@ -169,7 +169,7 @@ def abort_event_detail(request, event_id):
 @login_required
 def abort_event_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    message = AbortMessage.objects.get(event=event).Abortion_message
+    message = AbortMessage.objects.get(event=event).Abort_message
     return render(request, 'manage_event/abort_event_result.html', {'event': event, 'message': message})
 
 @login_required
@@ -192,8 +192,22 @@ def pending(request, event_id):
 @login_required
 def on_going(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    # on_going.html will call make_decision_json for data
-    return render(request, 'manage_event/on_going.html', {'event': event})
+    if request.method == 'POST':
+        form = InvitationForm(request.POST)
+        if form.is_valid():
+            emails = form.cleaned_data
+            for email in emails:
+                user_name = email.rsplit('@', 1)[0]
+                user = User.objects.get_or_create(username=user_name, email=email)[0]
+                event = Events.objects.get(pk=event_id)
+                EventUser.objects.get_or_create(user=user, event=event)
+
+                messages.success(request, _('Invite Success!'))
+                return HttpResponseRedirect(reverse('manage_event:on_going', args=(event_id,)))
+    else:
+        form = InvitationForm()
+        # on_going.html will call make_decision_json for data
+    return render(request, 'manage_event/on_going.html', {'event': event, 'form': form})
 
 def get_result(event_id):
     """
@@ -225,7 +239,7 @@ def make_decision_detail(request, event_id):
 def make_decision_results(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     if event.status == 'Abort':
-        message = AbortMessage.objects.get(event=event).Abortion_message
+        message = AbortMessage.objects.get(event=event).Abort_message
         return render(request, 'manage_event/abort_event_result.html', {'event': event, 'message': message})
     else:
         if event.final_time_end > datetime.datetime.now():
@@ -305,7 +319,7 @@ def make_decision_render(request, event_id):
 def show_decision_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     if event.status == 'Abort':
-        message = AbortMessage.objects.get(event = event).Abortion_message
+        message = AbortMessage.objects.get(event = event).Abort_message
         return render(request, 'manage_event/show_abort_event_result.html', {'event': event, 'message': message})
     else:
         return render(request, 'manage_event/show_decision_result.html', {'event': event})
@@ -358,28 +372,7 @@ def modify_timeslots(request, event_id):
 @login_required
 def read_timeslots(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    # user = request.user.email
-    # user = Users.objects.create(pk = "qimenghan77@gmail.com", user_name = "qimeng")
-    # user.save()
     user = request.user
-    """
-    Read the Json file includes user selection information and update the database
-    """
-
-    s = """{
-  	"2017-10-10 18:30:00": "Selected",
-  	"2017-10-10 19:00:00": "Blank",
-  	"2017-10-11 18:30:00": "Selected",
-  	"2017-10-11 19:00:00": "Blank",
-  	"2017-10-12 18:30:00": "Selected",
-  	"2017-10-12 19:00:00": "Blank",
-  	"2017-10-13 18:30:00": "Selected",
-  	"2017-10-13 19:00:00": "Blank",
-  	"2017-10-14 18:30:00": "Selected",
-  	"2017-10-14 19:00:00": "Blank",
-  	"2017-10-15 18:30:00": "Selected",
-  	"2017-10-15 19:00:00": "Blank"
-      }"""
     if request.method == 'POST':
         json_data = json.loads(request.body)
     if request.method == 'GET':
@@ -417,7 +410,7 @@ def select_publish(request, event_id):
 @login_required
 def select_publish_render(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    timeslots = TimeSlots.objects.filter(event= event)
+    timeslots = TimeSlots.objects.filter(event= event).filter(user = request.user)
     show_timeslots = []
     for t in timeslots:
         show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
@@ -439,8 +432,7 @@ def modify_timeslots_read(request, event_id):
     while time < time_range_end:
         if not user_timeslots.filter(time_slot_start = time):
             user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
-            print(time.strftime("%Y-%m-%d %H:%M:%S"))
-            print(user_data[time.strftime("%Y-%m-%d %H:%M:%S")])
+
         else:
             user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Selected"
         time += thirty_mins
@@ -460,23 +452,22 @@ def modify_timeslots_update(request, event_id):
         json_data = json.loads(request.body)
         dict_data = json_data
 
-    if request.method == 'GET':
-        s = """{
-      	"2017-10-10 18:30:00": "Blank",
-      	"2017-10-10 19:00:00": "Blank",
-      	"2017-10-11 18:30:00": "Blank",
-      	"2017-10-11 19:00:00": "Blank",
-      	"2017-10-12 18:30:00": "Selected",
-      	"2017-10-12 19:00:00": "Selected",
-      	"2017-10-13 18:30:00": "Selected",
-      	"2017-10-13 19:00:00": "Blank",
-      	"2017-10-14 18:30:00": "Selected",
-      	"2017-10-14 19:00:00": "Blank",
-      	"2017-10-15 18:30:00": "Selected",
-      	"2017-10-15 19:00:00": "Blank"
-          }"""
-        dict_data = json.loads(s)
-    #print(TimeSlots.objects.all())
+    # if request.method == 'GET':
+    #     s = """{
+    #   	"2017-10-10 18:30:00": "Blank",
+    #   	"2017-10-10 19:00:00": "Blank",
+    #   	"2017-10-11 18:30:00": "Blank",
+    #   	"2017-10-11 19:00:00": "Blank",
+    #   	"2017-10-12 18:30:00": "Selected",
+    #   	"2017-10-12 19:00:00": "Selected",
+    #   	"2017-10-13 18:30:00": "Selected",
+    #   	"2017-10-13 19:00:00": "Blank",
+    #   	"2017-10-14 18:30:00": "Selected",
+    #   	"2017-10-14 19:00:00": "Blank",
+    #   	"2017-10-15 18:30:00": "Selected",
+    #   	"2017-10-15 19:00:00": "Blank"
+    #       }"""
+    #     dict_data = json.loads(s)
     for key, value in dict_data.items():
         if (value == "Selected"):
             user_time_slot = TimeSlots.objects.update_or_create(event = event,
