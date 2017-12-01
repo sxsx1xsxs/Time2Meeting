@@ -9,5 +9,11 @@
     <input id="create" type="submit" value="Create">
 </form>
 
+<form action="" method="post">
+    {% csrf_token %}
+    <input type="email">
+    <br>
+    <input id="creae" type="submit" value="send email">
+</form>
 
 {% endblock%}

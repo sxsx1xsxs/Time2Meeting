@@ -487,4 +487,4 @@ def modify_timeslots_update(request, event_id):
 def testsendemail(request):
     send_mail('subject', 'body of the message', 'timetomeeting@gmail.com',
               ['shadow.lzd@gmail.com'], fail_silently=False)
-    return render(request, '')
+    return render(request, 'manage_event/create_event')
