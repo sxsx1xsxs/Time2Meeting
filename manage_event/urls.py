@@ -1,5 +1,4 @@
 from django.conf.urls import url
-
 from . import views
 
 app_name = 'manage_event'
@@ -26,7 +25,7 @@ urlpatterns = [
     url(r'^profile/$', views.update_profile),
     url(r'^logout/$', views.webLogout),
     url(r'^(?P<event_id>[0-9]+)/select_publish/$', views.select_publish, name="select_publish"),
-    url(r'^(?P<event_id>[0-9]+)/modify_timeslots_read/$',views.modify_timeslots_read, name= "modify_timeslots_read"),
+    url(r'^(?P<event_id>[0-9]+)/modify_timeslots_read/$', views.modify_timeslots_read, name="modify_timeslots_read"),
     url(r'^(?P<event_id>[0-9]+)/read_timeslots/$', views.read_timeslots, name='read_timeslots'),
 
 

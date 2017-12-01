@@ -9,9 +9,16 @@ import re
 
 
 class InvitationForm(forms.Form):
+    """
+    Invitation forms.
+    """
     emails = forms.CharField(label='', widget=forms.Textarea(attrs={'rows': 5, 'cols': 30, }))
 
     def clean(self):
+        """
+        Clean up information.
+        :return:
+        """
         cleaned_data = super(InvitationForm, self).clean()
         emails = re.compile(r'[^\w.\-+@_]+').split(cleaned_data.get('emails'))
 
@@ -22,24 +29,36 @@ class InvitationForm(forms.Form):
 
 
 class UserForm(forms.ModelForm):
+    """
+    User forms.
+    """
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
 
 
 class ProfileForm(forms.ModelForm):
+    """
+    Profile forms.
+    """
     class Meta:
         model = Profile
         fields = ('bio', 'location', 'birth_date')
 
 
 class AbortForm(forms.ModelForm):
+    """
+    Abort message forms.
+    """
     class Meta:
         model = AbortMessage
         fields = ('Abort_message',)
 
 
 class EventForm(forms.ModelForm):
+    """
+    Create event forms.
+    """
     class Meta:
         model = Events
         fields = ('event_name', 'time_range_start', 'time_range_end', 'duration', 'deadline', 'info')
@@ -75,6 +94,10 @@ class EventForm(forms.ModelForm):
         }
 
     def clean(self):
+        """
+        Clean up information.
+        :return:
+        """
         cleaned_data = super(EventForm, self).clean()
         time_range_start = cleaned_data.get('time_range_start')
         time_range_end = cleaned_data.get('time_range_end')
