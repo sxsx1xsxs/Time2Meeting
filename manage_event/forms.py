@@ -36,7 +36,7 @@ class ProfileForm(forms.ModelForm):
 class AbortForm(forms.ModelForm):
     class Meta:
         model = AbortMessage
-        fields = ('Abortion_message',)
+        fields = ('Abort_message',)
 
 
 class EventForm(forms.ModelForm):

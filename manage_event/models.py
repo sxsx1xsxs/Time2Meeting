@@ -43,7 +43,7 @@ class Events(models.Model):
 
 class AbortMessage(models.Model):
     event = models.ForeignKey(Events, on_delete=models.CASCADE)
-    Abortion_message = models.TextField(null=True, blank=True)
+    Abort_message = models.TextField(null=True, blank=True)
 
 class EventUser(models.Model):
     event = models.ForeignKey(Events, on_delete=models.CASCADE)

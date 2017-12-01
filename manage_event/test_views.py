@@ -147,10 +147,10 @@ class viewTestCase(TestCase):
                                       duration=thirty_mins)
 
         abort_message = AbortMessage.objects.create(event=event,
-                                                    Abortion_message="this is aborted.")
+                                                    Abort_message="this is aborted.")
         response = self.client.get(reverse('manage_event:abort_event_result', args=(event.id,)))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['message'], abort_message.Abortion_message)
+        self.assertEqual(response.context['message'], abort_message.Abort_message)
 
     def test_make_decision_detail(self):
         """
