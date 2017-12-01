@@ -15,6 +15,8 @@ from django.contrib.auth import logout
 from django.db import transaction
 from .forms import UserForm, ProfileForm, EventForm, InvitationForm, AbortForm
 from .models import Events, TimeSlots, EventUser, AbortMessage
+from notifications.models import Notification
+from notifications.signals import notify
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
@@ -29,7 +31,12 @@ def index(request):
     :param request:
     :return:
     """
-    return render(request, 'manage_event/index.html')
+    user = request.user
+    notifications = user.notifications.unread()
+
+    return render(request, 'manage_event/index.html', {
+        'notifications': notifications,
+    })
 
 # def index(request):
 #     get cookie by key

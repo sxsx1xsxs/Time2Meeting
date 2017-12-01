@@ -1,9 +1,29 @@
 {% extends 'manage_event/sidebar.html' %}
+
+
 {% block content %}
+
+{% load notifications_tags %}
+{% load static %}
+<script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
+    {% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge' %}
+
+    {% live_notify_badge classes="badge"%}
+
+    {% live_notify_list classes="dropdown-menu"%}
 
 <div align="center">
 
     <h1>Welcome to Time2Meeting!</h1>
+    {% notifications_unread as unread_count %}
+    {% if unread_count %}
+        You have <strong>{{ unread_count }}</strong> unread notifications.
+    {% endif %}
+    {% for notification in notifications %}
+        {{ notification.verb }}
+    {% endfor %}
+
+
 
 </div>
 
