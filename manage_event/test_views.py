@@ -406,9 +406,9 @@ class viewTestCase(TestCase):
                          "2018-02-10 05:30:00": "Selected",}
         response = self.client.post(reverse('manage_event:modify_timeslots_update', args=(self.event1.id,)),
                                     json.dumps(modified_json), content_type="application/json")
-        event_timeslots = TimeSlots.objects.filter(event= self.event1, user=self.organizer)
+        event_timeslots = TimeSlots.objects.filter(event=self.event1, user=self.organizer)
         self.event1.refresh_from_db()
-        q = TimeSlots.objects.filter(event=self.event1, user = self.organizer)
+        q = TimeSlots.objects.filter(event=self.event1, user=self.organizer)
         d = []
         for Q in q:
             d.append(Q.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))

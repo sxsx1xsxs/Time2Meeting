@@ -37,8 +37,8 @@ class EventsModelTests(TestCase):
         event = Events.objects.create(**kwargs)
         eventuser = EventUser.objects.create(user=user, event=event, role='o')
         return {
-                'event': event,
-                'eventuser': eventuser
+            'event': event,
+            'eventuser': eventuser
         }
 
 

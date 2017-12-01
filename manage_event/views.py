@@ -139,8 +139,7 @@ def create_event(request):
             # create corresponding EventUser tuple.
             eventuser_data = {'event': event,
                               'user': request.user,
-                              'role': 'o'
-                              }
+                              'role': 'o'}
             eventuser = EventUser.objects.create(**eventuser_data)
             eventuser.save()
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.pk,)))
@@ -557,7 +556,7 @@ def select_publish_render(request, event_id):
     :return:
     """
     event = get_object_or_404(Events, pk=event_id)
-    timeslots = TimeSlots.objects.filter(event= event).filter(user=request.user)
+    timeslots = TimeSlots.objects.filter(event=event).filter(user=request.user)
     show_timeslots = []
     for t in timeslots:
         show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
@@ -584,7 +583,7 @@ def modify_timeslots_read(request, event_id):
     thirty_mins = datetime.timedelta(minutes=30)
 
     while time < time_range_end:
-        if not user_timeslots.filter(time_slot_start = time):
+        if not user_timeslots.filter(time_slot_start=time):
             user_data[time.strftime("%Y-%m-%d %H:%M:%S")] = "Blank"
 
         else:
