@@ -41,3 +41,4 @@ social-auth-core==1.4.0
 tempora==1.9
 urllib3==1.22
 wrapt==1.10.11
+django-notifications-hq==1.3
