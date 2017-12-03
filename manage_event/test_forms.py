@@ -1,5 +1,7 @@
+from django import forms
 from django.test import TestCase
-from .forms import *
+import datetime
+from .forms import EventForm
 
 
 class EventFormTestCase(TestCase):
@@ -35,7 +37,7 @@ class EventFormTestCase(TestCase):
         with self.assertRaises(forms.ValidationError) as context:
             form.clean()
         exception = context.exception
-        self.assertEqual(exception.code, 'duration error')
+        self.assertEqual(exception.error_list[0].code, 'duration error')
 
     def test_clean_with_time_range_end_earlier_than_or_equal_to_time_range_start(self):
         """
@@ -54,13 +56,13 @@ class EventFormTestCase(TestCase):
         with self.assertRaises(forms.ValidationError) as context1:
             form1.clean()
         exception1 = context1.exception
-        self.assertEqual(exception1.code, 'end error')
+        self.assertEqual(exception1.error_list[0].code, 'end error')
 
         self.assertFalse(form2.is_valid())
         with self.assertRaises(forms.ValidationError) as context2:
             form2.clean()
         exception2 = context2.exception
-        self.assertEqual(exception2.code, 'end error')
+        self.assertEqual(exception2.error_list[0].code, 'end error')
 
     def test_clean_with_time_range_start_earlier_than_or_equal_to_deadline(self):
         """
@@ -79,13 +81,13 @@ class EventFormTestCase(TestCase):
         with self.assertRaises(forms.ValidationError) as context1:
             form1.clean()
         exception1 = context1.exception
-        self.assertEqual(exception1.code, 'start error')
+        self.assertEqual(exception1.error_list[0].code, 'start error')
 
         self.assertFalse(form2.is_valid())
         with self.assertRaises(forms.ValidationError) as context2:
             form2.clean()
         exception2 = context2.exception
-        self.assertEqual(exception2.code, 'start error')
+        self.assertEqual(exception2.error_list[0].code, 'start error')
 
     def test_clean_with_deadline_earlier_than_or_equal_to_now(self):
         """
@@ -104,13 +106,13 @@ class EventFormTestCase(TestCase):
         with self.assertRaises(forms.ValidationError) as context1:
             form1.clean()
         exception1 = context1.exception
-        self.assertEqual(exception1.code, 'deadline error')
+        self.assertEqual(exception1.error_list[0].code, 'deadline error')
 
         self.assertFalse(form2.is_valid())
         with self.assertRaises(forms.ValidationError) as context2:
             form2.clean()
         exception2 = context2.exception
-        self.assertEqual(exception2.code, 'deadline error')
+        self.assertEqual(exception2.error_list[0].code, 'deadline error')
 
     def test_clean_with_time_range_greater_than_max_time_range(self):
         """
@@ -124,4 +126,4 @@ class EventFormTestCase(TestCase):
         with self.assertRaises(forms.ValidationError) as context:
             form.clean()
         exception = context.exception
-        self.assertEqual(exception.code, 'time range error')
+        self.assertEqual(exception.error_list[0].code, 'time range error')
