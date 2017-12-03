@@ -22,10 +22,21 @@ class InvitationForm(forms.Form):
         cleaned_data = super(InvitationForm, self).clean()
         emails = re.compile(r'[^\w.\-+@_]+').split(cleaned_data.get('emails'))
 
+        users = []
+        error_list = []
         for email in emails:
             validate_email(email)
-
-        return emails
+            try:
+                user = User.objects.get(email=email)
+                users.append(user)
+            except User.DoesNotExist:
+                error = forms.ValidationError(_("User (%(value)s) does not exist!"),
+                                              code='exist error',
+                                              params={'value': email})
+                error_list.append(error)
+        if error_list:
+            raise forms.ValidationError(error_list)
+        return users
 
 
 class UserForm(forms.ModelForm):
@@ -89,7 +100,7 @@ class EventForm(forms.ModelForm):
             'duration': forms.Select(choices=DURATION),
             'deadline': DateTimeWidget(attrs={'placeholder': "yyyy-mm-dd hh:ii"},
                                        bootstrap_version=3, options=dateTimeOptions),
-            'info': forms.Textarea(attrs={'rows': 5, 'cols': 30})
+            'info': forms.Textarea(attrs={'placeholder': "description of this event", 'rows': 5, 'cols': 30})
         }
         help_texts = {
             'event_name': _('*No more than 300 characters.'),

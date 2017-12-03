@@ -22,6 +22,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
 from django.core.mail import send_mail
+from django.conf import settings
+from django.template.loader import render_to_string
 
 
 @login_required
@@ -169,8 +171,35 @@ def create_event(request):
             eventuser.save()
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.pk,)))
     else:
-        form = EventForm(initial={'info': 'description of this event.'})
+        form = EventForm()
     return render(request, 'manage_event/create_event.html', {'form': form})
+
+
+def send_invitation(request, event, mail_list):
+    current_site = 'time2meeting.com'
+    invite_url = reverse('manage_event:select_timeslots',
+                         args=[event.id])
+    invite_url = request.build_absolute_uri(invite_url)
+    inviter = request.user.first_name + ' ' + request.user.last_name
+
+    context = {
+        'invite_url': invite_url,
+        'site_name': current_site,
+        'inviter': inviter,
+        'event_name': event.event_name
+    }
+
+    msg_plain = render_to_string('invitations/email/email_invite_message.txt', context)
+    msg_html = render_to_string('invitations/email/email_invite_message.html', context)
+    sub_plain = render_to_string('invitations/email/email_invite_subject.txt', context)
+
+    send_mail(
+        sub_plain,
+        msg_plain,
+        settings.EMAIL_HOST_USER,
+        mail_list,
+        html_message=msg_html,
+    )
 
 
 @login_required
@@ -184,14 +213,15 @@ def create_publish(request, event_id):
     if request.method == 'POST':
         form = InvitationForm(request.POST)
         if form.is_valid():
-            emails = form.cleaned_data
-            for email in emails:
-                user_name = email.rsplit('@', 1)[0]
-                user = User.objects.get_or_create(username=user_name, email=email)[0]
+            users = form.cleaned_data
+            mail_list = []
+            for user in users:
                 event = Events.objects.get(pk=event_id)
                 EventUser.objects.get_or_create(user=user, event=event)
+                mail_list.append(user.email)
 
-                messages.success(request, _('Invite Success!'))
+            send_invitation(request, event, mail_list)
+            messages.success(request, _('Invite Success!'))
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event_id,)))
     else:
         form = InvitationForm()
@@ -284,15 +314,16 @@ def on_going(request, event_id):
     if request.method == 'POST':
         form = InvitationForm(request.POST)
         if form.is_valid():
-            emails = form.cleaned_data
-            for email in emails:
-                user_name = email.rsplit('@', 1)[0]
-                user = User.objects.get_or_create(username=user_name, email=email)[0]
+            users = form.cleaned_data
+            mail_list = []
+            for user in users:
                 event = Events.objects.get(pk=event_id)
                 EventUser.objects.get_or_create(user=user, event=event)
+                mail_list.append(user.email)
 
-                messages.success(request, _('Invite Success!'))
-                return HttpResponseRedirect(reverse('manage_event:on_going', args=(event_id,)))
+            send_invitation(request, event, mail_list)
+            messages.success(request, _('Invite Success!'))
+            return HttpResponseRedirect(reverse('manage_event:on_going', args=(event_id,)))
     else:
         form = InvitationForm()
         # on_going.html will call make_decision_json for data
@@ -676,9 +707,3 @@ def modify_timeslots_update(request, event_id):
                                                user=user,
                                                time_slot_start=key)
     return HttpResponseRedirect(reverse('manage_event:select_publish', args=(event.id,)))
-
-
-def testsendemail(request):
-    send_mail('subject', 'body of the message', 'timetomeeting@gmail.com',
-              ['shadow.lzd@gmail.com'], fail_silently=False)
-    return render(request, 'manage_event/create_event')

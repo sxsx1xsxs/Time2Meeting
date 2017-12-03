@@ -1,0 +1,14 @@
+{% load i18n %}
+{% autoescape off %}
+{% blocktrans %}
+
+Hello,
+<br>
+<br>
+You have been invited to join the event {{ event_name }} on {{ site_name }}
+<br>
+<br>
+If you'd like to join, please go to {{ invite_url }}
+
+{% endblocktrans %}
+{% endautoescape %}
