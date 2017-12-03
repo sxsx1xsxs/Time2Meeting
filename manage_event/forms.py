@@ -101,16 +101,17 @@ class EventForm(forms.ModelForm):
         Clean up information.
         :return:
         """
-        super(EventForm, self).clean()
-        if not self._errors:
-            cleaned_data = self.cleaned_data
-            time_range_start = cleaned_data.get('time_range_start')
-            time_range_end = cleaned_data.get('time_range_end')
-            duration = cleaned_data.get('duration')
-            deadline = cleaned_data.get('deadline')
+        cleaned_data = super(EventForm, self).clean()
+        time_range_start = cleaned_data.get('time_range_start')
+        time_range_end = cleaned_data.get('time_range_end')
+        duration = cleaned_data.get('duration')
+        deadline = cleaned_data.get('deadline')
+
+        if time_range_end and time_range_start and deadline:
+            # Only do something if these fields are valid so far.
+            error_list = []
             time_range = time_range_end - time_range_start
 
-            error_list = []
             if time_range_end > time_range_start and duration > time_range:
                 error = forms.ValidationError(
                     _("%(value1)s should be smaller than %(value2)s!"),
