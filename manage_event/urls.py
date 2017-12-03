@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^organize/$', views.organize_index, name='organize_index'),
     url(r'^participate/$', views.participate_index, name='participate_index'),
 
+    url(r'^(?P<event_id>[0-9]+)/notification_redirect/(?P<notification_id>[0-9]+)/$', views.notification_redirect, name='notification_redirect'),
     url(r'^(?P<event_id>[0-9]+)/on_going/$', views.on_going, name='on_going'),
     url(r'^(?P<event_id>[0-9]+)/pending/$', views.pending, name='pending'),
 

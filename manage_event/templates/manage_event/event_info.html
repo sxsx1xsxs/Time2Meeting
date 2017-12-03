@@ -1,0 +1,12 @@
+{% extends 'manage_event/calendar.html' %}
+
+<h1>{{ event.event_name }}</h1>
+<p><i>Info: {{ event.info }}</i></p>
+<br>
+<p>Created time: {{ event.create_time }}</p>
+<p>Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
+<p>Duration: {{ event.duration }}</p>
+<p>Deadline: {{ event.deadline }}</p>
+<p>-------------------------------------------------------------</p>
+<br>
+

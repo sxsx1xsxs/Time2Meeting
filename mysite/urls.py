@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+import notifications.urls
 from django.conf.urls import include, url
 from django.contrib import admin
 from manage_event import views
@@ -25,5 +26,6 @@ urlpatterns = [
     url(r'^home/', include('home.urls')),
     url(r'^account/', include('social_django.urls', namespace='social')),
     url(r'^account/', include('django.contrib.auth.urls', namespace='auth')),
+    url(r'^inbox/notifications/', include(notifications.urls, namespace='notifications')),
 
 ]

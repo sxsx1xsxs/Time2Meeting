@@ -15,6 +15,8 @@ from django.contrib.auth import logout
 from django.db import transaction
 from .forms import UserForm, ProfileForm, EventForm, InvitationForm, AbortForm
 from .models import Events, TimeSlots, EventUser, AbortMessage
+from notifications.models import Notification
+from notifications.signals import notify
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
@@ -29,7 +31,30 @@ def index(request):
     :param request:
     :return:
     """
-    return render(request, 'manage_event/index.html')
+    user = request.user
+    notifications = user.notifications.unread()
+
+    return render(request, 'manage_event/index.html', {
+        'notifications': notifications,
+    })
+
+
+@login_required
+def notification_redirect(request, event_id, notification_id):
+    """
+    Used for make notification as read and redirect to corresponding pages.
+    :param request:
+    :param event_id:
+    :param notification_id:
+    :return:
+    """
+    notification = get_object_or_404(Notification, pk=notification_id)
+    notification.mark_as_read()
+    if notification.verb == 'aborted' or notification.verb == 'decided':
+        return HttpResponseRedirect(reverse('manage_event:show_decision_result', args=(event_id,)))
+    else:
+        return 0
+
 
 # def index(request):
 #     get cookie by key
@@ -212,6 +237,14 @@ def abort_event_result(request, event_id):
     """
     event = get_object_or_404(Events, pk=event_id)
     message = AbortMessage.objects.get(event=event).Abort_message
+    # send notifications to all the participants
+    notify.send(sender=request.user,
+                recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
+                verb='aborted',
+                action_object=AbortMessage.objects.get(event=event),
+                target=event,
+                description=event.id,
+                timestamp=datetime.datetime.now().replace(microsecond=0))
     return render(request, 'manage_event/abort_event_result.html', {'event': event, 'message': message})
 
 # @login_required
@@ -368,6 +401,14 @@ def make_decision(request, event_id):
                         event.final_time_end = datetime.datetime.strptime(key_1, "%Y-%m-%d %H:%M:%S") + datetime.timedelta(minutes=30)
                         event.save()
 
+                # send notifications to all the participants
+                notify.send(sender=request.user,
+                            recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
+                            verb='decided',
+                            action_object=event,
+                            target=event,
+                            description=event.id,
+                            timestamp=datetime.datetime.now().replace(microsecond=0))
                 name = request.POST.get('name')
                 dictionary = {'name': name}
                 return HttpResponse(json.dumps(dictionary), content_type='application/json')
