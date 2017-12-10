@@ -1,0 +1,15 @@
+{% extends 'manage_event/sidebar.html' %}
+{% block content %}
+
+<div align="center">
+<h3>You have changed the submission deadline of for the event: </h3>
+
+<h3>{{ event.event_name }}</h3>
+
+<h3>to: </h3>
+<h3>{{ event.deadline }}</h3>
+
+<br>
+<button onclick="location.href='{% url 'manage_event:participate_index' %}'">Back to Participate Events</button>
+<br>
+{% endblock%}

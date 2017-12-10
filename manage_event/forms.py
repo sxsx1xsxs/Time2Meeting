@@ -5,7 +5,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import validate_email
 from datetimewidget.widgets import DateTimeWidget
 import datetime
-import re
 
 
 class InvitationForm(forms.Form):
@@ -64,6 +63,48 @@ class AbortForm(forms.ModelForm):
         model = AbortMessage
         fields = ('Abort_message',)
 
+class DeadlineForm(forms.ModelForm):
+    """
+    Create event forms.
+    """
+    class Meta:
+        model = Events
+        fields = ('deadline',)
+        dateTimeOptions = {
+            'format': 'yyyy-mm-dd hh:ii',
+            'minuteStep': 30,
+            'showMeridian': True
+        }
+        widgets = {
+            'deadline': DateTimeWidget(attrs={'placeholder': "yyyy-mm-dd hh:ii"},
+                                       bootstrap_version=3, options=dateTimeOptions),
+        }
+
+    def clean(self):
+        cleaned_data = super(DeadlineForm, self).clean()
+        deadline = self.cleaned_data.get('deadline')
+        time_range_start = self.instance.time_range_start
+        if deadline:
+            error_list = []
+            if deadline <= datetime.datetime.now():
+                error = forms.ValidationError(
+                    _("%(value1)s should be later than %(value2)s!"),
+                    code='deadline error',
+                    params={'value1': 'deadline',
+                            'value2': 'current time'})
+                error_list.append(error)
+            if time_range_start <= deadline:
+                print('error')
+                error = forms.ValidationError(
+                    _("%(value1)s should be later than %(value2)s!"),
+                    code='start error',
+                    params={'value1': 'time range start',
+                            'value2': 'deadline'})
+                error_list.append(error)
+            if error_list:
+                raise forms.ValidationError(error_list)
+
+
 
 class EventForm(forms.ModelForm):
     """
@@ -116,13 +157,11 @@ class EventForm(forms.ModelForm):
         time_range_start = cleaned_data.get('time_range_start')
         time_range_end = cleaned_data.get('time_range_end')
         duration = cleaned_data.get('duration')
-        deadline = cleaned_data.get('deadline')
+        deadline = self.cleaned_data.get('deadline')
 
         if time_range_end and time_range_start and deadline:
-            # Only do something if these fields are valid so far.
             error_list = []
             time_range = time_range_end - time_range_start
-
             if time_range_end > time_range_start and duration > time_range:
                 error = forms.ValidationError(
                     _("%(value1)s should be smaller than %(value2)s!"),

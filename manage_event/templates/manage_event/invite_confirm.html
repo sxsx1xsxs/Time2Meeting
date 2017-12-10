@@ -1,0 +1,13 @@
+{% extends 'manage_event/sidebar.html' %}
+
+{% block content %}
+
+<br>
+You have been invited to join the event {{ event }}.
+<br>
+<br>
+You can either accept or decline this invitation:
+<a href="{{ accept_invite_url }}">Accept</a>
+<a href="{{ decline_invite_url }}">Decline</a>
+
+{% endblock%}
