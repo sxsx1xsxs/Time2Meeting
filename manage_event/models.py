@@ -3,6 +3,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.crypto import get_random_string
+from django.db import IntegrityError
 
 
 class Profile(models.Model):
@@ -97,7 +99,16 @@ class Invitation(models.Model):
     """
     email = models.EmailField(max_length=254)
     event = models.ForeignKey(Events)
-    expired = models.BooleanField(default=False)
+    inviter = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    key = models.CharField(max_length=64, unique=True)
+    created = models.DateTimeField(default=datetime.datetime.now)
+    confirmed = models.BooleanField(default=False)
 
-    class Meta:
-        unique_together = ("email", "event")
+    @classmethod
+    def create(cls, event, mail_list, inviter=None):
+        insert_list = []
+        for mail in mail_list:
+            key = get_random_string(64).lower()
+            insert_list.append(Invitation(email=mail, event=event, key=key, inviter=inviter))
+        instances = cls.objects.bulk_create(insert_list)
+        return instances
