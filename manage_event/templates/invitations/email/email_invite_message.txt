@@ -4,11 +4,11 @@
 
 Hello,
 
-You ({{ email }}) have been invited to join {{ site_name }}
+You have been invited to join the event {{ event_name }} on {{ site_name }}
 
 You can either accept or decline this invitation:
-<a href="{{ site_name }}/manage_event/{{ event_id }}/confirm_invitation">Accept</a>
-<a href="{{ site_name }}/manage_event/{{ event_id }}/confirm_invitation">Decline</a>
+<a href="{{ accept_invite_url }}">Accept</a>
+<a href="{{ decline_invite_url }}">Decline</a>
 
 {% endblocktrans %}
 {% endautoescape %}

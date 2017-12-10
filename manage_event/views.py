@@ -176,14 +176,18 @@ def create_event(request):
 
 
 def send_invitation(request, event, mail_list):
-    current_site = 'time2meeting.com'
-    invite_url = reverse('manage_event:confirm_invitation',
-                         args=[event.id])
-    invite_url = request.build_absolute_uri(invite_url)
+    current_site = request.get_host()
+
+    accept_invite_url = reverse('manage_event:accept_invitation', args=[event.id])
+    decline_invite_url = reverse('manage_event:decline_invitation', args=[event.id])
+    accept_invite_url = request.build_absolute_uri(accept_invite_url)
+    decline_invite_url = request.build_absolute_uri(decline_invite_url)
+
     inviter = request.user.first_name + ' ' + request.user.last_name
 
     context = {
-        'invite_url': invite_url,
+        'accept_invite_url': accept_invite_url,
+        'decline_invite_url': decline_invite_url,
         'site_name': current_site,
         'inviter': inviter,
         'event_name': event.event_name,
@@ -204,16 +208,16 @@ def send_invitation(request, event, mail_list):
 
 
 @login_required
-def confirm_invitation(request, event_id, confirmation):
-    if request.method == 'POST':
-        value = request.POST.get('confirmation')
-        if value == 'Accept':
-            event = Events.objects.get(pk=event_id)
-            EventUser.objects.get_or_create(user=request.user, event=event)
-            return HttpResponseRedirect(reverse('manage_event:select_timeslots', args=(event_id,)))
-        else:
-            return HttpResponseRedirect(reverse('manage_event:select_timeslots', args=(event_id,)))
-    return render(request, 'manage_event/confirm_invitation.html', {'event_id': event_id})
+def accept_invitation(request, event_id):
+    event = Events.objects.get(pk=event_id)
+    EventUser.objects.get_or_create(user=request.user, event=event)
+    return HttpResponseRedirect(reverse('manage_event:select_timeslots', args=(event_id,)))
+
+
+@login_required
+def decline_invitation(request, event_id):
+    event = Events.objects.get(pk=event_id)
+    return render(request, 'invitations/decline/decline_invitation.html', {'event_name': event.event_name})
 
 
 @login_required
@@ -227,13 +231,8 @@ def create_publish(request, event_id):
     if request.method == 'POST':
         form = InvitationForm(request.POST)
         if form.is_valid():
-            users = form.cleaned_data
-            mail_list = []
-            for user in users:
-                event = Events.objects.get(pk=event_id)
-                EventUser.objects.get_or_create(user=user, event=event)
-                mail_list.append(user.email)
-
+            mail_list = form.cleaned_data
+            event = Events.objects.get(pk=event_id)
             send_invitation(request, event, mail_list)
             messages.success(request, _('Invite Success!'))
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event_id,)))
