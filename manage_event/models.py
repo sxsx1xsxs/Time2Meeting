@@ -88,4 +88,16 @@ class TimeSlots(models.Model):
     time_slot_start = models.DateTimeField()
 
     class Meta:
-        unique_together = (("event", "user", "time_slot_start"),)
+        unique_together = ("event", "user", "time_slot_start")
+
+
+class Invitation(models.Model):
+    """
+    Model for invitations.
+    """
+    email = models.EmailField(max_length=254)
+    event = models.ForeignKey(Events)
+    expired = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ("email", "event")

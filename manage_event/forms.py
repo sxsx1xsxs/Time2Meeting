@@ -12,7 +12,11 @@ class InvitationForm(forms.Form):
     """
     Invitation forms.
     """
-    emails = forms.CharField(label='', widget=forms.Textarea(attrs={'rows': 5, 'cols': 30, }))
+    emails = forms.CharField(label='',
+                             widget=forms.Textarea(attrs=
+                                                   {'rows': 5,
+                                                    'cols': 30,
+                                                    'placeholder': "Only support Gmail & Lionmail"}))
 
     def clean(self):
         """
@@ -22,27 +26,20 @@ class InvitationForm(forms.Form):
         cleaned_data = super(InvitationForm, self).clean()
         emails = re.compile(r'[^\w.\-+@_]+').split(cleaned_data.get('emails'))
 
-        users = []
-        error_list = []
         for email in emails:
             validate_email(email)
-            try:
-                user = User.objects.get(email=email)
-                users.append(user)
-            except User.DoesNotExist:
-                error = forms.ValidationError(_("User (%(value)s) does not exist!"),
-                                              code='exist error',
-                                              params={'value': email})
-                error_list.append(error)
-        if error_list:
-            raise forms.ValidationError(error_list)
-        return users
+            _, domain_part = email.rsplit('@', 1)
+            if domain_part != 'gmail.com' and domain_part != 'columbia.edu':
+                raise forms.ValidationError('Email address should be Gmail or LionMail !',
+                                            code='address error',)
+        return emails
 
 
 class UserForm(forms.ModelForm):
     """
     User forms.
     """
+
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
@@ -52,6 +49,7 @@ class ProfileForm(forms.ModelForm):
     """
     Profile forms.
     """
+
     class Meta:
         model = Profile
         fields = ('bio', 'location', 'birth_date')
@@ -61,6 +59,7 @@ class AbortForm(forms.ModelForm):
     """
     Abort message forms.
     """
+
     class Meta:
         model = AbortMessage
         fields = ('Abort_message',)
@@ -70,6 +69,7 @@ class EventForm(forms.ModelForm):
     """
     Create event forms.
     """
+
     class Meta:
         model = Events
         fields = ('event_name', 'time_range_start', 'time_range_end', 'duration', 'deadline', 'info')
