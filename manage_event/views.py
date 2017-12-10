@@ -34,7 +34,7 @@ def index(request):
     :return:
     """
     user = request.user
-    notifications = user.notifications.unread()
+    notifications = user.notifications.read()
 
     return render(request, 'manage_event/index.html', {
         'notifications': notifications,
@@ -50,29 +50,21 @@ def notification_redirect(request, event_id, notification_id):
     :param notification_id:
     :return:
     """
+    event = get_object_or_404(Events, pk=event_id)
     notification = get_object_or_404(Notification, pk=notification_id)
     notification.mark_as_read()
-    if notification.verb == 'aborted' or notification.verb == 'decided':
+    if notification.verb == 'aborted' or notification.verb == 'decided final time on':
         return HttpResponseRedirect(reverse('manage_event:show_decision_result', args=(event_id,)))
     else:
-        return 0
-
-
-# def index(request):
-#     get cookie by key
-#     user_name = request.COOKIES.get('username')
-#     if not user_name:
-#         # set cookie:
-#         # 1.initial a response;
-#         # 2.set cookie(key, value);
-#         # 3.return response to make the cookie change
-#         response = HttpResponse('set cookie as wayne')
-#         response.set_cookie('username', 'wayne')
-#         return response
-#     else:
-#         response = HttpResponse('set cookie as null')
-#         response.set_cookie('username', '')
-#         return response
+        accept_invite_url = reverse('manage_event:accept_invitation', args=[event.id])
+        decline_invite_url = reverse('manage_event:decline_invitation', args=[event.id])
+        accept_invite_url = request.build_absolute_uri(accept_invite_url)
+        decline_invite_url = request.build_absolute_uri(decline_invite_url)
+        return render(request, 'manage_event/invite_confirm.html', {
+            'event': event,
+            'accept_invite_url': accept_invite_url,
+            'decline_invite_url': decline_invite_url
+        })
 
 
 @login_required
@@ -174,6 +166,10 @@ def create_event(request):
         form = EventForm()
     return render(request, 'manage_event/create_event.html', {'form': form})
 
+@login_required
+def invite_confirm(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    return HttpResponseRedirect(reverse('manage_event:event_confirm', args=(event_id,)))
 
 def send_invitation(request, event, mail_list):
     current_site = request.get_host()
@@ -205,6 +201,13 @@ def send_invitation(request, event, mail_list):
         mail_list,
         html_message=msg_html,
     )
+
+    notify.send(sender=request.user,
+                recipient=[User.objects.filter(email=email).first() for email in mail_list],
+                verb='invite you to join event',
+                target=event,
+                description=event.id,
+                timestamp=datetime.datetime.now().replace(microsecond=0))
 
 
 def invitation_required(foo):
@@ -323,8 +326,8 @@ def abort_event_result(request, event_id):
     # send notifications to all the participants
     notify.send(sender=request.user,
                 recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
-                verb='aborted',
-                action_object=AbortMessage.objects.get(event=event),
+                verb='aborted event',
+                #action_object=AbortMessage.objects.get(event=event),
                 target=event,
                 description=event.id,
                 timestamp=datetime.datetime.now().replace(microsecond=0))
@@ -483,8 +486,7 @@ def make_decision(request, event_id):
                 # send notifications to all the participants
                 notify.send(sender=request.user,
                             recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
-                            verb='decided',
-                            action_object=event,
+                            verb='decided final time on event',
                             target=event,
                             description=event.id,
                             timestamp=datetime.datetime.now().replace(microsecond=0))
