@@ -13,13 +13,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.db import transaction
-from .forms import UserForm, ProfileForm, EventForm, InvitationForm, AbortForm
+from .forms import UserForm, ProfileForm, EventForm, InvitationForm, AbortForm, DeadlineForm
 from .models import Events, TimeSlots, EventUser, AbortMessage
 from notifications.models import Notification
 from notifications.signals import notify
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
+from django.forms import ValidationError
 
 from django.core.mail import send_mail
 
@@ -172,6 +173,52 @@ def create_event(request):
         form = EventForm(initial={'info': 'description of this event.'})
     return render(request, 'manage_event/create_event.html', {'form': form})
 
+# def decorater(foo):
+#     def func(request, event_id):
+#         event = get_object_or_404(Events, pk=event_id)
+#         if EventUser.get(event = event).get(user = request.user) == 'o':
+#             return foo(request, event_id)
+#         else:
+#
+#     return func
+
+@login_required
+def modify_event_deadline_detail(request, event_id):
+    """
+    Modify event deadline and overwrite the datebase.
+    :param request:
+    :return:
+    """
+    event = get_object_or_404(Events, pk=event_id)
+    if EventUser.objects.get(event=event, user=request.user).role == 'o':
+        if request.method == 'POST':
+            form = DeadlineForm(request.POST, instance = event)
+            if form.is_valid():
+                modified_deadline = form.cleaned_data.get('deadline')
+                event.deadline = modified_deadline
+                event.save()
+                return HttpResponseRedirect(reverse('manage_event:modify_event_deadline_result', args=(event_id,)))
+        else:
+            form = DeadlineForm()
+            contents = {'event': event,
+                        'message': "Cautious: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abort message."}
+    else:
+        contents = {'event': event, 'error_message': "Sorry, you didn't have the access to modify the deadline of this event."}
+    return render(request, 'manage_event/modify_event_deadline_detail.html', {'form': form})
+
+def modify_event_deadline_result(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    #message = AbortMessage.objects.get(event=event).Abort_message
+    # send notifications to all the participants
+    # notify.send(sender=request.user,
+    #             recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
+    #             verb='aborted',
+    #             action_object=AbortMessage.objects.get(event=event),
+    #             target=event,
+    #             description=event.id,
+    #             timestamp=datetime.datetime.now().replace(microsecond=0))
+    context = {'event': event}
+    return render(request, 'manage_event/modify_event_deadline_result.html', context)
 
 @login_required
 def create_publish(request, event_id):
@@ -350,7 +397,6 @@ def make_decision_results(request, event_id):
         else:
             contents = {'event': event}
         return render(request, 'manage_event/make_decision_results.html', contents)
-
 
 @login_required
 def make_decision_json(request, event_id):
