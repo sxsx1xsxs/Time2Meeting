@@ -1,11 +1,11 @@
 import datetime
 import json
-# import sys
-# import re
-# from django.views import generic
-# from django.utils import timezone
-# from .models import Profile
-# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import sys
+import re
+from django.views import generic
+from django.utils import timezone
+from .models import Profile
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
@@ -201,6 +201,7 @@ def modify_event_deadline_detail(request, event_id):
         contents = {'event': event, 'error_message': "Sorry, you didn't have the access to modify the deadline of this event."}
     return render(request, 'manage_event/modify_event_deadline_detail.html', {'form': form})
 
+
 def modify_event_deadline_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
     #message = AbortMessage.objects.get(event=event).Abort_message
@@ -246,6 +247,7 @@ def send_invitation(request, event, objs):
                   html_message=msg_html
                   )
 
+    mail_list = [obj.email for obj in objs]
     notify.send(sender=request.user,
                 recipient=[User.objects.filter(email=email).first() for email in mail_list],
                 verb='invite you to join event',
@@ -337,7 +339,7 @@ def create_publish(request, event_id):
         if form.is_valid():
             mail_list = form.cleaned_data
             objs = Invitation.create(event=event, mail_list=mail_list, inviter=request.user)
-            send_invitation.delay(request, event, objs)
+            send_invitation(request, event, objs)
 
             messages.success(request, _('Invite Success!'))
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event_id,)))
