@@ -175,15 +175,6 @@ def create_event(request):
         form = EventForm()
     return render(request, 'manage_event/create_event.html', {'form': form})
 
-# def decorater(foo):
-#     def func(request, event_id):
-#         event = get_object_or_404(Events, pk=event_id)
-#         if EventUser.get(event = event).get(user = request.user) == 'o':
-#             return foo(request, event_id)
-#         else:
-#
-#     return func
-
 @login_required
 def modify_event_deadline_detail(request, event_id):
     """
@@ -376,11 +367,6 @@ def abort_event_result(request, event_id):
                 description=event.id,
                 timestamp=datetime.datetime.now().replace(microsecond=0))
     return render(request, 'manage_event/abort_event_result.html', {'event': event, 'message': message})
-
-# @login_required
-# def delete_event(request, event_id):
-#
-#     return HttpResponseRedirect("You're deleting.")
 
 
 @login_required
@@ -779,22 +765,6 @@ def modify_timeslots_update(request, event_id):
     else:
         dict_data = {}
 
-    # if request.method == 'GET':
-    #     s = """{
-    #   	"2017-10-10 18:30:00": "Blank",
-    #   	"2017-10-10 19:00:00": "Blank",
-    #   	"2017-10-11 18:30:00": "Blank",
-    #   	"2017-10-11 19:00:00": "Blank",
-    #   	"2017-10-12 18:30:00": "Selected",
-    #   	"2017-10-12 19:00:00": "Selected",
-    #   	"2017-10-13 18:30:00": "Selected",
-    #   	"2017-10-13 19:00:00": "Blank",
-    #   	"2017-10-14 18:30:00": "Selected",
-    #   	"2017-10-14 19:00:00": "Blank",
-    #   	"2017-10-15 18:30:00": "Selected",
-    #   	"2017-10-15 19:00:00": "Blank"
-    #       }"""
-    #     dict_data = json.loads(s)
     for key, value in dict_data.items():
         if value == "Selected":
             TimeSlots.objects.update_or_create(event=event,
