@@ -1,6 +1,10 @@
 {% extends 'manage_event/sidebar.html' %}
 {% block content %}
 
+<h1>Event Created Successfully!</h1>
+
+<p>Input their emails to invite your friends to join the event:</p>
+
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
@@ -10,10 +14,6 @@
     {% endfor %}
 </ul>
 {% endif %}
-
-<h1>Event Created Successfully!</h1>
-
-<p>Input their emails to invite your friends to join the event:</p>
 
 <form method="post">
     {% csrf_token %}

@@ -1,0 +1,14 @@
+{% load i18n %}
+{% autoescape off %}
+{% blocktrans %}
+
+Hello,
+
+You have been invited to join the event {{ event_name }} on {{ site_name }}
+
+You can either accept or decline this invitation:
+<a href="{{ accept_invite_url }}">Accept</a>
+<a href="{{ decline_invite_url }}">Decline</a>
+
+{% endblocktrans %}
+{% endautoescape %}

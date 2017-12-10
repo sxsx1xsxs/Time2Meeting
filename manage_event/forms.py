@@ -11,7 +11,11 @@ class InvitationForm(forms.Form):
     """
     Invitation forms.
     """
-    emails = forms.CharField(label='', widget=forms.Textarea(attrs={'rows': 5, 'cols': 30, }))
+    emails = forms.CharField(label='',
+                             widget=forms.Textarea(attrs=
+                                                   {'rows': 5,
+                                                    'cols': 30,
+                                                    'placeholder': "Only support Gmail & Lionmail"}))
 
     def clean(self):
         """
@@ -23,7 +27,10 @@ class InvitationForm(forms.Form):
 
         for email in emails:
             validate_email(email)
-
+            _, domain_part = email.rsplit('@', 1)
+            if domain_part != 'gmail.com' and domain_part != 'columbia.edu':
+                raise forms.ValidationError('Email address should be Gmail or LionMail !',
+                                            code='address error',)
         return emails
 
 
@@ -31,6 +38,7 @@ class UserForm(forms.ModelForm):
     """
     User forms.
     """
+
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
@@ -40,6 +48,7 @@ class ProfileForm(forms.ModelForm):
     """
     Profile forms.
     """
+
     class Meta:
         model = Profile
         fields = ('bio', 'location', 'birth_date')
@@ -49,6 +58,7 @@ class AbortForm(forms.ModelForm):
     """
     Abort message forms.
     """
+
     class Meta:
         model = AbortMessage
         fields = ('Abort_message',)
@@ -100,6 +110,7 @@ class EventForm(forms.ModelForm):
     """
     Create event forms.
     """
+
     class Meta:
         model = Events
         fields = ('event_name', 'time_range_start', 'time_range_end', 'duration', 'deadline', 'info')
@@ -130,7 +141,7 @@ class EventForm(forms.ModelForm):
             'duration': forms.Select(choices=DURATION),
             'deadline': DateTimeWidget(attrs={'placeholder': "yyyy-mm-dd hh:ii"},
                                        bootstrap_version=3, options=dateTimeOptions),
-            'info': forms.Textarea(attrs={'rows': 5, 'cols': 30})
+            'info': forms.Textarea(attrs={'placeholder': "description of this event", 'rows': 5, 'cols': 30})
         }
         help_texts = {
             'event_name': _('*No more than 300 characters.'),
@@ -155,7 +166,7 @@ class EventForm(forms.ModelForm):
                 error = forms.ValidationError(
                     _("%(value1)s should be smaller than %(value2)s!"),
                     code='duration error',
-                    params={'value1': 'duration',
+                    params={'value1': 'Duration',
                             'value2': 'time range'})
                 error_list.append(error)
 
@@ -163,7 +174,7 @@ class EventForm(forms.ModelForm):
                 error = forms.ValidationError(
                     _("%(value1)s should be later than %(value2)s!"),
                     code='end error',
-                    params={'value1': 'time range end',
+                    params={'value1': 'Time range end',
                             'value2': 'time range start'})
                 error_list.append(error)
 
@@ -171,7 +182,7 @@ class EventForm(forms.ModelForm):
                 error = forms.ValidationError(
                     _("%(value1)s should be later than %(value2)s!"),
                     code='start error',
-                    params={'value1': 'time range start',
+                    params={'value1': 'Time range start',
                             'value2': 'deadline'})
                 error_list.append(error)
 
@@ -179,13 +190,13 @@ class EventForm(forms.ModelForm):
                 error = forms.ValidationError(
                     _("%(value1)s should be later than %(value2)s!"),
                     code='deadline error',
-                    params={'value1': 'deadline',
+                    params={'value1': 'Deadline',
                             'value2': 'current time'})
                 error_list.append(error)
 
             if time_range > datetime.timedelta(days=7):
                 error = forms.ValidationError(
-                    _("time range should be no more than %(value)s days!"),
+                    _("Time range should be no more than %(value)s days!"),
                     code='time range error',
                     params={'value': '7'})
                 error_list.append(error)

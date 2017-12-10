@@ -1,0 +1,42 @@
+<User login>
+Try to use different gmail to login and make sure you can view the index pages and use the create event function.
+
+<Authentication verification>
+Login with one account.
+Try to visit some other events which you are not an organizer or participants by directly typing in its corresponding URLs.
+Make sure that the access will be denied or there will raise errors.
+
+<Create events and invite participants>
+Login with one account.
+Try to create a event, you can type some invalid information when creating it to verify the function of form.
+After creation, invite some exists users by typing in there emails.
+Make sure that the event appear both in your organize and participate index page.
+Make sure the ones who was invited receive a email
+
+<Select time slots>
+Login with one account which has been invited to at least one event.
+Make sure that the event which you was invited appear in the participate index page
+Click on the event to select time slots and submit it
+Make sure the event move from TO-DO to Pending list
+Login the organizer account of this event
+Make sure that there is an update when this event is visited from On-Going list
+
+<Make decision>
+Login with one account which has created at least one event
+Make sure the event appears in Wait For Decision list after the deadline of it has passed
+Click in to view the time slots selected by others and make sure they are the same as what participants actually have chosen
+Make a decision and make sure your decision was displayed correctly on confirmation page
+Make sure all the participants received the notification of the new decision
+
+<Abort events>
+Login with one account which has created at least one event
+Click in either an event in Wait For Decision or On Going list in organize index
+Try to abort this event and type in the abort message
+Make sure the aborted event will move to the History list
+Make sure all the participants received the notification of this abort action
+
+<Notification center>
+Login with one account which has some notifications
+Click on the bubble with a number in it on the upper-right corner of the page and make sure the notifications was displayed
+Click on the notifications and make sure you are redirected to the right URLs
+Click on the bubble again to view the notifications and make sure that the notification which was read has disappeared from the list
