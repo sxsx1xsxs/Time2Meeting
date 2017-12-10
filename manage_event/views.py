@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.db import transaction
 from .forms import UserForm, ProfileForm, EventForm, InvitationForm, AbortForm
-from .models import Events, TimeSlots, EventUser, AbortMessage
+from .models import Events, TimeSlots, EventUser, AbortMessage, Invitation
 from notifications.models import Notification
 from notifications.signals import notify
 from django.contrib import messages
@@ -169,7 +169,7 @@ def create_event(request):
                               'role': 'o'}
             eventuser = EventUser.objects.create(**eventuser_data)
             eventuser.save()
-            return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.pk,)))
+            return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event.id,)))
     else:
         form = EventForm()
     return render(request, 'manage_event/create_event.html', {'form': form})
@@ -207,20 +207,56 @@ def send_invitation(request, event, mail_list):
     )
 
 
+def invitation_required(foo):
+    """
+    :param foo:
+    :return: wrapper
+    decorator for checking user's invitation status for the event
+    """
+    def wrapper(request, event_id):
+        event = get_object_or_404(Events, pk=event_id)
+        current_email = request.user.email
+        mail_list = [entry.email for entry in Invitation.objects.filter(event=event)]
+        if current_email not in mail_list:
+            messages.warning(request, _('Sorry, you are not been invited for this event!'))
+            return HttpResponseRedirect(reverse('manage_event:index'))
+        return foo(request, event_id)
+    return wrapper
+
+
+def permission_required(foo):
+    """
+    :param foo:
+    :return: wrapper
+    decorator for checking user's permission for the event
+    """
+    def wrapper(request, event_id):
+        event = get_object_or_404(Events, pk=event_id)
+        user_list = [entry.user for entry in EventUser.objects.filter(event=event)]
+        if request.user not in user_list:
+            messages.warning(request, _('Sorry, you have no permission to view this event!'))
+            return HttpResponseRedirect(reverse('manage_event:index'))
+        return foo(request, event_id)
+    return wrapper
+
+
 @login_required
+@invitation_required
 def accept_invitation(request, event_id):
-    event = Events.objects.get(pk=event_id)
+    event = get_object_or_404(Events, pk=event_id)
     EventUser.objects.get_or_create(user=request.user, event=event)
     return HttpResponseRedirect(reverse('manage_event:select_timeslots', args=(event_id,)))
 
 
 @login_required
+@invitation_required
 def decline_invitation(request, event_id):
-    event = Events.objects.get(pk=event_id)
-    return render(request, 'invitations/decline/decline_invitation.html', {'event_name': event.event_name})
+    event = get_object_or_404(Events, pk=event_id)
+    return render(request, 'invitations/decline/decline_invitation.html', {'event': event})
 
 
 @login_required
+@permission_required
 def create_publish(request, event_id):
     """
     Publish create result.
@@ -228,11 +264,15 @@ def create_publish(request, event_id):
     :param event_id:
     :return:
     """
+    # first check whether this event exists.
+    event = get_object_or_404(Events, pk=event_id)
+
     if request.method == 'POST':
         form = InvitationForm(request.POST)
         if form.is_valid():
             mail_list = form.cleaned_data
-            event = Events.objects.get(pk=event_id)
+            for email in mail_list:
+                Invitation.objects.get_or_create(email=email, event=event)
             send_invitation(request, event, mail_list)
             messages.success(request, _('Invite Success!'))
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event_id,)))
@@ -327,20 +367,15 @@ def on_going(request, event_id):
     if request.method == 'POST':
         form = InvitationForm(request.POST)
         if form.is_valid():
-            users = form.cleaned_data
-            mail_list = []
-            for user in users:
-                event = Events.objects.get(pk=event_id)
-                EventUser.objects.get_or_create(user=user, event=event)
-                mail_list.append(user.email)
-
+            mail_list = form.cleaned_data
+            for email in mail_list:
+                Invitation.objects.get_or_create(email=email, event=event)
             send_invitation(request, event, mail_list)
             messages.success(request, _('Invite Success!'))
             return HttpResponseRedirect(reverse('manage_event:on_going', args=(event_id,)))
     else:
         form = InvitationForm()
-        # on_going.html will call make_decision_json for data
-    return render(request, 'manage_event/on_going.html', {'event': event, 'form': form})
+        return render(request, 'manage_event/on_going.html', {'event': event, 'form': form})
 
 
 def get_result(event_id):
