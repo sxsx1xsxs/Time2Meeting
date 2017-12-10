@@ -3,6 +3,11 @@
     font-size: 12pt;
 }
 
+.messages {
+    color: red;
+    font-size: 12pt;
+}
+
 .input-group {
     width: 50%;
 }

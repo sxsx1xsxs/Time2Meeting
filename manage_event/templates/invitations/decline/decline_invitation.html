@@ -1,6 +1,14 @@
 {% extends 'manage_event/sidebar.html' %}
 {% block content %}
 
-<p>You have declined the invitation for event {{ event.event_name }}.</p>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}" {% endif %} >
+        {{ message }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
 
 {% endblock %}
