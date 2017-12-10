@@ -6,7 +6,9 @@ Hello,
 
 You ({{ email }}) have been invited to join {{ site_name }}
 
-If you'd like to join, please go to {{ invite_url }}
+You can either accept or decline this invitation:
+<a href="{{ site_name }}/manage_event/{{ event_id }}/confirm_invitation">Accept</a>
+<a href="{{ site_name }}/manage_event/{{ event_id }}/confirm_invitation">Decline</a>
 
 {% endblocktrans %}
 {% endautoescape %}

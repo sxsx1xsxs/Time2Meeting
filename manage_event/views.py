@@ -177,7 +177,7 @@ def create_event(request):
 
 def send_invitation(request, event, mail_list):
     current_site = 'time2meeting.com'
-    invite_url = reverse('manage_event:select_timeslots',
+    invite_url = reverse('manage_event:confirm_invitation',
                          args=[event.id])
     invite_url = request.build_absolute_uri(invite_url)
     inviter = request.user.first_name + ' ' + request.user.last_name
@@ -186,7 +186,8 @@ def send_invitation(request, event, mail_list):
         'invite_url': invite_url,
         'site_name': current_site,
         'inviter': inviter,
-        'event_name': event.event_name
+        'event_name': event.event_name,
+        'event_id': event.id
     }
 
     msg_plain = render_to_string('invitations/email/email_invite_message.txt', context)
@@ -200,6 +201,19 @@ def send_invitation(request, event, mail_list):
         mail_list,
         html_message=msg_html,
     )
+
+
+@login_required
+def confirm_invitation(request, event_id, confirmation):
+    if request.method == 'POST':
+        value = request.POST.get('confirmation')
+        if value == 'Accept':
+            event = Events.objects.get(pk=event_id)
+            EventUser.objects.get_or_create(user=request.user, event=event)
+            return HttpResponseRedirect(reverse('manage_event:select_timeslots', args=(event_id,)))
+        else:
+            return HttpResponseRedirect(reverse('manage_event:select_timeslots', args=(event_id,)))
+    return render(request, 'manage_event/confirm_invitation.html', {'event_id': event_id})
 
 
 @login_required
