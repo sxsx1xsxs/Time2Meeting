@@ -27,9 +27,10 @@
 <div id="unread" class="anchor">
     {% register_notify_callbacks callbacks='fill_notification_list_with_link,fill_notification_badge' %}
 
-    {% live_notify_badge classes="badge"%} New notifications
+    <p>{% live_notify_badge classes="badge"%} New notifications</p>
 
     {% live_notify_list %}
+    <br><br><br><br>
 </div>
 <div id="read" class="anchor">
 <p>Read</p>
