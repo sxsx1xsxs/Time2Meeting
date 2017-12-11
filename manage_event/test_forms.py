@@ -127,3 +127,21 @@ class EventFormTestCase(TestCase):
             form.clean()
         exception = context.exception
         self.assertEqual(exception.error_list[0].code, 'time range error')
+
+
+# class InvitationFormTestCase(TestCase):
+#     def setUp(self):
+#         """
+#            Setup time_delta, time_now, max_time_range for manipulating data,
+#            then set up a valid form data.
+#         """
+#         self.time_delta = datetime.timedelta(hours=1)
+#         self.time_now = datetime.datetime.now()
+#         self.max_time_range = datetime.timedelta(days=7)
+#
+#         self.data = {'event_name': 'shadow',
+#                      'time_range_start': self.time_now + 2 * self.time_delta,
+#                      'time_range_end': self.time_now + 4 * self.time_delta,
+#                      'duration': self.time_delta,
+#                      'deadline': self.time_now + self.time_delta,
+#                      'info': ''}
