@@ -3,7 +3,7 @@
 
 <h1>Event Created Successfully!</h1>
 
-<p>Input their emails to invite your friends to join the event:</p>
+<h4>Input their emails to invite your friends to join the event:</h4>
 
 {% if messages %}
 <ul class="messages">
@@ -15,23 +15,17 @@
 </ul>
 {% endif %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Invite">
-</form>
+<div >
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" class = "btn btn-primary"  value="Invite">
+    </form>
+</div>
 
-<p>Share this link to invite your friends to join the event:</p>
-
-<p>http://localhost:8000/manage_event/{{ event_id }}/select_timeslots</p>
-
-
-<button onclick="location.href='{% url 'manage_event:select_timeslots' event_id %}'">Select your time slots</button>
-<br>
-<button onclick="location.href='{% url 'manage_event:create_event' %}'">Create another event</button>
-<br>
-<button onclick="location.href='{% url 'manage_event:organize_index' %}'">Back to organize events</button>
-<br>
+<button class = "btn btn-primary" onclick="location.href='{% url 'manage_event:select_timeslots' event_id %}'">Select your time slots</button>
+<button class = "btn btn-primary" onclick="location.href='{% url 'manage_event:create_event' %}'">Create another event</button>
+<button class = "btn btn-primary" onclick="location.href='{% url 'manage_event:organize_index' %}'">Back to organize events</button>
 
 
 {% endblock%}

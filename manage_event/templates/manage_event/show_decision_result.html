@@ -5,9 +5,33 @@
 <div align="center">
 <h1>{{ event.event_name }}</h1>
 
-<p> The final time is {{ event.final_time_start }} to {{ event.final_time_end }}.</p>
+<h3> The final time is {{ event.final_time_start }} to {{ event.final_time_end }}.</h3>
+    <table class="table table-hover table-bordered">
+        <tr>
+            <th scope="row">Created time</th>
+            <td>{{ event.create_time }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Time range</th>
+            <td>{{ event.time_range_start }} to {{ event.time_range_end }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Duration</th>
+            <td>{{ event.duration }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Deadline</th>
+            <td>{{ event.deadline }}</td>
+        </tr>
+        {% if event.info %}
+        <tr>
+            <th scope="row">Info</th>
+            <td>{{ event.info }}</td>
+        </tr>
+        {% endif %}
+    </table>
 
-<a href="{% url 'manage_event:participate_index' %}">Back to Participate Event</a>
+<a  class="btn btn-primary" href="{% url 'manage_event:participate_index' %}" role="button">Back to Participate Event</a>
 </div>
 
 

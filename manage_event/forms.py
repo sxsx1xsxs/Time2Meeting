@@ -14,8 +14,8 @@ class InvitationForm(forms.Form):
     """
     emails = forms.CharField(label='',
                              widget=forms.Textarea(attrs=
-                                                   {'rows': 5,
-                                                    'cols': 30,
+                                                   {'class': "form-control",
+                                                    'rows': 5,
                                                     'placeholder': "Only support Gmail & Lionmail"}))
 
     def clean(self):
@@ -64,6 +64,12 @@ class AbortForm(forms.ModelForm):
         model = AbortMessage
         fields = ('Abort_message',)
 
+        widgets = {
+            'Abort_message': forms.Textarea(attrs={'class': "form-control",
+                                                    'rows': 5})
+        }
+
+
 class DeadlineForm(forms.ModelForm):
     """
     Create event forms.
@@ -77,7 +83,8 @@ class DeadlineForm(forms.ModelForm):
             'showMeridian': True
         }
         widgets = {
-            'deadline': DateTimeWidget(attrs={'placeholder': "yyyy-mm-dd hh:ii"},
+            'deadline': DateTimeWidget(attrs={'class': 'form-control',
+                                              'placeholder': "yyyy-mm-dd hh:mm"},
                                        bootstrap_version=3, options=dateTimeOptions),
         }
 
@@ -104,7 +111,6 @@ class DeadlineForm(forms.ModelForm):
                 error_list.append(error)
             if error_list:
                 raise forms.ValidationError(error_list)
-
 
 
 class EventForm(forms.ModelForm):
@@ -135,18 +141,22 @@ class EventForm(forms.ModelForm):
         )
 
         widgets = {
-            'time_range_start': DateTimeWidget(attrs={'placeholder': "yyyy-mm-dd hh:ii"},
+            'event_name': forms.TextInput(attrs={'class': "form-control"}),
+            'time_range_start': DateTimeWidget(attrs={'placeholder': "yyyy-mm-dd hh:mm"},
                                                bootstrap_version=3, options=dateTimeOptions),
-            'time_range_end': DateTimeWidget(attrs={'placeholder': "yyyy-mm-dd hh:ii"},
+            'time_range_end': DateTimeWidget(attrs={'placeholder': "yyyy-mm-dd hh:mm"},
                                              bootstrap_version=3, options=dateTimeOptions),
-            'duration': forms.Select(choices=DURATION),
-            'deadline': DateTimeWidget(attrs={'placeholder': "yyyy-mm-dd hh:ii"},
+            'duration': forms.Select(attrs={'class': "form-control",
+                                            }, choices=DURATION),
+            'deadline': DateTimeWidget(attrs={'placeholder': "yyyy-mm-dd hh:mm"},
                                        bootstrap_version=3, options=dateTimeOptions),
-            'info': forms.Textarea(attrs={'placeholder': "description of this event", 'rows': 5, 'cols': 30})
+            'info': forms.Textarea(attrs={'class': "form-control",
+                                          'placeholder': "Description of this event",
+                                          'rows': 5})
         }
         help_texts = {
             'event_name': _('*No more than 300 characters.'),
-            'info': _('(optional)'),
+            'info': _('Optional'),
         }
 
     def clean(self):

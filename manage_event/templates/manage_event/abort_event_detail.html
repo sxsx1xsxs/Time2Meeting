@@ -1,20 +1,18 @@
 {% extends 'manage_event/sidebar.html' %}
 {% block content %}
 
+<h1>Aborting event: {{ event.event_name }}</h1>
 {% if message %}
-<p>
 <p><strong>{{ message }}</strong></p>
 
 <form method="post">
     {% csrf_token %}
     {{ form }}
-    <br>
-    <input type="submit" value="Abort">
+    <input type="submit" class="btn btn-danger" value="Abort">
 </form>
 
 <br>
-<button onclick="location.href='{% url 'manage_event:organize_index' %}'">Back to Organize Events</button>
-<br>
+<button class="btn btn-primary" onclick="location.href='{% url 'manage_event:organize_index' %}'">Back to Organize Events</button>
 
 {% endif %}
 
