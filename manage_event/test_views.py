@@ -209,6 +209,9 @@ class viewTestCase(TestCase):
                                       time_range_end=time_now + thirty_mins * 6,
                                       deadline=time_now + thirty_mins * 3,
                                       duration=thirty_mins)
+        event_organizer = EventUser.objects.create(event=event,
+                                                   user=self.organizer,
+                                                   role='o')
         decision = {self.timeslot.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'): "Blank",
                     self.timeslot2.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'): "Selected"}
         response = self.client.post(reverse('manage_event:make_decision', args=(event.id,)),
