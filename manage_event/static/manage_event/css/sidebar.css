@@ -56,9 +56,14 @@ a, a:hover, a:focus {
 #sidebar {
     min-width: 250px;
     max-width: 250px;
+    height: 100%;
+
     background: #7386D5;
     color: #fff;
     transition: all 0.3s;
+   position: fixed;
+   left: 0px;
+   top: 100px;
 }
 
 #sidebar.active {
@@ -72,7 +77,7 @@ a, a:hover, a:focus {
 
 #sidebar ul.components {
     padding: 20px 0;
-    border-bottom: 1px solid #47748b;
+
 }
 
 #sidebar ul p {
@@ -147,9 +152,11 @@ a.article, a.article:hover {
     CONTENT STYLE
 ----------------------------------------------------- */
 #content {
-    padding: 20px;
+    padding-left: 270px;
+    padding-top: 120px;
     min-height: 100vh;
     transition: all 0.3s;
+    width: 100%;
 }
 
 /* ---------------------------------------------------
