@@ -121,8 +121,7 @@ class viewTestCase(TestCase):
         login = client1.login(username='participant1', password='12345')
         self.assertEqual(login, True)
         response = client1.get(reverse('manage_event:abort_event_detail', args=(self.event.id,)))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('error_message', response.context)
+        self.assertEqual(response.status_code, 302)
         response = self.client.get(reverse('manage_event:abort_event_detail', args=(self.event.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertIn('message', response.context)
@@ -148,7 +147,9 @@ class viewTestCase(TestCase):
                                       time_range_end=time_now + thirty_mins * 6,
                                       deadline=time_now + thirty_mins * 3,
                                       duration=thirty_mins)
-
+        event_organizer = EventUser.objects.create(event=event,
+                                                   user=self.organizer,
+                                                   role='o')
         abort_message = AbortMessage.objects.create(event=event,
                                                     Abort_message="this is aborted.")
         response = self.client.get(reverse('manage_event:abort_event_result', args=(event.id,)))
@@ -178,6 +179,9 @@ class viewTestCase(TestCase):
                                       final_time_end=time_now + thirty_mins * 6,
                                       deadline=time_now + thirty_mins * 3,
                                       duration=thirty_mins)
+        event_organizer = EventUser.objects.create(event=event,
+                                                   user=self.organizer,
+                                                   role='o')
         response = self.client.get(reverse('manage_event:make_decision_results', args=(event.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['event'], event)
