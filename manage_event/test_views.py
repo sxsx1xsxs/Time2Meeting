@@ -112,49 +112,6 @@ class viewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['event'], self.event)
 
-    def test_abort_event_detail_get(self):
-        """
-        Test the response of a GET request when calling abort_event_detail.
-
-        """
-        client1 = Client()
-        login = client1.login(username='participant1', password='12345')
-        self.assertEqual(login, True)
-        response = client1.get(reverse('manage_event:abort_event_detail', args=(self.event.id,)))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('error_message', response.context)
-        response = self.client.get(reverse('manage_event:abort_event_detail', args=(self.event.id,)))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('message', response.context)
-
-    def test_abort_event_detail_post(self):
-        """
-        Test the response of a POST request when calling abort_event_detail.
-
-        """
-
-        response = self.client.post(reverse('manage_event:abort_event_detail', args=(self.event.id,)))
-        self.assertRedirects(response, reverse('manage_event:abort_event_result', args=(self.event.id,)))
-
-    def test_abort_event_result(self):
-        """
-        Test the response of a GET request when calling abort_event_result.
-
-        """
-        thirty_mins = datetime.timedelta(minutes=30)
-        time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
-        event = Events.objects.create(event_name="testEvent",
-                                      time_range_start=time_now + thirty_mins * 4,
-                                      time_range_end=time_now + thirty_mins * 6,
-                                      deadline=time_now + thirty_mins * 3,
-                                      duration=thirty_mins)
-
-        abort_message = AbortMessage.objects.create(event=event,
-                                                    Abort_message="this is aborted.")
-        response = self.client.get(reverse('manage_event:abort_event_result', args=(event.id,)))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['message'], abort_message.Abort_message)
-
     def test_make_decision_detail(self):
         """
         Test the response of a GET request when calling make_decision_detail.
@@ -163,24 +120,6 @@ class viewTestCase(TestCase):
         response = self.client.get(reverse('manage_event:make_decision_detail', args=(self.event.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['event'], self.event)
-
-    def test_make_decision_results(self):
-        """
-        Test the response of a GET request when calling make_decision_results.
-
-        """
-        thirty_mins = datetime.timedelta(minutes=30)
-        time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
-        event = Events.objects.create(event_name="testEvent",
-                                      time_range_start=time_now + thirty_mins * 4,
-                                      time_range_end=time_now + thirty_mins * 6,
-                                      final_time_start=time_now + thirty_mins * 5,
-                                      final_time_end=time_now + thirty_mins * 6,
-                                      deadline=time_now + thirty_mins * 3,
-                                      duration=thirty_mins)
-        response = self.client.get(reverse('manage_event:make_decision_results', args=(event.id,)))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['event'], event)
 
     def test_make_decision_json(self):
         """
@@ -219,7 +158,6 @@ class viewTestCase(TestCase):
     def test_make_decision_get(self):
         """
         Test the response of a GET request when calling make_decision.
-
         """
         response = self.client.get(reverse('manage_event:make_decision_render', args=(self.event.id,)))
         self.assertEqual(response.status_code, 200)
@@ -299,6 +237,29 @@ class viewTestCase(TestCase):
         json = ast.literal_eval(jsonstring)
         for key, value in json.items():
             self.assertEqual(value, "Blank")
+
+    def test_modify_event_deadline(self):
+        """
+        Test the post request for the test_modify_event_deadline
+        """
+        thirty_mins = datetime.timedelta(minutes=30)
+        time_range_start = datetime.datetime(2018, 2, 10, 2, 0, 0, 0)
+        time_range_end = datetime.datetime(2018, 2, 15, 20, 0, 0, 0)
+        deadline = datetime.datetime(2018, 1, 1, 0, 0, 0, 0)
+        self.event1 = Events.objects.create(event_name="testEvent",
+                                            time_range_start=time_range_start,
+                                            time_range_end=time_range_end,
+                                            deadline=deadline,
+                                            duration=thirty_mins*2)
+        self.event1.save()
+        self.event_user = EventUser.objects.create(event = self.event1, user = self.organizer)
+        self.event_user.save()
+        user_input3 = datetime.datetime(2018, 2, 9, 0, 0, 0, 0)
+        post_dict = {'deadline': user_input3}
+        response1 = self.client.post(reverse('manage_event:modify_event_deadline_detail', args=(self.event1.id,)),post_dict)
+        event = get_object_or_404(Events, pk=self.event1.id)
+        self.assertEqual(event.deadline, user_input3)
+
 
     def test_read_timeslots(self):
         """
@@ -453,30 +414,3 @@ class CreateEventViewTests(TestCase):
                      'duration': self.time_delta,
                      'deadline': self.time_now + self.time_delta,
                      'info': ''}
-
-    # def test_create_event_get(self):
-    #     """
-    #     Test the GET response of view create event
-    #     """
-    #     response = self.client.get(reverse('manage_event:create_event', self.data))
-    #     self.assertEqual(response.status_code, 200)
-    #
-    # def test_create_event_post(self):
-    #     """
-    #     Test the POST response of view create event
-    #     """
-    #     response = self.client.post('/manage_event/create_event', self.data)
-    #     self.assertEqual(response.status_code, 200)
-        # At this point, event in DB has updated, but the object here is not updated, it needs to be reloaded from DB
-        # event.refresh_from_db()
-        # self.assertEqual(event.final_time_start, self.timeslot2.time_slot_start)
-        # self.assertEqual(event.final_time_end, self.timeslot2.time_slot_start + datetime.timedelta(minutes=30))
-
-
-# class CreatePublishViewTests(TestCase):
-#     def test_create_event_get(self):
-#         """
-#         Test the GET response of view create publish
-#         """
-#         response = self.client.get(reverse('manage_event:create_publish', args=(self)))
-#         self.assertEqual(response.status_code, 200)

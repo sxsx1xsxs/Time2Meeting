@@ -169,6 +169,7 @@ def create_event(request):
     return render(request, 'manage_event/create_event.html', {'form': form})
 
 @login_required
+#@permission_required(role='o')
 def modify_event_deadline_detail(request, event_id):
     """
     Modify event deadline and overwrite the datebase.
@@ -176,34 +177,25 @@ def modify_event_deadline_detail(request, event_id):
     :return:
     """
     event = get_object_or_404(Events, pk=event_id)
-    if EventUser.objects.get(event=event, user=request.user).role == 'o':
-        if request.method == 'POST':
-            form = DeadlineForm(request.POST, instance = event)
-            if form.is_valid():
-                modified_deadline = form.cleaned_data.get('deadline')
-                event.deadline = modified_deadline
-                event.save()
-                return HttpResponseRedirect(reverse('manage_event:modify_event_deadline_result', args=(event_id,)))
-        else:
-            form = DeadlineForm()
-            contents = {'event': event,
-                        'message': "Cautious: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abort message."}
+    #if EventUser.objects.get(event=event, user=request.user).role == 'o':
+    if request.method == 'POST':
+        form = DeadlineForm(request.POST, instance = event)
+        if form.is_valid():
+            modified_deadline = form.cleaned_data.get('deadline')
+            event.deadline = modified_deadline
+            event.save()
+            return HttpResponseRedirect(reverse('manage_event:modify_event_deadline_result', args=(event_id,)))
     else:
-        contents = {'event': event, 'error_message': "Sorry, you didn't have the access to modify the deadline of this event."}
+        form = DeadlineForm()
+        contents = {'event': event,
+                    'message': "Cautious: Every participants will be notified about the change of submisson deadline."}
+#else:
+        #contents = {'event': event, 'error_message': "Sorry, you didn't have the access to modify the deadline of this event."}
     return render(request, 'manage_event/modify_event_deadline_detail.html', {'form': form})
 
 
 def modify_event_deadline_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    #message = AbortMessage.objects.get(event=event).Abort_message
-    # send notifications to all the participants
-    # notify.send(sender=request.user,
-    #             recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
-    #             verb='aborted',
-    #             action_object=AbortMessage.objects.get(event=event),
-    #             target=event,
-    #             description=event.id,
-    #             timestamp=datetime.datetime.now().replace(microsecond=0))
     context = {'event': event}
     return render(request, 'manage_event/modify_event_deadline_result.html', context)
 
