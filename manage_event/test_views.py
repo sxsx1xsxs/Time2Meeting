@@ -453,30 +453,26 @@ class CreateEventViewTests(TestCase):
                      'duration': self.time_delta,
                      'deadline': self.time_now + self.time_delta,
                      'info': ''}
-
-    # def test_create_event_get(self):
-    #     """
-    #     Test the GET response of view create event
-    #     """
-    #     response = self.client.get(reverse('manage_event:create_event', self.data))
-    #     self.assertEqual(response.status_code, 200)
-    #
-    # def test_create_event_post(self):
-    #     """
-    #     Test the POST response of view create event
-    #     """
-    #     response = self.client.post('/manage_event/create_event', self.data)
-    #     self.assertEqual(response.status_code, 200)
-        # At this point, event in DB has updated, but the object here is not updated, it needs to be reloaded from DB
-        # event.refresh_from_db()
-        # self.assertEqual(event.final_time_start, self.timeslot2.time_slot_start)
-        # self.assertEqual(event.final_time_end, self.timeslot2.time_slot_start + datetime.timedelta(minutes=30))
-
-
+#
+#     def test_create_event_get(self):
+#         """
+#         Test the GET response of view create event
+#         """
+#         response = self.client.get(reverse('manage_event:create_event', self.data))
+#         self.assertEqual(response.status_code, 200)
+#
+#     def test_create_event_post(self):
+#         """
+#         Test the POST response of view create event
+#         """
+#         response = self.client.post('/manage_event/create_event', self.data)
+#         self.assertEqual(response.status_code, 200)
+#
+#
 # class CreatePublishViewTests(TestCase):
 #     def test_create_event_get(self):
 #         """
 #         Test the GET response of view create publish
 #         """
-#         response = self.client.get(reverse('manage_event:create_publish', args=(self)))
+#         response = self.client.get(reverse('manage_event:create_publish', args=(self,)))
 #         self.assertEqual(response.status_code, 200)
