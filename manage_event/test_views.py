@@ -226,7 +226,6 @@ class viewTestCase(TestCase):
     def test_make_decision_get(self):
         """
         Test the response of a GET request when calling make_decision.
-
         """
         response = self.client.get(reverse('manage_event:make_decision_render', args=(self.event.id,)))
         self.assertEqual(response.status_code, 200)
@@ -306,6 +305,29 @@ class viewTestCase(TestCase):
         json = ast.literal_eval(jsonstring)
         for key, value in json.items():
             self.assertEqual(value, "Blank")
+
+    def test_modify_event_deadline(self):
+        """
+        Test the post request for the test_modify_event_deadline
+        """
+        thirty_mins = datetime.timedelta(minutes=30)
+        time_range_start = datetime.datetime(2018, 2, 10, 2, 0, 0, 0)
+        time_range_end = datetime.datetime(2018, 2, 15, 20, 0, 0, 0)
+        deadline = datetime.datetime(2018, 1, 1, 0, 0, 0, 0)
+        self.event1 = Events.objects.create(event_name="testEvent",
+                                            time_range_start=time_range_start,
+                                            time_range_end=time_range_end,
+                                            deadline=deadline,
+                                            duration=thirty_mins*2)
+        self.event1.save()
+        self.event_user = EventUser.objects.create(event = self.event1, user = self.organizer)
+        self.event_user.save()
+        user_input3 = datetime.datetime(2018, 2, 9, 0, 0, 0, 0)
+        post_dict = {'deadline': user_input3}
+        response1 = self.client.post(reverse('manage_event:modify_event_deadline_detail', args=(self.event1.id,)),post_dict)
+        event = get_object_or_404(Events, pk=self.event1.id)
+        self.assertEqual(event.deadline, user_input3)
+
 
     def test_read_timeslots(self):
         """
@@ -460,26 +482,3 @@ class CreateEventViewTests(TestCase):
                      'duration': self.time_delta,
                      'deadline': self.time_now + self.time_delta,
                      'info': ''}
-#
-#     def test_create_event_get(self):
-#         """
-#         Test the GET response of view create event
-#         """
-#         response = self.client.get(reverse('manage_event:create_event', self.data))
-#         self.assertEqual(response.status_code, 200)
-#
-#     def test_create_event_post(self):
-#         """
-#         Test the POST response of view create event
-#         """
-#         response = self.client.post('/manage_event/create_event', self.data)
-#         self.assertEqual(response.status_code, 200)
-#
-#
-# class CreatePublishViewTests(TestCase):
-#     def test_create_event_get(self):
-#         """
-#         Test the GET response of view create publish
-#         """
-#         response = self.client.get(reverse('manage_event:create_publish', args=(self,)))
-#         self.assertEqual(response.status_code, 200)
