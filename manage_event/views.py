@@ -291,9 +291,10 @@ def permission_required(role='p'):
                 messages.warning(request, _('Sorry, you have no permission to view this event!'))
                 return HttpResponseRedirect(reverse('manage_event:index'))
             entry = EventUser.objects.get(event=event, user=request.user)
-            if entry.role != role:
-                messages.warning(request, _('Sorry, you are not the organizer of this event!'))
-                return HttpResponseRedirect(reverse('manage_event:index'))
+            if role == 'o':
+                if entry.user != 'o':
+                    messages.warning(request, _('Sorry, you are not the organizer of this event!'))
+                    return HttpResponseRedirect(reverse('manage_event:index'))
             return foo(request, event_id)
         return wrapper
     return decorator

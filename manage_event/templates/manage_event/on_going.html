@@ -1,8 +1,7 @@
 {% extends 'manage_event/calendar.html' %}
 
 {% block head %}
-<div class="123"
-<h1>{{ event.event_name }}</h1>
+<h1>{{ event.event_name }} is on going, and the current status is: </h1>
 <p><i>{{ event.info }}</i></p>
 <br>
 <p>Created time: {{ event.create_time }}</p>
@@ -10,13 +9,6 @@
 <p>Duration: {{ event.duration }}</p>
 <p>Deadline: {{ event.deadline }}</p>
 <p>-------------------------------------------------------------</p>
-<br>
-
-<br>
-<button onclick="location.href='{% url 'manage_event:modify_event_deadline_detail' event.id %}'">Modify Event Deadline</button>
-<button onclick="location.href='{% url 'manage_event:abort_event_detail' event.id %}'">Abort event</button>
-<br>
-
 <br>
 <p>Invite more friends to join the event via emails:</p>
 {% if messages %}
@@ -34,7 +26,15 @@
     <input type="submit" value="Invite">
 </form>
 
-<h1>{{ event.event_name }} is on going, and the current status is: </h1>
+<br>
+
+<br>
+<button onclick="location.href='{% url 'manage_event:modify_event_deadline_detail' event.id %}'">Modify Event Deadline</button>
+<button onclick="location.href='{% url 'manage_event:abort_event_detail' event.id %}'">Abort event</button>
+<br>
+
+
+
 {% endblock %}
 
 
@@ -43,5 +43,4 @@
     loadTimeSlotsAndCreateTimeTable("../make_decision_json", "");
 </script>
 <br>
-<button onclick="location.href='{% url 'manage_event:organize_index' %}'">Back to organize events</button>
 {% endblock %}
