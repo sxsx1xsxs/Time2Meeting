@@ -98,32 +98,19 @@
     transform: rotateY(180deg);
 }
 
-
-.scrollbox {
-    overflow-y: scroll;
-    height: 600;
-    width: 100%;
-}
-
-.content2 {
-    padding: 40px;
-    width: 100%;
-}
+</style>
+<style>
+    .sectionTitle {
+    font-family: Impact;
+    font-size: 25px;
+    }
 </style>
 
-
 <div>
-    <ul class="nav nav-tabs" style="margin-bottom: 15px;">
-        <li><a href="#newEvent" data-toggle="tab">New Event</a></li>
-        <li><a href="#waitForDecision" data-toggle="tab">Wait for decision</a></li>
-        <li><a href="#ongoing" data-toggle="tab">On going</a></li>
-        <li><a href="#history" data-toggle="tab">History</a></li>
-    </ul>
-    <div class="scrollbox">
-        <div class="content2">
             <div class="tab-content " id="TabContent">
-                <div id="newEvent">
-                    New Event:
+
+                <div id="newEvent" class="anchor">
+                    <div class="sectionTitle">New Event: </div>
                     <div class="row">
                         <div class="col-md-4">
                             <a href='{% url "manage_event:create_event" %}'>
@@ -134,8 +121,8 @@
                         </div>
                     </div>
                 </div>
-                <div id="waitForDecision">
-                    Events waiting for decision
+                <div id="waitForDecision" class="anchor">
+                    <div class="sectionTitle">Events waiting for decision: </div>
                     {% for event in event_wait_for_decision %} {% if forloop.counter|modulo:3 == 1 %}
                     <div class="row">
                         {% endif %}
@@ -162,8 +149,8 @@
                     {% endif %}
                     {% endfor %}
                 </div>
-                <div id="ongoing">
-                    Ongoing Events:
+                <div id="ongoing" class="anchor">
+                    <div class="sectionTitle">Ongoing Events </div>
                     {% for event in event_on_going %} {% if forloop.counter|modulo:3 == 1 %}
                     <div class="row">
                         {% endif %}
@@ -190,8 +177,8 @@
                     {% endif %}
                     {% endfor %}
                 </div>
-                <div id="history">
-                    History Events:
+                <div id="history" class="anchor">
+                   <div class="sectionTitle">History Events: </div>
 
                     {% for event in event_history %} {% if forloop.counter|modulo:3 == 1 %}
                     <div class="row">
@@ -220,7 +207,5 @@
                     {% endfor %}
                 </div>
             </div>
-        </div>
-    </div>
 </div>
     {% endblock%}

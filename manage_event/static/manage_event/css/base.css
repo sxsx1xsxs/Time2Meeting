@@ -12,10 +12,14 @@
     width: 50%;
 }
 
-.page-header {
-    background-color: #ff9400;
-    margin-top: 0;
-    padding: 20px 20px 20px 40px;
+.page-header-custom {
+    background-color: #b3e0ff;
+    top: 50px;
+    padding: 0px 15px 15px 15px;
+    position: fixed;
+    width: 100%;
+    height: 80;
+    z-index: 100;
 }
 
 .page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {

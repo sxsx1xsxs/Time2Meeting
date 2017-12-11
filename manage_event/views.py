@@ -55,8 +55,10 @@ def notification_redirect(request, event_id, notification_id):
     event = get_object_or_404(Events, pk=event_id)
     notification = get_object_or_404(Notification, pk=notification_id)
     notification.mark_as_read()
-    if notification.verb == 'aborted' or notification.verb == 'decided final time on':
+    if notification.verb == 'aborted event' or notification.verb == 'decided final time on event':
         return HttpResponseRedirect(reverse('manage_event:show_decision_result', args=(event_id,)))
+    elif notification.verb == 'modified event':
+        return HttpResponseRedirect(reverse('manage_event:modify_timeslots', args=(event_id,)))
     else:
         accept_invite_url = reverse('manage_event:accept_invitation', args=[event.id])
         decline_invite_url = reverse('manage_event:decline_invitation', args=[event.id])
@@ -185,34 +187,32 @@ def modify_event_deadline_detail(request, event_id):
     :return:
     """
     event = get_object_or_404(Events, pk=event_id)
-    if EventUser.objects.get(event=event, user=request.user).role == 'o':
-        if request.method == 'POST':
-            form = DeadlineForm(request.POST, instance = event)
-            if form.is_valid():
-                modified_deadline = form.cleaned_data.get('deadline')
-                event.deadline = modified_deadline
-                event.save()
-                return HttpResponseRedirect(reverse('manage_event:modify_event_deadline_result', args=(event_id,)))
-        else:
-            form = DeadlineForm()
-            contents = {'event': event,
-                        'message': "Cautious: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abort message."}
+
+    if request.method == 'POST':
+        form = DeadlineForm(request.POST, instance = event)
+        if form.is_valid():
+            modified_deadline = form.cleaned_data.get('deadline')
+            event.deadline = modified_deadline
+            event.save()
+            return HttpResponseRedirect(reverse('manage_event:modify_event_deadline_result', args=(event_id,)))
     else:
-        contents = {'event': event, 'error_message': "Sorry, you didn't have the access to modify the deadline of this event."}
+        form = DeadlineForm()
+        contents = {'event': event,
+                    'message': "Cautious: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abort message."}
+
     return render(request, 'manage_event/modify_event_deadline_detail.html', {'form': form})
 
 
 def modify_event_deadline_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    #message = AbortMessage.objects.get(event=event).Abort_message
+
     # send notifications to all the participants
-    # notify.send(sender=request.user,
-    #             recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
-    #             verb='aborted',
-    #             action_object=AbortMessage.objects.get(event=event),
-    #             target=event,
-    #             description=event.id,
-    #             timestamp=datetime.datetime.now().replace(microsecond=0))
+    notify.send(sender=request.user,
+                recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
+                verb='modified event',
+                target=event,
+                description=event.id,
+                timestamp=datetime.datetime.now().replace(microsecond=0))
     context = {'event': event}
     return render(request, 'manage_event/modify_event_deadline_result.html', context)
 
@@ -360,22 +360,19 @@ def abort_event_detail(request, event_id):
     """
     event = get_object_or_404(Events, pk=event_id)
 
-    if EventUser.objects.get(event=event, user=request.user).role == 'o':
-        if request.method == 'POST':
-            form = AbortForm(request.POST)
-            if form.is_valid():
-                AbortMessage.objects.get_or_create(event=event, Abort_message=form.cleaned_data['Abort_message'])
-                event.status = 'Abort'
-                event.save()
-            return HttpResponseRedirect(reverse('manage_event:abort_event_result', args=(event_id,)))
-        else:
-            form = AbortForm()
-            contents = {'event': event,
-                        'message': "Cautious: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abort message.)",
-                        'form': form.as_p()}
+    if request.method == 'POST':
+        form = AbortForm(request.POST)
+        if form.is_valid():
+            AbortMessage.objects.get_or_create(event=event, Abort_message=form.cleaned_data['Abort_message'])
+            event.status = 'Abort'
+            event.save()
+        return HttpResponseRedirect(reverse('manage_event:abort_event_result', args=(event_id,)))
     else:
+        form = AbortForm()
         contents = {'event': event,
-                    'error_message': "Sorry, you didn't have the access to abort this event."}
+                    'message': "Cautious: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abort message.)",
+                    'form': form.as_p()}
+
     return render(request, 'manage_event/abort_event_detail.html', contents)
 
 
@@ -407,6 +404,7 @@ def abort_event_result(request, event_id):
 
 
 @login_required
+@permission_required()
 def pending(request, event_id):
     """
     Pending event information page.
@@ -426,6 +424,7 @@ def pending(request, event_id):
 
 
 @login_required
+@permission_required(role='o')
 def on_going(request, event_id):
     """
     On going event information page.
@@ -503,6 +502,7 @@ def make_decision_results(request, event_id):
         return render(request, 'manage_event/make_decision_results.html', contents)
 
 @login_required
+@permission_required(role='o')
 def make_decision_json(request, event_id):
     """
     Used for .js parsing json by ajax.
@@ -531,6 +531,7 @@ def make_decision_json(request, event_id):
 
 
 @login_required
+@permission_required(role='o')
 def make_decision(request, event_id):
     """
     Make decision page.
@@ -569,6 +570,7 @@ def make_decision(request, event_id):
 
 
 @login_required
+@permission_required(role='o')
 def make_decision_render(request, event_id):
     """
     Response to make decision.
@@ -590,6 +592,7 @@ def make_decision_render(request, event_id):
 
 
 @login_required
+@permission_required()
 def show_decision_result(request, event_id):
     """
     Show decision result page.
@@ -603,16 +606,6 @@ def show_decision_result(request, event_id):
         return render(request, 'manage_event/show_abort_event_result.html', {'event': event, 'message': message})
     else:
         return render(request, 'manage_event/show_decision_result.html', {'event': event})
-
-
-@login_required
-def home(request):
-    """
-    Seems useless.
-    :param request:
-    :return:
-    """
-    return render(request, 'manage_event/index.html')
 
 
 @login_required
@@ -649,7 +642,7 @@ def webLogout(request):
     :return:
     """
     logout(request)
-    return HttpResponseRedirect('/manage_event/')
+    return HttpResponseRedirect('/')
 
 
 @login_required
