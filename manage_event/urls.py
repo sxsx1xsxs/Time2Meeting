@@ -18,6 +18,8 @@ urlpatterns = [
     url(r'^(?P<event_id>[0-9]+)/show_decision_result/$', views.show_decision_result, name='show_decision_result'),
     url(r'^(?P<event_id>[0-9]+)/abort_event_detail/$', views.abort_event_detail, name='abort_event_detail'),
     url(r'^(?P<event_id>[0-9]+)/abort_event_result/$', views.abort_event_result, name='abort_event_result'),
+    url(r'^(?P<event_id>[0-9]+)/modify_event_deadline_detail/$', views.modify_event_deadline_detail, name='modify_event_deadline_detail'),
+    url(r'^(?P<event_id>[0-9]+)/modify_event_deadline_result/$', views.modify_event_deadline_result, name='modify_event_deadline_result'),
 
     url(r'^create_event/$', views.create_event, name='create_event'),
     url(r'^(?P<event_id>[0-9]+)/create_publish/$', views.create_publish, name='create_publish'),
@@ -35,8 +37,8 @@ urlpatterns = [
     url(r'^(?P<event_id>[0-9]+)/initialize_timeslots/$', views.initialize_timeslots, name='initialize_timeslots'),
     url(r'^(?P<event_id>[0-9]+)/modify_timeslots_update/$', views.modify_timeslots_update, name='modify_timeslots_update'),
     url(r'^(?P<event_id>[0-9]+)/select_publish_render/$', views.select_publish_render, name="select_publish_render"),
-    url(r'^(?P<event_id>[0-9]+)/accept_invitation$', views.accept_invitation, name="accept_invitation"),
-    url(r'^(?P<event_id>[0-9]+)/decline_invitation$', views.decline_invitation, name="decline_invitation"),
+    url(r'^accept_invitation/(?P<key>\w+)/$', views.accept_invitation, name="accept_invitation"),
+    url(r'^decline_invitation/(?P<key>\w+)/$', views.decline_invitation, name="decline_invitation"),
     #url(r'^(?P<event_id>[0-9]+)/read_timeslots/$', views.get_each_user_timeslots, name='get_each_user_timeslots'),
 
 ]

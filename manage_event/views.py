@@ -1,11 +1,11 @@
 import datetime
 import json
-# import sys
-# import re
-# from django.views import generic
-# from django.utils import timezone
-# from .models import Profile
-# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import sys
+import re
+from django.views import generic
+from django.utils import timezone
+from .models import Profile
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
@@ -13,17 +13,19 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.db import transaction
-from .forms import UserForm, ProfileForm, EventForm, InvitationForm, AbortForm
+from .forms import UserForm, ProfileForm, EventForm, InvitationForm, AbortForm, DeadlineForm
 from .models import Events, TimeSlots, EventUser, AbortMessage, Invitation
 from notifications.models import Notification
 from notifications.signals import notify
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
+from django.forms import ValidationError
 
-from django.core.mail import send_mail
+from django.core.mail import send_mass_mail, send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
+import functools
 
 
 @login_required
@@ -34,7 +36,7 @@ def index(request):
     :return:
     """
     user = request.user
-    notifications = user.notifications.unread()
+    notifications = user.notifications.read()
 
     return render(request, 'manage_event/index.html', {
         'notifications': notifications,
@@ -50,29 +52,21 @@ def notification_redirect(request, event_id, notification_id):
     :param notification_id:
     :return:
     """
+    event = get_object_or_404(Events, pk=event_id)
     notification = get_object_or_404(Notification, pk=notification_id)
     notification.mark_as_read()
-    if notification.verb == 'aborted' or notification.verb == 'decided':
+    if notification.verb == 'aborted' or notification.verb == 'decided final time on':
         return HttpResponseRedirect(reverse('manage_event:show_decision_result', args=(event_id,)))
     else:
-        return 0
-
-
-# def index(request):
-#     get cookie by key
-#     user_name = request.COOKIES.get('username')
-#     if not user_name:
-#         # set cookie:
-#         # 1.initial a response;
-#         # 2.set cookie(key, value);
-#         # 3.return response to make the cookie change
-#         response = HttpResponse('set cookie as wayne')
-#         response.set_cookie('username', 'wayne')
-#         return response
-#     else:
-#         response = HttpResponse('set cookie as null')
-#         response.set_cookie('username', '')
-#         return response
+        accept_invite_url = reverse('manage_event:accept_invitation', args=[event.id])
+        decline_invite_url = reverse('manage_event:decline_invitation', args=[event.id])
+        accept_invite_url = request.build_absolute_uri(accept_invite_url)
+        decline_invite_url = request.build_absolute_uri(decline_invite_url)
+        return render(request, 'manage_event/invite_confirm.html', {
+            'event': event,
+            'accept_invite_url': accept_invite_url,
+            'decline_invite_url': decline_invite_url
+        })
 
 
 @login_required
@@ -174,37 +168,92 @@ def create_event(request):
         form = EventForm()
     return render(request, 'manage_event/create_event.html', {'form': form})
 
+# def decorater(foo):
+#     def func(request, event_id):
+#         event = get_object_or_404(Events, pk=event_id)
+#         if EventUser.get(event = event).get(user = request.user) == 'o':
+#             return foo(request, event_id)
+#         else:
+#
+#     return func
 
-def send_invitation(request, event, mail_list):
+@login_required
+def modify_event_deadline_detail(request, event_id):
+    """
+    Modify event deadline and overwrite the datebase.
+    :param request:
+    :return:
+    """
+    event = get_object_or_404(Events, pk=event_id)
+    if EventUser.objects.get(event=event, user=request.user).role == 'o':
+        if request.method == 'POST':
+            form = DeadlineForm(request.POST, instance = event)
+            if form.is_valid():
+                modified_deadline = form.cleaned_data.get('deadline')
+                event.deadline = modified_deadline
+                event.save()
+                return HttpResponseRedirect(reverse('manage_event:modify_event_deadline_result', args=(event_id,)))
+        else:
+            form = DeadlineForm()
+            contents = {'event': event,
+                        'message': "Cautious: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abort message."}
+    else:
+        contents = {'event': event, 'error_message': "Sorry, you didn't have the access to modify the deadline of this event."}
+    return render(request, 'manage_event/modify_event_deadline_detail.html', {'form': form})
+
+
+def modify_event_deadline_result(request, event_id):
+    event = get_object_or_404(Events, pk=event_id)
+    #message = AbortMessage.objects.get(event=event).Abort_message
+    # send notifications to all the participants
+    # notify.send(sender=request.user,
+    #             recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
+    #             verb='aborted',
+    #             action_object=AbortMessage.objects.get(event=event),
+    #             target=event,
+    #             description=event.id,
+    #             timestamp=datetime.datetime.now().replace(microsecond=0))
+    context = {'event': event}
+    return render(request, 'manage_event/modify_event_deadline_result.html', context)
+
+
+def send_invitation(request, event, objs):
     current_site = request.get_host()
-
-    accept_invite_url = reverse('manage_event:accept_invitation', args=[event.id])
-    decline_invite_url = reverse('manage_event:decline_invitation', args=[event.id])
-    accept_invite_url = request.build_absolute_uri(accept_invite_url)
-    decline_invite_url = request.build_absolute_uri(decline_invite_url)
-
     inviter = request.user.first_name + ' ' + request.user.last_name
+    event_name = event.event_name
 
-    context = {
-        'accept_invite_url': accept_invite_url,
-        'decline_invite_url': decline_invite_url,
-        'site_name': current_site,
-        'inviter': inviter,
-        'event_name': event.event_name,
-        'event_id': event.id
-    }
+    for obj in objs:
+        accept_invite_url = reverse('manage_event:accept_invitation', args=(obj.key,))
+        decline_invite_url = reverse('manage_event:decline_invitation', args=(obj.key,))
+        accept_invite_url = request.build_absolute_uri(accept_invite_url)
+        decline_invite_url = request.build_absolute_uri(decline_invite_url)
 
-    msg_plain = render_to_string('invitations/email/email_invite_message.txt', context)
-    msg_html = render_to_string('invitations/email/email_invite_message.html', context)
-    sub_plain = render_to_string('invitations/email/email_invite_subject.txt', context)
+        context = {
+            'site_name': current_site,
+            'inviter': inviter,
+            'event_name': event_name,
+            'accept_invite_url': accept_invite_url,
+            'decline_invite_url': decline_invite_url,
+        }
 
-    send_mail(
-        sub_plain,
-        msg_plain,
-        settings.EMAIL_HOST_USER,
-        mail_list,
-        html_message=msg_html,
-    )
+        msg_html = render_to_string('invitations/email/email_invite_message.html', context)
+        msg_plain = render_to_string('invitations/email/email_invite_message.txt', context)
+        sub_plain = render_to_string('invitations/email/email_invite_subject.txt', context)
+
+        send_mail(sub_plain,
+                  msg_plain,
+                  settings.EMAIL_HOST_USER,
+                  [obj.email],
+                  html_message=msg_html
+                  )
+
+    mail_list = [obj.email for obj in objs]
+    notify.send(sender=request.user,
+                recipient=[User.objects.filter(email=email).first() for email in mail_list],
+                verb='invite you to join event',
+                target=event,
+                description=event.id,
+                timestamp=datetime.datetime.now().replace(microsecond=0))
 
 
 def invitation_required(foo):
@@ -213,50 +262,68 @@ def invitation_required(foo):
     :return: wrapper
     decorator for checking user's invitation status for the event
     """
-    def wrapper(request, event_id):
-        event = get_object_or_404(Events, pk=event_id)
+    @functools.wraps(foo)
+    def wrapper(request, key):
+        invitation = get_object_or_404(Invitation, key=key)
         current_email = request.user.email
-        mail_list = [entry.email for entry in Invitation.objects.filter(event=event)]
-        if current_email not in mail_list:
+        if current_email != invitation.email:
             messages.warning(request, _('Sorry, you are not been invited for this event!'))
             return HttpResponseRedirect(reverse('manage_event:index'))
-        return foo(request, event_id)
+        if invitation.confirmed:
+            messages.info(request, _('Sorry, you have already made a decision for this invitation!'))
+            return HttpResponseRedirect(reverse('manage_event:index'))
+        return foo(request, key)
     return wrapper
 
 
-def permission_required(foo):
+def permission_required(role='p'):
     """
-    :param foo:
+    :param role:
     :return: wrapper
     decorator for checking user's permission for the event
     """
-    def wrapper(request, event_id):
-        event = get_object_or_404(Events, pk=event_id)
-        user_list = [entry.user for entry in EventUser.objects.filter(event=event)]
-        if request.user not in user_list:
-            messages.warning(request, _('Sorry, you have no permission to view this event!'))
-            return HttpResponseRedirect(reverse('manage_event:index'))
-        return foo(request, event_id)
-    return wrapper
+    def decorator(foo):
+        @functools.wraps(foo)
+        def wrapper(request, event_id):
+            event = get_object_or_404(Events, pk=event_id)
+            user_list = [entry.user for entry in EventUser.objects.filter(event=event)]
+            if request.user not in user_list:
+                messages.warning(request, _('Sorry, you have no permission to view this event!'))
+                return HttpResponseRedirect(reverse('manage_event:index'))
+            entry = EventUser.objects.get(event=event, user=request.user)
+            if entry.role != role:
+                messages.warning(request, _('Sorry, you are not the organizer of this event!'))
+                return HttpResponseRedirect(reverse('manage_event:index'))
+            return foo(request, event_id)
+        return wrapper
+    return decorator
 
 
 @login_required
 @invitation_required
-def accept_invitation(request, event_id):
-    event = get_object_or_404(Events, pk=event_id)
+def accept_invitation(request, key):
+    invitation = get_object_or_404(Invitation, key=key)
+    event = invitation.event
+
     EventUser.objects.get_or_create(user=request.user, event=event)
-    return HttpResponseRedirect(reverse('manage_event:select_timeslots', args=(event_id,)))
+    invitation.confirmed = True
+    invitation.save()
+    return HttpResponseRedirect(reverse('manage_event:select_timeslots', args=(event.id,)))
 
 
 @login_required
 @invitation_required
-def decline_invitation(request, event_id):
-    event = get_object_or_404(Events, pk=event_id)
-    return render(request, 'invitations/decline/decline_invitation.html', {'event': event})
+def decline_invitation(request, key):
+    invitation = get_object_or_404(Invitation, key=key)
+    invitation.confirmed = True
+    invitation.save()
+
+    messages.info(request, _('You have declined the invitation for event ' + invitation.event.event_name))
+    return render(request, 'invitations/decline/decline_invitation.html')
 
 
 @login_required
-@permission_required
+@permission_required(role='o')
 def create_publish(request, event_id):
     """
     Publish create result.
@@ -271,9 +338,9 @@ def create_publish(request, event_id):
         form = InvitationForm(request.POST)
         if form.is_valid():
             mail_list = form.cleaned_data
-            for email in mail_list:
-                Invitation.objects.get_or_create(email=email, event=event)
-            send_invitation(request, event, mail_list)
+            objs = Invitation.create(event=event, mail_list=mail_list, inviter=request.user)
+            send_invitation(request, event, objs)
+
             messages.success(request, _('Invite Success!'))
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event_id,)))
     else:
@@ -282,6 +349,7 @@ def create_publish(request, event_id):
 
 
 @login_required
+@permission_required(role='o')
 def abort_event_detail(request, event_id):
     """
     Abort event page.
@@ -311,6 +379,7 @@ def abort_event_detail(request, event_id):
 
 
 @login_required
+@permission_required(role='o')
 def abort_event_result(request, event_id):
     """
     Show result after aborting event.
@@ -323,8 +392,8 @@ def abort_event_result(request, event_id):
     # send notifications to all the participants
     notify.send(sender=request.user,
                 recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
-                verb='aborted',
-                action_object=AbortMessage.objects.get(event=event),
+                verb='aborted event',
+                #action_object=AbortMessage.objects.get(event=event),
                 target=event,
                 description=event.id,
                 timestamp=datetime.datetime.now().replace(microsecond=0))
@@ -368,14 +437,14 @@ def on_going(request, event_id):
         form = InvitationForm(request.POST)
         if form.is_valid():
             mail_list = form.cleaned_data
-            for email in mail_list:
-                Invitation.objects.get_or_create(email=email, event=event)
-            send_invitation(request, event, mail_list)
+            objs = Invitation.create(event=event, mail_list=mail_list, inviter=request.user)
+            send_invitation(request, event, objs)
+
             messages.success(request, _('Invite Success!'))
             return HttpResponseRedirect(reverse('manage_event:on_going', args=(event_id,)))
     else:
         form = InvitationForm()
-        return render(request, 'manage_event/on_going.html', {'event': event, 'form': form})
+    return render(request, 'manage_event/on_going.html', {'event': event, 'form': form})
 
 
 def get_result(event_id):
@@ -399,6 +468,7 @@ def get_result(event_id):
 
 
 @login_required
+@permission_required(role='o')
 def make_decision_detail(request, event_id):
     """
     Make decision page.
@@ -412,6 +482,7 @@ def make_decision_detail(request, event_id):
 
 
 @login_required
+@permission_required(role='o')
 def make_decision_results(request, event_id):
     """
     Show decision results.
@@ -429,7 +500,6 @@ def make_decision_results(request, event_id):
         else:
             contents = {'event': event}
         return render(request, 'manage_event/make_decision_results.html', contents)
-
 
 @login_required
 def make_decision_json(request, event_id):
@@ -483,8 +553,7 @@ def make_decision(request, event_id):
                 # send notifications to all the participants
                 notify.send(sender=request.user,
                             recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
-                            verb='decided',
-                            action_object=event,
+                            verb='decided final time on event',
                             target=event,
                             description=event.id,
                             timestamp=datetime.datetime.now().replace(microsecond=0))

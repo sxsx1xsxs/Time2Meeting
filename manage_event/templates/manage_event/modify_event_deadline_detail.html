@@ -1,0 +1,25 @@
+{% extends 'manage_event/sidebar.html' %}
+{% block content %}
+{{ form.media }}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}" {% endif %} >
+        {{ message }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <br>
+    <input id="create" type="submit" value="Modify the Event Deadline">
+</form>
+
+<br>
+<button onclick="location.href='{% url 'manage_event:organize_index' %}'">Back to Organize Events</button>
+<br>
+{% endblock%}

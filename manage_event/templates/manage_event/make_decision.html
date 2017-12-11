@@ -16,6 +16,10 @@
 <button onclick="location.href='{% url 'manage_event:abort_event_detail' event.id %}'">Abort event</button>
 <br>
 
+<br>
+<button onclick="location.href='{% url 'manage_event:modify_event_deadline_detail' event.id %}'">Modify Deadline</button>
+<br>
+
 <h1>Make a decision for {{ event.event_name }}</h1>
 {% endblock %}
 
@@ -27,5 +31,3 @@
 <br>
 <button onclick="postTimeSlotsAndRedirect('../make_decision/','../make_decision_render')"> submit</button>
 {% endblock %}
-
-
