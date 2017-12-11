@@ -229,7 +229,7 @@
                     {% for event in event_pending %} {% if forloop.counter|modulo:4 == 1 %}
                     <div class="row">
                         {% endif %}
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <a href="{% url 'manage_event:pending' event.id%}">
                             <div class="flip-container alphas" ontouchstart="this.classList.toggle('hover');">
                                 <div class="flipper">
