@@ -15,11 +15,10 @@
 <form action="" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <br>
-    <input id="create" type="submit" value="Modify the Event Deadline">
+    <input type="submit" class="btn btn-primary" value="Modify the Event Deadline">
 </form>
 
 <br>
-<button onclick="location.href='{% url 'manage_event:organize_index' %}'">Back to Organize Events</button>
+<button class="btn btn-primary" onclick="location.href='{% url 'manage_event:organize_index' %}'">Back to Organize Events</button>
 <br>
 {% endblock%}

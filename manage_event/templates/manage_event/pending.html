@@ -1,7 +1,7 @@
 {% extends 'manage_event/sidebar.html' %}
 {% block content %}
 
-<h3>{{ event.event_name }}</h3>
+<h1>{{ event.event_name }}</h1>
 
 <p>This event is waiting for the final decision of organizer.</p>
 <p>You have submitted your time slots: </p>
@@ -13,7 +13,7 @@
 </ul>
 
 <br>
-<button onclick="location.href='{% url 'manage_event:participate_index' %}'">Back to Participate Events</button>
+<button class="btn btn-primary" onclick="location.href='{% url 'manage_event:participate_index' %}'">Back to Participate Events</button>
 <br>
 
 {% endblock%}
