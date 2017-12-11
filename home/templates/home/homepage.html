@@ -1,0 +1,161 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block main %}
+
+  <header class="masthead text-white text-center">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-xl-9 mx-auto">
+            <h1 class="mb-5">Simplify Scheduling. Reduce Chaos.</h1>
+            <p class="mb-5">A scheduling web application focusing on lite groups’ demands and experiences.</p>
+          </div>
+          <div class="col-md-9 col-lg-8 col-xl-7 mx-auto">
+            <form>
+              <div class="form-row">
+                <div class="col-0 col-md-4">
+                </div>
+                <div class="col-12 col-md-4">
+                  <button type="submit" class="btn btn-block btn-lg btn-primary">Sign in!</button>
+                </div>
+                <div class="col-0 col-md-4">
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Icons Grid -->
+    <section class="features-icons bg-light text-center">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
+              <div class="features-icons-icon d-flex">
+                <i class="icon-screen-desktop m-auto text-primary"></i>
+              </div>
+              <h3>Scheduling Engine</h3>
+              <p class="lead mb-0">Powerful scheduling engine to display overlap of time slots!</p>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
+              <div class="features-icons-icon d-flex">
+                <i class="icon-layers m-auto text-primary"></i>
+              </div>
+              <h3>Easy-used Calendar</h3>
+              <p class="lead mb-0">Selecting whichever time slot with user friendly calendar.</p>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="features-icons-item mx-auto mb-0 mb-lg-3">
+              <div class="features-icons-icon d-flex">
+                <i class="icon-check m-auto text-primary"></i>
+              </div>
+              <h3>Real-time notifications</h3>
+              <p class="lead mb-0">Ready to get notifications on all events and invitations!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Image Showcases -->
+    <section class="showcase">
+      <div class="container-fluid p-0">
+        <div class="row no-gutters">
+
+          <div class="col-lg-6 order-lg-2 text-white showcase-img" style="background-image: url('{% static 'home/img/bg-showcase-1.jpg' %}');"></div>
+          <div class="col-lg-6 order-lg-1 my-auto showcase-text">
+            <h2>One platform.</h2>
+            <h2>Unlimited convenience.</h2>
+            <p class="lead mb-0">When you use Time2Meeting, you can deal with all the scheduling tasks of the event with the platform, whether it's:</p>
+            <p class="lead mb-0">• Select time slots</p>
+            <p class="lead mb-0">• View event status</p>
+            <p class="lead mb-0">• Make decision</p>
+          </div>
+        </div>
+        <div class="row no-gutters">
+          <div class="col-lg-6 text-white showcase-img" style="background-image: url('{% static 'home/img/bg-showcase-2.jpg' %}');"></div>
+          <div class="col-lg-6 my-auto showcase-text">
+            <h2>Click. Drag. Done.</h2>
+            <p class="lead mb-0">Cloud scheduling software has never been easier. Use the most easy-used calendar create for humans to select time slots in a snap.</p>
+            <p class="lead mb-0">• Half hour as a unit</p>
+            <p class="lead mb-0">• Select as simple or complex as you need</p>
+          </div>
+        </div>
+        <div class="row no-gutters">
+          <div class="col-lg-6 order-lg-2 text-white showcase-img" style="background-image: url('{% static 'home/img/bg-showcase-3.jpg' %}');"></div>
+          <div class="col-lg-6 order-lg-1 my-auto showcase-text">
+            <h2>Every news.</h2>
+            <h2>On Notification center.</h2>
+            <p class="lead mb-0">Stop using spreadsheets and email to track events and skedules. Time2Meeting instantly shows you the progress of any news.</p>
+            <p class="lead mb-0">• New invitation</p>
+            <p class="lead mb-0">• Modification of events</p>
+            <p class="lead mb-0">• Final decision on holding time</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials text-center bg-light">
+      <div class="container">
+        <h2 class="mb-5"><a href="{% url 'home:team' %}">Who we are?</a></h2>
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="testimonial-item mx-auto mb-4 mb-lg-0">
+              <a href="{% url 'home:team' %}"><img class="img-fluid rounded-circle mb-3" src="{% static 'home/img/yz.jpeg' %}" alt=""></a>
+              <h5>Yi Zhang</h5>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="testimonial-item mx-auto mb-5 mb-lg-0">
+              <a href="{% url 'home:team' %}"><img class="img-fluid rounded-circle mb-3" src="{% static 'home/img/zdl.jpeg' %}" alt=""></a>
+              <h5>Zhidong Liu</h5>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="testimonial-item mx-auto mb-5 mb-lg-0">
+              <a href="{% url 'home:team' %}"><img class="img-fluid rounded-circle mb-3" src="{% static 'home/img/yfz-1.jpeg' %}" alt=""></a>
+              <h5>Yufeng Zhang</h5>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="testimonial-item mx-auto mb-5 mb-lg-0">
+              <a href="{% url 'home:team' %}"><img class="img-fluid rounded-circle mb-3" src="{% static 'home/img/qmh.jpeg' %}" alt=""></a>
+              <h5>Qimeng Han</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="call-to-action text-white text-center">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-xl-9 mx-auto">
+            <h2 class="mb-4">Ready to get started? Sign in now!</h2>
+          </div>
+          <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+            <form>
+              <div class="form-row">
+                <div class="col-0 col-md-4">
+                </div>
+                <div class="col-12 col-md-4">
+                  <button type="submit" class="btn btn-block btn-lg btn-primary">Sign in!</button>
+                </div>
+                <div class="col-0 col-md-4">
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+{% endblock%}
