@@ -1,44 +1,225 @@
 {% extends 'manage_event/sidebar.html' %}
+
+{% load my_tags %}
 {% block content %}
 
+<style type="text/css">
+
+.col-md-4 {
+    border: 10px solid none;
+    display: inline-block;
+    padding: 7px;
+}
+
+.flip-container {
+    perspective: 1000px;
+}
+
+.cardHeader {
+    color: #FFFFFF;
+    font-style: italic;
+    font-size: 25px;
+}
+
+.cardContext {
+
+}
+
+/* flip the pane when hovered */
+
+.flip-container:hover .flipper,
+.flip-container.hover .flipper {
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+}
+
+.flip-container,
+.front,
+.back {
+    width: 100%;
+    height: 150px;
+}
+
+.image {
+    zoom: 60%;
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+}
+
+.image:hover {
+    transform: scale(1.1, 1.1);
+    transition: 0.2s ease;
+}
+
+
+
+
+/* flip speed goes here */
+
+.flipper {
+    -webkit-transition: 0.6s;
+    transition: 0.6s;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    -o-transform-style: preserve-3d;
+    -ms-transform-style: preserve-3d;
+
+    position: relative;
+}
+
+.front,
+.back {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+
+
+/* front pane, placed above back */
+
+.front {
+    padding: 10px;
+    -webkit-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+    background: #8edbfe;
+}
+
+
+
+/* back, initially hidden pane */
+
+.back {
+    padding: 10px;
+    background: #ffa343;
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+}
+
+</style>
+<style>
+    .sectionTitle {
+    font-family: Impact;
+    font-size: 25px;
+    }
+</style>
 
 <div>
-
-    <h1>Welcome to Time2Meeting!</h1>
-
-
-    <br><h3>To do:</h3>
-
-    <ul>
-    {% for event in event_to_do %}
-        <li><a href="{% url 'manage_event:select_timeslots' event.id%}">{{ event.event_name }}</a></li>
-    {% endfor %}
-    </ul>
-
-
-    <ul>
-    {% for event in event_done %}
-        <p>{{ event.event_name }} &nbsp <a href="{% url 'manage_event:modify_timeslots' event.id%}">Click to modify</a></p>
-    {% endfor %}
-    </ul>
-
-    <br><h3>Result:</h3>
-
-    <ul>
-    {% for event in event_result %}
-        <li><a href="{% url 'manage_event:show_decision_result' event.id%}">{{ event.event_name }}</a></li>
-    {% endfor %}
-    </ul>
-
-    <br><h3>Pending:</h3>
-
-    <ul>
-    {% for event in event_pending %}
-        <li><a href="{% url 'manage_event:pending' event.id%}">{{ event.event_name }}</a></li>
-    {% endfor %}
-    </ul>
-
+            <div class="tab-content " id="TabContent">
+                <div id="ToDo" class="anchor">
+                    <div class="sectionTitle">To Do </div>
+                    {% for event in event_to_do %} {% if forloop.counter|modulo:3 == 1 %}
+                    <div class="row">
+                        {% endif %}
+                        <div class="col-md-4">
+                            <a href="{% url 'manage_event:select_timeslots' event.id%}">
+                            <div class="flip-container alphas" ontouchstart="this.classList.toggle('hover');">
+                                <div class="flipper">
+                                    <div class="front">
+                                        <p class="cardHeader">{{event.event_name}}</p>
+                                        <p class="cardContext">{{event.create_time}}</p>
+                                    </div>
+                                    <div class="back">
+                                        <p>Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
+                                        <p>Duration: {{ event.duration }}</p>
+                                        <p>Deadline: {{ event.deadline }}</p>
+                                        <p>{{ event.info }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                                </a>
+                        </div>
+                        {% if forloop.last or forloop.counter|modulo:3 == 0 %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                    {% for event in event_done %} {% if forloop.counter|modulo:3 == 1 %}
+                    <div class="row">
+                        {% endif %}
+                        <div class="col-md-4">
+                            <a href="{% url 'manage_event:modify_timeslots' event.id%}">
+                            <div class="flip-container alphas" ontouchstart="this.classList.toggle('hover');">
+                                <div class="flipper">
+                                    <div class="front">
+                                        <p class="cardHeader">{{event.event_name}}</p>
+                                        <p class="cardContext">{{event.create_time}}</p>
+                                    </div>
+                                    <div class="back">
+                                        <p>Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
+                                        <p>Duration: {{ event.duration }}</p>
+                                        <p>Deadline: {{ event.deadline }}</p>
+                                        <p>{{ event.info }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                                </a>
+                        </div>
+                        {% if forloop.last or forloop.counter|modulo:3 == 0 %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                <div id="Decided" class="anchor">
+                    <div class="sectionTitle">Decided </div>
+                    {% for event in event_result %} {% if forloop.counter|modulo:3 == 1 %}
+                    <div class="row">
+                        {% endif %}
+                        <div class="col-md-4">
+                            <a href="{% url 'manage_event:show_decision_result' event.id%}">
+                            <div class="flip-container alphas" ontouchstart="this.classList.toggle('hover');">
+                                <div class="flipper">
+                                    <div class="front">
+                                        <p class="cardHeader">{{event.event_name}}</p>
+                                        <p class="cardContext">{{event.create_time}}</p>
+                                    </div>
+                                    <div class="back">
+                                        <p>Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
+                                        <p>Duration: {{ event.duration }}</p>
+                                        <p>Deadline: {{ event.deadline }}</p>
+                                        <p>{{ event.info }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                        {% if forloop.last or forloop.counter|modulo:3 == 0 %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                <div id="Pending" class="anchor">
+                   <div class="sectionTitle">Pending </div>
+                    {% for event in event_pending %} {% if forloop.counter|modulo:3 == 1 %}
+                    <div class="row">
+                        {% endif %}
+                        <div class="col-md-4">
+                            <a href="{% url 'manage_event:pending' event.id%}">
+                            <div class="flip-container alphas" ontouchstart="this.classList.toggle('hover');">
+                                <div class="flipper">
+                                    <div class="front">
+                                        <p class="cardHeader">{{event.event_name}}</p>
+                                        <p class="cardContext">{{event.create_time}}</p>
+                                    </div>
+                                    <div class="back">
+                                        <p>Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
+                                        <p>Duration: {{ event.duration }}</p>
+                                        <p>Deadline: {{ event.deadline }}</p>
+                                        <p>{{ event.info }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                        {% if forloop.last or forloop.counter|modulo:3 == 0 %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
 </div>
 
-
 {% endblock%}
+
