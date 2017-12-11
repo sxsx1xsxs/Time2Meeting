@@ -4,7 +4,7 @@
 
 <style type="text/css">
 
-.col-md-4 {
+.col-md-3 {
     border: 10px solid none;
     display: inline-block;
     padding: 7px;
@@ -21,7 +21,8 @@
 }
 
 .cardContext {
-
+    color: #FFFFFF;
+    font-style: italic;
 }
 
 /* flip the pane when hovered */
@@ -84,7 +85,7 @@
     padding: 10px;
     -webkit-transform: rotateY(0deg);
     transform: rotateY(0deg);
-    background: #8edbfe;
+    background: #8fbfef;
 }
 
 
@@ -93,7 +94,7 @@
 
 .back {
     padding: 10px;
-    background: #ffa343;
+    background: #f7a855;
     -webkit-transform: rotateY(180deg);
     transform: rotateY(180deg);
 }
@@ -110,9 +111,9 @@
             <div class="tab-content " id="TabContent">
 
                 <div id="newEvent" class="anchor">
-                    <div class="sectionTitle">New Event: </div>
+                    <div class="sectionTitle">Create New Event </div>
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <a href='{% url "manage_event:create_event" %}'>
                                 <div >
                                      <img class="image" src="../../static/manage_event/3.png">
@@ -121,12 +122,13 @@
                         </div>
                     </div>
                 </div>
+                <br><br><br><br>
                 <div id="waitForDecision" class="anchor">
                     <div class="sectionTitle">Waiting for decision</div>
-                    {% for event in event_wait_for_decision %} {% if forloop.counter|modulo:3 == 1 %}
+                    {% for event in event_wait_for_decision %} {% if forloop.counter|modulo:4 == 1 %}
                     <div class="row">
                         {% endif %}
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <a href="{% url 'manage_event:make_decision_detail' event.id%}">
                             <div class="flip-container alphas" ontouchstart="this.classList.toggle('hover');">
                                 <div class="flipper">
@@ -135,26 +137,32 @@
                                         <p class="cardContext">{{event.create_time}}</p>
                                     </div>
                                     <div class="back">
-                                        <p>Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
-                                        <p>Duration: {{ event.duration }}</p>
-                                        <p>Deadline: {{ event.deadline }}</p>
-                                        <p>{{ event.info }}</p>
+                                        <p class="cardContext">Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
+                                        <p class="cardContext">Duration: {{ event.duration }}</p>
+                                        <p class="cardContext">Deadline: {{ event.deadline }}</p>
+                                        <p class="cardContext">{{ event.info }}</p>
                                     </div>
                                 </div>
                             </div>
                                 </a>
                         </div>
-                        {% if forloop.last or forloop.counter|modulo:3 == 0 %}
+                        {% if forloop.last or forloop.counter|modulo:4 == 0 %}
                     </div>
                     {% endif %}
                     {% endfor %}
+                    <div class="row">
+                         <div class="col-md-3">
+                            <div class="flip-container alphas" ontouchstart="this.classList.toggle('hover');">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div id="ongoing" class="anchor">
                     <div class="sectionTitle">Ongoing</div>
-                    {% for event in event_on_going %} {% if forloop.counter|modulo:3 == 1 %}
+                    {% for event in event_on_going %} {% if forloop.counter|modulo:4 == 1 %}
                     <div class="row">
                         {% endif %}
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <a href="{% url 'manage_event:on_going' event.id%}">
                             <div class="flip-container alphas" ontouchstart="this.classList.toggle('hover');">
                                 <div class="flipper">
@@ -163,27 +171,33 @@
                                         <p class="cardContext">{{event.create_time}}</p>
                                     </div>
                                     <div class="back">
-                                        <p>Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
-                                        <p>Duration: {{ event.duration }}</p>
-                                        <p>Deadline: {{ event.deadline }}</p>
-                                        <p>{{ event.info }}</p>
+                                        <p class="cardContext">Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
+                                        <p class="cardContext">Duration: {{ event.duration }}</p>
+                                        <p class="cardContext">Deadline: {{ event.deadline }}</p>
+                                        <p class="cardContext">{{ event.info }}</p>
                                     </div>
                                 </div>
                             </div>
                             </a>
                         </div>
-                        {% if forloop.last or forloop.counter|modulo:3 == 0 %}
+                        {% if forloop.last or forloop.counter|modulo:4 == 0 %}
                     </div>
                     {% endif %}
                     {% endfor %}
+                    <div class="row">
+                         <div class="col-md-3">
+                            <div class="flip-container alphas" ontouchstart="this.classList.toggle('hover');">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div id="history" class="anchor">
                    <div class="sectionTitle">History</div>
 
-                    {% for event in event_history %} {% if forloop.counter|modulo:3 == 1 %}
+                    {% for event in event_history %} {% if forloop.counter|modulo:4 == 1 %}
                     <div class="row">
                         {% endif %}
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <a href="{% url 'manage_event:make_decision_results' event.id%}">
                             <div class="flip-container alphas" ontouchstart="this.classList.toggle('hover');">
                                 <div class="flipper">
@@ -192,19 +206,25 @@
                                         <p class="cardContext">{{event.create_time}}</p>
                                     </div>
                                     <div class="back">
-                                        <p>Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
-                                        <p>Duration: {{ event.duration }}</p>
-                                        <p>Deadline: {{ event.deadline }}</p>
-                                        <p>{{ event.info }}</p>
+                                        <p class="cardContext">Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
+                                        <p class="cardContext">Duration: {{ event.duration }}</p>
+                                        <p class="cardContext">Deadline: {{ event.deadline }}</p>
+                                        <p class="cardContext">{{ event.info }}</p>
                                     </div>
                                 </div>
                             </div>
                             </a>
                         </div>
-                        {% if forloop.last or forloop.counter|modulo:3 == 0 %}
+                        {% if forloop.last or forloop.counter|modulo:4 == 0 %}
                     </div>
                     {% endif %}
                     {% endfor %}
+                    <div class="row">
+                         <div class="col-md-3">
+                            <div class="flip-container alphas" ontouchstart="this.classList.toggle('hover');">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 </div>
