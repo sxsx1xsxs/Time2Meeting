@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import validate_email
 from datetimewidget.widgets import DateTimeWidget
 import datetime
+import re
 
 
 class InvitationForm(forms.Form):
