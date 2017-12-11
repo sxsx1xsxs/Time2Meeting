@@ -122,7 +122,7 @@
                     </div>
                 </div>
                 <div id="waitForDecision" class="anchor">
-                    <div class="sectionTitle">Events waiting for decision: </div>
+                    <div class="sectionTitle">Waiting for decision</div>
                     {% for event in event_wait_for_decision %} {% if forloop.counter|modulo:3 == 1 %}
                     <div class="row">
                         {% endif %}
@@ -150,7 +150,7 @@
                     {% endfor %}
                 </div>
                 <div id="ongoing" class="anchor">
-                    <div class="sectionTitle">Ongoing Events </div>
+                    <div class="sectionTitle">Ongoing</div>
                     {% for event in event_on_going %} {% if forloop.counter|modulo:3 == 1 %}
                     <div class="row">
                         {% endif %}
@@ -178,7 +178,7 @@
                     {% endfor %}
                 </div>
                 <div id="history" class="anchor">
-                   <div class="sectionTitle">History Events: </div>
+                   <div class="sectionTitle">History</div>
 
                     {% for event in event_history %} {% if forloop.counter|modulo:3 == 1 %}
                     <div class="row">
