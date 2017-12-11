@@ -57,6 +57,8 @@ def notification_redirect(request, event_id, notification_id):
     notification.mark_as_read()
     if notification.verb == 'aborted' or notification.verb == 'decided final time on':
         return HttpResponseRedirect(reverse('manage_event:show_decision_result', args=(event_id,)))
+    elif notification.verb == 'modified':
+        return HttpResponseRedirect(reverse('manage_event:modify_timeslots', args=(event_id,)))
     else:
         accept_invite_url = reverse('manage_event:accept_invitation', args=[event.id])
         decline_invite_url = reverse('manage_event:decline_invitation', args=[event.id])
@@ -203,15 +205,14 @@ def modify_event_deadline_detail(request, event_id):
 
 def modify_event_deadline_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
-    #message = AbortMessage.objects.get(event=event).Abort_message
+
     # send notifications to all the participants
-    # notify.send(sender=request.user,
-    #             recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
-    #             verb='aborted',
-    #             action_object=AbortMessage.objects.get(event=event),
-    #             target=event,
-    #             description=event.id,
-    #             timestamp=datetime.datetime.now().replace(microsecond=0))
+    notify.send(sender=request.user,
+                recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
+                verb='modified',
+                target=event,
+                description=event.id,
+                timestamp=datetime.datetime.now().replace(microsecond=0))
     context = {'event': event}
     return render(request, 'manage_event/modify_event_deadline_result.html', context)
 
