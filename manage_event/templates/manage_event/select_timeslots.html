@@ -3,6 +3,30 @@
 
 {% block head %}
 <h1>Select time slot for {{ event.event_name }}</h1>
+<table class="table table-hover table-bordered">
+        <tr>
+            <th scope="row">Created time</th>
+            <td>{{ event.create_time }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Time range</th>
+            <td>{{ event.time_range_start }} to {{ event.time_range_end }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Duration</th>
+            <td>{{ event.duration }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Deadline</th>
+            <td>{{ event.deadline }}</td>
+        </tr>
+        {% if event.info %}
+        <tr>
+            <th scope="row">Info</th>
+            <td>{{ event.info }}</td>
+        </tr>
+        {% endif %}
+    </table>
 {% endblock %}
 
 
@@ -11,6 +35,6 @@
     loadTimeSlotsAndCreateTimeTable("../initialize_timeslots", "highlighted");
 </script>
 <br>
-<button onclick="postTimeSlotsAndRedirect('../read_timeslots/','../select_publish_render')"> submit</button>
+<button class = "btn btn-primary" onclick="postTimeSlotsAndRedirect('../read_timeslots/','../select_publish_render')"> submit</button>
 {% endblock %}
 

@@ -39,6 +39,5 @@ urlpatterns = [
     url(r'^(?P<event_id>[0-9]+)/select_publish_render/$', views.select_publish_render, name="select_publish_render"),
     url(r'^accept_invitation/(?P<key>\w+)/$', views.accept_invitation, name="accept_invitation"),
     url(r'^decline_invitation/(?P<key>\w+)/$', views.decline_invitation, name="decline_invitation"),
-    #url(r'^(?P<event_id>[0-9]+)/read_timeslots/$', views.get_each_user_timeslots, name='get_each_user_timeslots'),
 
 ]

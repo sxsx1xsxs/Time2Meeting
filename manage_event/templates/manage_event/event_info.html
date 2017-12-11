@@ -1,12 +1,28 @@
 {% extends 'manage_event/calendar.html' %}
 
 <h1>{{ event.event_name }}</h1>
-<p><i>Info: {{ event.info }}</i></p>
-<br>
-<p>Created time: {{ event.create_time }}</p>
-<p>Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
-<p>Duration: {{ event.duration }}</p>
-<p>Deadline: {{ event.deadline }}</p>
-<p>-------------------------------------------------------------</p>
-<br>
+<table class="table table-hover table-bordered">
+        <tr>
+            <th scope="row">Created time</th>
+            <td>{{ event.create_time }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Time range</th>
+            <td>{{ event.time_range_start }} to {{ event.time_range_end }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Duration</th>
+            <td>{{ event.duration }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Deadline</th>
+            <td>{{ event.deadline }}</td>
+        </tr>
+        {% if event.info %}
+        <tr>
+            <th scope="row">Info</th>
+            <td>{{ event.info }}</td>
+        </tr>
+        {% endif %}
+</table>
 

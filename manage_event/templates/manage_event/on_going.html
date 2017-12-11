@@ -1,47 +1,61 @@
 {% extends 'manage_event/calendar.html' %}
 
 {% block head %}
-<div class="123"
-<h1>{{ event.event_name }}</h1>
-<p><i>{{ event.info }}</i></p>
-<br>
-<p>Created time: {{ event.create_time }}</p>
-<p>Time range: {{ event.time_range_start }} to {{ event.time_range_end }}</p>
-<p>Duration: {{ event.duration }}</p>
-<p>Deadline: {{ event.deadline }}</p>
-<p>-------------------------------------------------------------</p>
-<br>
 
+<h1>{{ event.event_name }} is on going </h1>
 <br>
-<button onclick="location.href='{% url 'manage_event:modify_event_deadline_detail' event.id %}'">Modify Event Deadline</button>
-<button onclick="location.href='{% url 'manage_event:abort_event_detail' event.id %}'">Abort event</button>
-<br>
-
-<br>
-<p>Invite more friends to join the event via emails:</p>
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li {% if message.tags %} class="{{ message.tags }}" {% endif %} >
-        {{ message }}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Invite">
-</form>
-
-<h1>{{ event.event_name }} is on going, and the current status is: </h1>
+<div class="row">
+        <div class="col-lg-6">
+            <table class="table table-hover table-bordered">
+                <tr>
+                    <th scope="row">Created time</th>
+                    <td>{{ event.create_time }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Time range</th>
+                    <td>{{ event.time_range_start }} to {{ event.time_range_end }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Duration</th>
+                    <td>{{ event.duration }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Deadline</th>
+                    <td>{{ event.deadline }}</td>
+                </tr>
+                {% if event.info %}
+                <tr>
+                    <th scope="row">Info</th>
+                    <td>{{ event.info }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        <div class="col-lg-6">
+            {% if messages %}
+            <ul class="messages">
+            {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}" {% endif %} >{{ message }}</li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+            <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" class="btn btn-primary btn-block" value="Invite more friends to join the event via emails">
+            </form>
+        </div>
+</div>
+<h4 class="text-center">Current result:</h4>
 {% endblock %}
 
-
 {% block jsAndButton %}
+
 <script type="text/javascript" charset="utf-8">
     loadTimeSlotsAndCreateTimeTable("../make_decision_json", "");
 </script>
 <br>
-<button onclick="location.href='{% url 'manage_event:organize_index' %}'">Back to organize events</button>
+<button type="button" class="btn btn-primary" onclick="location.href='{% url 'manage_event:modify_event_deadline_detail' event.id %}'">Modify Event Deadline</button>
+<button type="button" class="btn btn-warning" onclick="location.href='{% url 'manage_event:abort_event_detail' event.id %}'">Abort event</button>
+
 {% endblock %}

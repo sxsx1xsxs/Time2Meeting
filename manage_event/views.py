@@ -55,11 +55,14 @@ def notification_redirect(request, event_id, notification_id):
     event = get_object_or_404(Events, pk=event_id)
     notification = get_object_or_404(Notification, pk=notification_id)
     notification.mark_as_read()
-    if notification.verb == 'aborted' or notification.verb == 'decided final time on':
+    if notification.verb == 'aborted event' or notification.verb == 'decided final time on event':
         return HttpResponseRedirect(reverse('manage_event:show_decision_result', args=(event_id,)))
+    elif notification.verb == 'modified event':
+        return HttpResponseRedirect(reverse('manage_event:modify_timeslots', args=(event_id,)))
     else:
-        accept_invite_url = reverse('manage_event:accept_invitation', args=[event.id])
-        decline_invite_url = reverse('manage_event:decline_invitation', args=[event.id])
+        obj = Invitation.objects.filter(event=event).filter(email=request.user.email).first()
+        accept_invite_url = reverse('manage_event:accept_invitation', args=[obj.key])
+        decline_invite_url = reverse('manage_event:decline_invitation', args=[obj.key])
         accept_invite_url = request.build_absolute_uri(accept_invite_url)
         decline_invite_url = request.build_absolute_uri(decline_invite_url)
         return render(request, 'manage_event/invite_confirm.html', {
@@ -86,12 +89,12 @@ def organize_index(request):
     event_wait_for_decision = Events.objects.filter(Q(id__in=organized_events_id),
                                                     Q(status='Available'),
                                                     Q(final_time_start__isnull=True),
-                                                    Q(deadline__lte=datetime.datetime.now()))
+                                                    Q(deadline__lte=datetime.datetime.now())).order_by('-create_time')
     event_on_going = Events.objects.filter(Q(id__in=organized_events_id),
                                            Q(status='Available'),
-                                           Q(deadline__gte=datetime.datetime.now()))
+                                           Q(deadline__gte=datetime.datetime.now())).order_by('-create_time')
     event_history = Events.objects.filter(Q(id__in=organized_events_id),
-                                          Q(final_time_start__isnull=False) | Q(status='Abort'))
+                                          Q(final_time_start__isnull=False) | Q(status='Abort')).order_by('-create_time')
     # latest_event_list = Events.objects.order_by('-event_date')[:5]
     # output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/organize_index.html', {
@@ -124,15 +127,15 @@ def participate_index(request):
 
     event_to_do = Events.objects.filter(Q(id__in=to_do_events_id),
                                         Q(status='Available'),
-                                        Q(deadline__gte=datetime.datetime.now()))
+                                        Q(deadline__gte=datetime.datetime.now())).order_by('-create_time')
     event_done = Events.objects.filter(Q(id__in=done_events_id),
                                        Q(status='Available'),
-                                       Q(deadline__gte=datetime.datetime.now()))
+                                       Q(deadline__gte=datetime.datetime.now())).order_by('-create_time')
     event_result = Events.objects.filter(Q(id__in=participate_events_id),
-                                         Q(final_time_start__isnull=False) | Q(status='Abort'))
+                                         Q(final_time_start__isnull=False) | Q(status='Abort')).order_by('-create_time')
     event_pending = Events.objects.filter(Q(id__in=participate_events_id),
                                           Q(status='Available'),
-                                          Q(deadline__lte=datetime.datetime.now())).exclude(final_time_start__isnull=False)
+                                          Q(deadline__lte=datetime.datetime.now())).exclude(final_time_start__isnull=False).order_by('-create_time')
     # latest_event_list = Events.objects.order_by('-event_date')[:5]
     # output = ', '.join([q.event_name for q in latest_event_list])
     return render(request, 'manage_event/participate_index.html', {
@@ -196,6 +199,14 @@ def modify_event_deadline_detail(request, event_id):
 
 def modify_event_deadline_result(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
+
+    # send notifications to all the participants
+    notify.send(sender=request.user,
+                recipient=[eventuser.user for eventuser in EventUser.objects.filter(event=event)],
+                verb='modified event',
+                target=event,
+                description=event.id,
+                timestamp=datetime.datetime.now().replace(microsecond=0))
     context = {'event': event}
     return render(request, 'manage_event/modify_event_deadline_result.html', context)
 
@@ -273,10 +284,11 @@ def permission_required(role='p'):
             if request.user not in user_list:
                 messages.warning(request, _('Sorry, you have no permission to view this event!'))
                 return HttpResponseRedirect(reverse('manage_event:index'))
-            entry = EventUser.objects.get(event=event, user=request.user)
-            if entry.role != role:
-                messages.warning(request, _('Sorry, you are not the organizer of this event!'))
-                return HttpResponseRedirect(reverse('manage_event:index'))
+            eventuser = EventUser.objects.get(event=event, user=request.user)
+            if role == 'o':
+                if eventuser.role != 'o':
+                    messages.warning(request, _('Sorry, you are not the organizer of this event!'))
+                    return HttpResponseRedirect(reverse('manage_event:index'))
             return foo(request, event_id)
         return wrapper
     return decorator
@@ -342,22 +354,19 @@ def abort_event_detail(request, event_id):
     """
     event = get_object_or_404(Events, pk=event_id)
 
-    if EventUser.objects.get(event=event, user=request.user).role == 'o':
-        if request.method == 'POST':
-            form = AbortForm(request.POST)
-            if form.is_valid():
-                AbortMessage.objects.get_or_create(event=event, Abort_message=form.cleaned_data['Abort_message'])
-                event.status = 'Abort'
-                event.save()
-            return HttpResponseRedirect(reverse('manage_event:abort_event_result', args=(event_id,)))
-        else:
-            form = AbortForm()
-            contents = {'event': event,
-                        'message': "Cautious: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abort message.)",
-                        'form': form.as_p()}
+    if request.method == 'POST':
+        form = AbortForm(request.POST)
+        if form.is_valid():
+            AbortMessage.objects.get_or_create(event=event, Abort_message=form.cleaned_data['Abort_message'])
+            event.status = 'Abort'
+            event.save()
+        return HttpResponseRedirect(reverse('manage_event:abort_event_result', args=(event_id,)))
     else:
+        form = AbortForm()
         contents = {'event': event,
-                    'error_message': "Sorry, you didn't have the access to abort this event."}
+                    'message': "Caution: Once the event is aborted, it cannot be undo. Every participants will be infomed with the abort message.)",
+                    'form': form.as_p()}
+
     return render(request, 'manage_event/abort_event_detail.html', contents)
 
 
@@ -384,6 +393,7 @@ def abort_event_result(request, event_id):
 
 
 @login_required
+@permission_required()
 def pending(request, event_id):
     """
     Pending event information page.
@@ -403,6 +413,7 @@ def pending(request, event_id):
 
 
 @login_required
+@permission_required(role='o')
 def on_going(request, event_id):
     """
     On going event information page.
@@ -480,6 +491,7 @@ def make_decision_results(request, event_id):
         return render(request, 'manage_event/make_decision_results.html', contents)
 
 @login_required
+@permission_required(role='o')
 def make_decision_json(request, event_id):
     """
     Used for .js parsing json by ajax.
@@ -508,6 +520,7 @@ def make_decision_json(request, event_id):
 
 
 @login_required
+@permission_required(role='o')
 def make_decision(request, event_id):
     """
     Make decision page.
@@ -546,6 +559,7 @@ def make_decision(request, event_id):
 
 
 @login_required
+@permission_required(role='o')
 def make_decision_render(request, event_id):
     """
     Response to make decision.
@@ -567,6 +581,7 @@ def make_decision_render(request, event_id):
 
 
 @login_required
+@permission_required()
 def show_decision_result(request, event_id):
     """
     Show decision result page.
@@ -580,16 +595,6 @@ def show_decision_result(request, event_id):
         return render(request, 'manage_event/show_abort_event_result.html', {'event': event, 'message': message})
     else:
         return render(request, 'manage_event/show_decision_result.html', {'event': event})
-
-
-@login_required
-def home(request):
-    """
-    Seems useless.
-    :param request:
-    :return:
-    """
-    return render(request, 'manage_event/index.html')
 
 
 @login_required
@@ -626,7 +631,7 @@ def webLogout(request):
     :return:
     """
     logout(request)
-    return HttpResponseRedirect('/manage_event/')
+    return HttpResponseRedirect('/')
 
 
 @login_required

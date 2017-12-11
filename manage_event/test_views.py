@@ -112,6 +112,50 @@ class viewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['event'], self.event)
 
+    def test_abort_event_detail_get(self):
+        """
+        Test the response of a GET request when calling abort_event_detail.
+
+        """
+        client1 = Client()
+        login = client1.login(username='participant1', password='12345')
+        self.assertEqual(login, True)
+        response = client1.get(reverse('manage_event:abort_event_detail', args=(self.event.id,)))
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(reverse('manage_event:abort_event_detail', args=(self.event.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('message', response.context)
+
+    def test_abort_event_detail_post(self):
+        """
+        Test the response of a POST request when calling abort_event_detail.
+
+        """
+
+        response = self.client.post(reverse('manage_event:abort_event_detail', args=(self.event.id,)))
+        self.assertRedirects(response, reverse('manage_event:abort_event_result', args=(self.event.id,)))
+
+    def test_abort_event_result(self):
+        """
+        Test the response of a GET request when calling abort_event_result.
+
+        """
+        thirty_mins = datetime.timedelta(minutes=30)
+        time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
+        event = Events.objects.create(event_name="testEvent",
+                                      time_range_start=time_now + thirty_mins * 4,
+                                      time_range_end=time_now + thirty_mins * 6,
+                                      deadline=time_now + thirty_mins * 3,
+                                      duration=thirty_mins)
+        event_organizer = EventUser.objects.create(event=event,
+                                                   user=self.organizer,
+                                                   role='o')
+        abort_message = AbortMessage.objects.create(event=event,
+                                                    Abort_message="this is aborted.")
+        response = self.client.get(reverse('manage_event:abort_event_result', args=(event.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['message'], abort_message.Abort_message)
+
     def test_make_decision_detail(self):
         """
         Test the response of a GET request when calling make_decision_detail.
@@ -120,6 +164,27 @@ class viewTestCase(TestCase):
         response = self.client.get(reverse('manage_event:make_decision_detail', args=(self.event.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['event'], self.event)
+
+    def test_make_decision_results(self):
+        """
+        Test the response of a GET request when calling make_decision_results.
+
+        """
+        thirty_mins = datetime.timedelta(minutes=30)
+        time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
+        event = Events.objects.create(event_name="testEvent",
+                                      time_range_start=time_now + thirty_mins * 4,
+                                      time_range_end=time_now + thirty_mins * 6,
+                                      final_time_start=time_now + thirty_mins * 5,
+                                      final_time_end=time_now + thirty_mins * 6,
+                                      deadline=time_now + thirty_mins * 3,
+                                      duration=thirty_mins)
+        event_organizer = EventUser.objects.create(event=event,
+                                                   user=self.organizer,
+                                                   role='o')
+        response = self.client.get(reverse('manage_event:make_decision_results', args=(event.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['event'], event)
 
     def test_make_decision_json(self):
         """
@@ -144,6 +209,9 @@ class viewTestCase(TestCase):
                                       time_range_end=time_now + thirty_mins * 6,
                                       deadline=time_now + thirty_mins * 3,
                                       duration=thirty_mins)
+        event_organizer = EventUser.objects.create(event=event,
+                                                   user=self.organizer,
+                                                   role='o')
         decision = {self.timeslot.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'): "Blank",
                     self.timeslot2.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'): "Selected"}
         response = self.client.post(reverse('manage_event:make_decision', args=(event.id,)),

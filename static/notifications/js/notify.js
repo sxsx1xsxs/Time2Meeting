@@ -4,7 +4,7 @@ var notify_api_url;
 var notify_fetch_count;
 var notify_unread_url;
 var notify_mark_all_unread_url;
-var notify_refresh_period = 15000;
+var notify_refresh_period = 5000;
 var consecutive_misfires = 0;
 var registered_functions = [];
 
@@ -56,7 +56,7 @@ function fill_notification_list_with_link(data) {
                 message = message + " " + "<b>" + item.target + "</b>";
             }
             if(typeof item.timestamp !== 'undefined'){
-                message = message + " on " + item.timestamp;
+                message = message + ", " + item.timestamp;
             }
             if(item.description !== null){
                 message = '<a href="' + item.description + '/notification_redirect/' + item.id +  '">' + message + '</a>';
@@ -65,6 +65,7 @@ function fill_notification_list_with_link(data) {
         }).join('')
     }
 }
+
 
 function register_notifier(func) {
     registered_functions.push(func);
