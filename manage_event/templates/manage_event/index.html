@@ -23,12 +23,15 @@
 
 
 <script src="{% static 'notifications/js/notify.js' %}" type="text/javascript"></script>
+
+<div id="unread" class="anchor">
     {% register_notify_callbacks callbacks='fill_notification_list_with_link,fill_notification_badge' %}
 
     {% live_notify_badge classes="badge"%} New notifications
 
     {% live_notify_list %}
-</br>
+</div>
+<div id="read" class="anchor">
 <p>Read</p>
 
     <ul>
@@ -36,6 +39,7 @@
         <li>{{ notification }}&nbsp<a href="{% url 'manage_event:notification_redirect' event_id=notification.target.id notification_id=notification.id %}">(View details)</a></li>
     {% endfor %}
     </ul>
+</div>
 
 
 {% endblock%}

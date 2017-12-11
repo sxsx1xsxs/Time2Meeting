@@ -4,8 +4,30 @@
 
 <style>
     .anchor {
-    padding-top: 120px;
-    margin-top: -120px;
+    padding-top: 170px;
+    margin-top: -170px;
+    }
+
+    #sidebarCollapse {
+        background-color: #7386D5;
+        border-color:#7386D5;
+    }
+
+    .buttonrow {
+        padding-top: 10px;
+        padding-left: 30px;
+        width: 100%;
+        height: 50px;
+        background-color: #ffffff;
+        z-index:200;
+        opacity: 1;
+        z-index: 200;
+        position: fixed;
+    }
+
+    .realContent {
+    padding-top: 70px;
+    padding-left: 20px;
     }
 </style>
 {% load static %}
@@ -21,10 +43,10 @@
             <nav id="sidebar">
                 <ul class="list-unstyled components">
                     <li class="active">
-                        <a href="#NotificationSubmenu" data-toggle="collapse" aria-expanded="false">Notifications</a>
-                        <ul class="collapse list-unstyled" id="NotificationSubmenu">
-                            <li><a href="#">Unread</a></li>
-                            <li><a href="#">Read</a></li>
+                        <a href="#notificationSubmenu" data-toggle="collapse" aria-expanded="false" onclick="redirect('notification')">Notifications</a>
+                        <ul class="collapse list-unstyled" id="notificationSubmenu">
+                            <li><a href="#unread">Unread</a></li>
+                            <li><a href="#read">Read</a></li>
                         </ul>
                     </li>
                     <li>
@@ -50,13 +72,16 @@
 
             <!-- Page Content Holder -->
             <div id="content">
+                <div class="buttonrow">
 
-               <button type="button" id="sidebarCollapse" class="btn btn-info">
+               <div type="button" id="sidebarCollapse" class="btn btn-info">
                                 <i class="glyphicon glyphicon-align-left"></i>
                                 <span>Hide Sidebar</span>
-                            </button>
+                            </div>
+
+                </div>
                 <div>
-                    <div class="row">
+                    <div class="realContent">
                         <div class="col-md-12">
                             <div>
 
@@ -98,6 +123,8 @@ if (expandingLocation == "organize") {
             window.location.replace('{% url 'manage_event:organize_index' %}');
         }else if (place == "participate") {
             window.location.replace('{% url 'manage_event:participate_index' %}');
+        }else if (place == "notification") {
+            window.location.replace('{% url 'manage_event:index' %}');
         }
 
         localStorage['expand'] = place;
@@ -115,13 +142,15 @@ if (expandingLocation == "organize") {
                  $('#sidebarCollapse').on('click', function () {
                      $('#sidebar').toggleClass('active');
                       if ($('#sidebar').hasClass('active')){
-                        document.getElementById("content").style.padding = "120px 10px 0px 20px";
+                        document.getElementById("content").style.padding = "130px 0px 0px 0px";
                         document.getElementById("sidebarCollapse").innerHTML = "Show Sidebar";
                       } else {
-                        document.getElementById("content").style.padding = "120px 10px 0px 270px";
+                        document.getElementById("content").style.padding = "130px 0px 0px 250px";
                         document.getElementById("sidebarCollapse").innerHTML = "Hide Sidebar";
 
                       }
+
+                      console.log("I am here");
 
                  });
              });

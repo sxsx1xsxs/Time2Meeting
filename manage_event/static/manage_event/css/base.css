@@ -14,11 +14,11 @@
 
 .page-header-custom {
     background-color: #b3e0ff;
-    margin-top: 0;
-    top: 0 px;
-    padding: 20px 20px 20px 40px;
+    top: 50px;
+    padding: 0px 15px 15px 15px;
     position: fixed;
     width: 100%;
+    height: 80;
     z-index: 100;
 }
 

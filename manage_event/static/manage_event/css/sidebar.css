@@ -63,7 +63,7 @@ a, a:hover, a:focus {
     transition: all 0.3s;
    position: fixed;
    left: 0px;
-   top: 100px;
+   top: 130px;
 }
 
 #sidebar.active {
@@ -152,8 +152,8 @@ a.article, a.article:hover {
     CONTENT STYLE
 ----------------------------------------------------- */
 #content {
-    padding-left: 270px;
-    padding-top: 120px;
+    padding-left: 250px;
+    padding-top: 130px;
     min-height: 100vh;
     transition: all 0.3s;
     width: 100%;
