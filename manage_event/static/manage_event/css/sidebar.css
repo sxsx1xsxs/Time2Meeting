@@ -63,7 +63,7 @@ a, a:hover, a:focus {
     transition: all 0.3s;
    position: fixed;
    left: 0px;
-   top: 130px;
+   top: 80px;
 }
 
 #sidebar.active {
@@ -153,7 +153,7 @@ a.article, a.article:hover {
 ----------------------------------------------------- */
 #content {
     padding-left: 250px;
-    padding-top: 130px;
+    padding-top: 80px;
     min-height: 100vh;
     transition: all 0.3s;
     width: 100%;

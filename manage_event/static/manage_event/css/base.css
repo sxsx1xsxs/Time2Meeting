@@ -14,8 +14,8 @@
 
 .page-header-custom {
     background-color: #b3e0ff;
-    top: 50px;
-    padding: 0px 15px 15px 15px;
+    top: 0px;
+    padding: 20px 15px 15px 15px;
     position: fixed;
     width: 100%;
     height: 80;

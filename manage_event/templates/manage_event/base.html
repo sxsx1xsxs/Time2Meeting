@@ -11,30 +11,17 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
-<div class="topbar">
-    <button class="topButton btn btn-info" onclick="location.href='{% url 'manage_event:index' %}'">Time2Meeting</button>
-    <button class="topButton btn btn-info" onclick="location.href='{% url 'home:guidance' %}'">Guidance</button>
-    <button class="topButton btn btn-info" onclick="location.href='{% url 'home:team' %}'">Team</button>
-    {% if user.is_authenticated %}
-    <a class="right topButton btn btn-info" href="/manage_event/logout">Log out</a>
-</div>
 
 <style type="text/css" media="screen">
 .right {
     text-align: right;
     float: right;
+    margin-right: 10px;
 }
 
-.topbar {
-        width: 100%;
-        padding-top: 8px;
-        padding-left: 8px;
-        padding-right: 8px;
-        height: 50px;
-        background-color: #7386D5;
-        z-index:200;
-        opacity: 1;
-        position: fixed;
+#ourHeading {
+
+    font-size: 30px;
 }
 </style>
 
@@ -42,13 +29,18 @@
 {% load notifications_tags %}
 {% load static %}
 <script src="{% static 'notifications/js/notify.js' %}" type="text/javascript"></script>
-{% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge' %}
-<a class="right" href="/manage_event/">&nbsp{% live_notify_badge classes="badge"%}&nbsp</a>
-{% endif %}
-{% csrf_token %}
+
 
 <div class="page-header-custom">
-    <h1><a href="/">Time2Meeting</a></h1>
+    <a id="ourHeading" href="/">Time2Meeting</a>
+    {% if request.user.is_authenticated %}
+    <a class="right topButton btn btn-info" href="/manage_event/logout">Log out</a>
+    <a class="right" href='{% url "manage_event:index" %}' >{{ request.user.first_name }}</a>
+    {% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge' %}
+    <a class="right" href="/manage_event/">&nbsp{% live_notify_badge classes="badge"%}&nbsp</a>
+
+{% csrf_token %}
+    {% endif %}
 </div>
 
 <div>
