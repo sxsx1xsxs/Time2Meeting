@@ -11,9 +11,8 @@
     <li>{{ slot}}</li>
 {% endfor %}
 </ul>
+<br>
 <button class="btn btn-primary" onclick="location.href='{% url 'manage_event:modify_timeslots' event.id %}'">Modify your time slots</button>
-<br>
 <button class="btn btn-primary" onclick="location.href='{% url 'manage_event:participate_index' %}'">Back to Participate Events</button>
-<br>
 
 {% endblock%}

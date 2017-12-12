@@ -102,7 +102,6 @@ class DeadlineForm(forms.ModelForm):
                             'value2': 'current time'})
                 error_list.append(error)
             if time_range_start <= deadline:
-                print('error')
                 error = forms.ValidationError(
                     _("%(value1)s should be later than %(value2)s!"),
                     code='start error',
