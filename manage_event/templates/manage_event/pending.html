@@ -3,16 +3,10 @@
 
 <h1>{{ event.event_name }}</h1>
 
-<p>This event is waiting for the final decision of organizer.</p>
-<p>You have submitted your time slots: </p>
-
-<ul>
-{% for slot in timeslots %}
-    <li>{{ slot}}</li>
-{% endfor %}
-</ul>
-
+<h4>Pending for the final decision of organizer.</h4>
+<h4>You can either view or modify the time slots before deadline.</h4>
 <br>
+<button class="btn btn-primary" onclick="location.href='{% url 'manage_event:modify_timeslots' event.id %}'">View your time slots</button>
 <button class="btn btn-primary" onclick="location.href='{% url 'manage_event:participate_index' %}'">Back to Participate Events</button>
 <br>
 

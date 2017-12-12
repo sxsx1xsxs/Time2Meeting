@@ -41,10 +41,18 @@
     height: 150px;
 }
 
+.flip-container,
+.front-low,
+.back {
+    width: 100%;
+    height: 150px;
+}
+
 .image {
     zoom: 60%;
-    opacity: 0.4;
+    opacity: 0.7;
     filter: alpha(opacity=40);
+
 }
 
 .image:hover {
@@ -78,7 +86,14 @@
     left: 0;
 }
 
-
+.front-low,
+.back {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
 
 /* front pane, placed above back */
 
@@ -89,7 +104,12 @@
     background: #8fbfef;
 }
 
-
+.front-low {
+    padding: 10px;
+    -webkit-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+    background: #cccccc;
+}
 
 /* back, initially hidden pane */
 
@@ -106,26 +126,31 @@
     font-family: Impact;
     font-size: 25px;
     }
+    .sectionTitleCreate {
+    font-family: Impact;
+    font-size: 25px;
+    color: #f7a855;
+    }
 </style>
 
 <div>
             <div class="tab-content " id="TabContent">
 
                 <div id="newEvent" class="anchor">
-                    <div class="sectionTitle">Create New Event </div>
+                    <div class="sectionTitle">Create New Event</div>
                     <div class="row">
                         <div class="col-md-3">
                             <a href='{% url "manage_event:create_event" %}'>
                                 <div >
-                                     <img class="image" src="{% static 'manage_event/3.png' %}">
+                                     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<img class="image" src="{% static 'manage_event/3.png' %}">
                                 </div>
                             </a>
                         </div>
                     </div>
                 </div>
-                <br><br><br><br>
+                <br><br>
                 <div id="waitForDecision" class="anchor">
-                    <div class="sectionTitle">Waiting for decision</div>
+                    <div class="sectionTitle">To Decide</div>
                     {% for event in event_wait_for_decision %} {% if forloop.counter|modulo:4 == 1 %}
                     <div class="row">
                         {% endif %}
@@ -159,7 +184,7 @@
                     </div>
                 </div>
                 <div id="ongoing" class="anchor">
-                    <div class="sectionTitle">Ongoing</div>
+                    <div class="sectionTitle">In Progress</div>
                     {% for event in event_on_going %} {% if forloop.counter|modulo:4 == 1 %}
                     <div class="row">
                         {% endif %}
@@ -202,7 +227,7 @@
                             <a href="{% url 'manage_event:make_decision_results' event.id%}">
                             <div class="flip-container alphas" ontouchstart="this.classList.toggle('hover');">
                                 <div class="flipper">
-                                    <div class="front">
+                                    <div class="front-low">
                                         <p class="cardHeader">{{event.event_name}}</p>
                                         <p class="cardContext">{{event.create_time}}</p>
                                     </div>

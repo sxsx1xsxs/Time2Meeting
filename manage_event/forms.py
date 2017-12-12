@@ -18,6 +18,11 @@ class InvitationForm(forms.Form):
                                                     'rows': 5,
                                                     'placeholder': "Only support Gmail & Lionmail"}))
 
+    def __init__(self,user_obj = None,*args,**kwargs):
+        self.user_obj = user_obj
+
+        super(InvitationForm,self).__init__(*args,**kwargs)
+
     def clean(self):
         """
         Clean up information.
@@ -25,13 +30,27 @@ class InvitationForm(forms.Form):
         """
         cleaned_data = super(InvitationForm, self).clean()
         emails = re.compile(r'[^\w.\-+@_]+').split(cleaned_data.get('emails'))
-
+        self_email = self.user_obj.email
+        error_list = []
         for email in emails:
             validate_email(email)
             _, domain_part = email.rsplit('@', 1)
             if domain_part != 'gmail.com' and domain_part != 'columbia.edu':
                 raise forms.ValidationError('Email address should be Gmail or LionMail !',
                                             code='address error',)
+                                            
+        for email in emails:
+            print(email)
+            print(self_email)
+            validate_email(email)
+            _, domain_part1 = email.rsplit('@',1)
+            _, domain_part2 = self_email.rsplit('@',1)
+            if domain_part1 == domain_part2:
+                error = forms.ValidationError("Email address should not be your own email!")
+                error_list.append(error)
+        if error_list:
+            raise forms.ValidationError(error_list)
+
         return emails
 
 
