@@ -330,7 +330,7 @@ def create_publish(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
 
     if request.method == 'POST':
-        form = InvitationForm(request.POST)
+        form = InvitationForm(data = request.POST, user_obj = request.user)
         if form.is_valid():
             mail_list = form.cleaned_data
             objs = Invitation.create(event=event, mail_list=mail_list, inviter=request.user)
@@ -339,7 +339,7 @@ def create_publish(request, event_id):
             messages.success(request, _('Invite Success!'))
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event_id,)))
     else:
-        form = InvitationForm()
+        form = InvitationForm(user_obj = request.user)
     return render(request, 'manage_event/create_publish.html', {'event_id': event_id, 'form': form})
 
 
@@ -423,7 +423,7 @@ def on_going(request, event_id):
     """
     event = get_object_or_404(Events, pk=event_id)
     if request.method == 'POST':
-        form = InvitationForm(request.POST)
+        form = InvitationForm(data = request.POST,user_obj = request.user)
         if form.is_valid():
             mail_list = form.cleaned_data
             objs = Invitation.create(event=event, mail_list=mail_list, inviter=request.user)
@@ -432,7 +432,7 @@ def on_going(request, event_id):
             messages.success(request, _('Invite Success!'))
             return HttpResponseRedirect(reverse('manage_event:on_going', args=(event_id,)))
     else:
-        form = InvitationForm()
+        form = InvitationForm(user_obj = request.user)
     return render(request, 'manage_event/on_going.html', {'event': event, 'form': form})
 
 
