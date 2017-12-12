@@ -1,19 +1,10 @@
 {% extends 'manage_event/sidebar.html' %}
 {% block content %}
-
-<h1>You have submitted your time slots for the event: </h1>
-
-<h3>{{ event.event_name }}</h3>
-
-
-<ul>
-{% for slot in timeslots %}
-    <li>{{ slot}}</li>
-{% endfor %}
-</ul>
-<button onclick="location.href='{% url 'manage_event:modify_timeslots' event.id %}'">Modify your time slots</button>
+<h1>{{ event.event_name }}</h1>
+<h4>You have submitted your time slots for this event. </h4>
+<h4>You can either view or modify the time slots before deadline.</h4>
 <br>
-<button onclick="location.href='{% url 'manage_event:participate_index' %}'">Back to Participate Events</button>
-<br>
+<button class="btn btn-primary" onclick="location.href='{% url 'manage_event:modify_timeslots' event.id %}'">View your time slots</button>
+<button class="btn btn-primary" onclick="location.href='{% url 'manage_event:participate_index' %}'">Back to Participate Events</button>
 
 {% endblock%}

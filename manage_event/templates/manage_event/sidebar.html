@@ -29,6 +29,15 @@
     padding-left: 20px;
     }
 
+    .quick-create{
+    background:#f7a855;
+    }
+
+    .left-align{
+    float: left;
+    margin-right: 10px;
+    color: white;
+    }
 
 </style>
 {% load static %}
@@ -53,9 +62,9 @@
                     <li>
                         <a href="#organizeSubmenu" onclick="redirect('organize')" data-toggle="collapse" aria-expanded="false">Organize</a>
                         <ul class="collapse list-unstyled" id="organizeSubmenu">
-                            <li><a href="#newEvent">New Event</a></li>
-                            <li><a href="#waitForDecision">Wait For Decision</a></li>
-                            <li><a href="#ongoing">Ongoing</a></li>
+                            <li><a href="#newEvent">Create New</a></li>
+                            <li><a href="#waitForDecision">To Decide</a></li>
+                            <li><a href="#ongoing">In Progress</a></li>
                             <li><a href="#history">History</a></li>
                         </ul>
                     </li>
@@ -63,8 +72,8 @@
                         <a href="#participateSubmenu" data-toggle="collapse" aria-expanded="false" onclick="redirect('participate')">Participate</a>
                         <ul class="collapse list-unstyled" id="participateSubmenu">
                             <li><a href="#ToDo">To Do</a></li>
-                            <li><a href="#Decided">Decided</a></li>
-                            <li><a href="#Pending">Pending</a></li>
+                            <li><a href="#Decided">Final Result</a></li>
+                            <li><a href="#Pending">Pending Decision</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -73,13 +82,15 @@
 
             <!-- Page Content Holder -->
             <div id="content">
-                <div class="buttonrow">
+                <div class="buttonrow row">
 
-               <div type="button" id="sidebarCollapse" class="btn btn-info">
+               <div type="button" id="sidebarCollapse" class="btn btn-info left-align">
                                 <i class="glyphicon glyphicon-align-left"></i>
                                 <span>Hide Sidebar</span>
-                            </div>
-
+               </div>
+                    <div class="sidebarCollapse left-align">
+                        <button class = "btn quick-create " onclick="location.href='{% url 'manage_event:create_event' %}'"><i class="glyphicon glyphicon-plus"></i><span>Create New</span></button>
+                </div>
                 </div>
                 <div>
                     <div class="realContent">
@@ -136,10 +147,10 @@ if (url.includes("/organize/")) {
                      $('#sidebar').toggleClass('active');
                       if ($('#sidebar').hasClass('active')){
                         document.getElementById("content").style.padding = "80px 0px 0px 0px";
-                        document.getElementById("sidebarCollapse").innerHTML = "Show Sidebar";
+                        document.getElementById("sidebarCollapse").innerHTML = "<i class='glyphicon glyphicon-align-left'></i><span>Show Sidebar</span>";
                       } else {
                         document.getElementById("content").style.padding = "80px 0px 0px 250px";
-                        document.getElementById("sidebarCollapse").innerHTML = "Hide Sidebar";
+                        document.getElementById("sidebarCollapse").innerHTML = "<i class='glyphicon glyphicon-align-left'></i><span>Hide Sidebar</span>";
 
                       }
 

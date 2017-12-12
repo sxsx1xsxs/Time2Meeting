@@ -242,8 +242,13 @@ def send_invitation(request, event, objs):
                   )
 
     mail_list = [obj.email for obj in objs]
+    recipient_list = []
+    for email in mail_list:
+        user = User.objects.filter(email=email).first()
+        if user:
+            recipient_list.append(user)
     notify.send(sender=request.user,
-                recipient=[User.objects.filter(email=email).first() for email in mail_list],
+                recipient=recipient_list,
                 verb='invite you to join event',
                 target=event,
                 description=event.id,
@@ -330,7 +335,7 @@ def create_publish(request, event_id):
     event = get_object_or_404(Events, pk=event_id)
 
     if request.method == 'POST':
-        form = InvitationForm(request.POST)
+        form = InvitationForm(data = request.POST, user_obj = request.user)
         if form.is_valid():
             mail_list = form.cleaned_data
             objs = Invitation.create(event=event, mail_list=mail_list, inviter=request.user)
@@ -339,7 +344,7 @@ def create_publish(request, event_id):
             messages.success(request, _('Invite Success!'))
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event_id,)))
     else:
-        form = InvitationForm()
+        form = InvitationForm(user_obj = request.user)
     return render(request, 'manage_event/create_publish.html', {'event_id': event_id, 'form': form})
 
 
@@ -403,7 +408,7 @@ def pending(request, event_id):
     """
     event = get_object_or_404(Events, pk=event_id)
 
-    timeslots = TimeSlots.objects.filter(event=event).filter(user=request.user)
+    timeslots = TimeSlots.objects.filter(event=event).filter(user=request.user).order_by('id')
     show_timeslots = []
     for t in timeslots:
         show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
@@ -423,7 +428,7 @@ def on_going(request, event_id):
     """
     event = get_object_or_404(Events, pk=event_id)
     if request.method == 'POST':
-        form = InvitationForm(request.POST)
+        form = InvitationForm(data = request.POST,user_obj = request.user)
         if form.is_valid():
             mail_list = form.cleaned_data
             objs = Invitation.create(event=event, mail_list=mail_list, inviter=request.user)
@@ -432,7 +437,7 @@ def on_going(request, event_id):
             messages.success(request, _('Invite Success!'))
             return HttpResponseRedirect(reverse('manage_event:on_going', args=(event_id,)))
     else:
-        form = InvitationForm()
+        form = InvitationForm(user_obj = request.user)
     return render(request, 'manage_event/on_going.html', {'event': event, 'form': form})
 
 
@@ -728,7 +733,7 @@ def select_publish_render(request, event_id):
     :return:
     """
     event = get_object_or_404(Events, pk=event_id)
-    timeslots = TimeSlots.objects.filter(event=event).filter(user=request.user)
+    timeslots = TimeSlots.objects.filter(event=event).filter(user=request.user).order_by('id')
     show_timeslots = []
     for t in timeslots:
         show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))

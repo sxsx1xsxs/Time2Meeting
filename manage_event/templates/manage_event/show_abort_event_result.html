@@ -4,10 +4,10 @@
 <div align="center">
 <h1>{{ event.event_name }}</h1>
 
-<p> This event has been aborted.</p>
+<h4> This event has been aborted.</h4>
     <p>The message left by organizer:</p>
     <p><b>{{ message }}</b></p>
-
+<br><br>
 <a class="btn btn-primary" href="{% url 'manage_event:participate_index' %}" role="button">Back to Participate Event</a>
 </div>
 
