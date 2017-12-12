@@ -242,8 +242,13 @@ def send_invitation(request, event, objs):
                   )
 
     mail_list = [obj.email for obj in objs]
+    recipient_list = []
+    for email in mail_list:
+        user = User.objects.filter(email=email).first()
+        if user:
+            recipient_list.append(user)
     notify.send(sender=request.user,
-                recipient=[User.objects.filter(email=email).first() for email in mail_list],
+                recipient=recipient_list,
                 verb='invite you to join event',
                 target=event,
                 description=event.id,
