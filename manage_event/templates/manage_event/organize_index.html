@@ -1,4 +1,5 @@
 {% extends 'manage_event/sidebar.html' %}
+{% load static %}
 {% load my_tags %}
 {% block content %}
 
@@ -141,7 +142,7 @@
                         <div class="col-md-3">
                             <a href='{% url "manage_event:create_event" %}'>
                                 <div >
-                                     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<img class="image" src="../../static/manage_event/3.png">
+                                     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<img class="image" src="{% static 'manage_event/3.png' %}g">
                                 </div>
                             </a>
                         </div>
