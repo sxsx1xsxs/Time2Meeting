@@ -2,14 +2,15 @@
 
 
 {% block head %}
-<h1>Modify time slot for {{ event.event_name }}</h1>
+<h1>{{ event.event_name }}</h1>
+<h4>View or modify the time slots you selected for this event.</h4>
 {% endblock %}
-
 
 {% block jsAndButton %}
 <script type="text/javascript" charset="utf-8">
     loadTimeSlotsAndCreateTimeTable("../modify_timeslots_read", "highlighted");
 </script>
 <br>
-<button class="btn btn-primary" onclick="postTimeSlotsAndRedirect('../modify_timeslots_update/','../select_publish_render')"> submit</button>
+<button class="btn btn-primary" onclick="postTimeSlotsAndRedirect('../modify_timeslots_update/','../select_publish_render')"> Modify</button>
+<button class="btn btn-primary" onclick="location.href='{% url 'manage_event:participate_index' %}'"> Back</button>
 {% endblock %}

@@ -2,12 +2,10 @@
 {% block content %}
 
 <div align="center">
-<h3>You have changed the submission deadline of for the event: </h3>
+    <h1>{{ event.event_name }}</h1>
+<h4>You have changed the submission deadline of for this event to:</h4>
 
-<h3>{{ event.event_name }}</h3>
-
-<h3>to: </h3>
-<h3>{{ event.deadline }}</h3>
+<h4>{{ event.deadline }}</h4>
 
 <br>
 <button  type="button" class= "btn btn-primary" onclick="location.href='{% url 'manage_event:participate_index' %}'">Back to Participate Events</button>

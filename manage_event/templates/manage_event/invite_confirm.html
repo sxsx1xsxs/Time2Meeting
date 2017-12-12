@@ -3,11 +3,14 @@
 {% block content %}
 
 <br>
-You have been invited to join the event {{ event }}.
+<h4>You have been invited to join the event {{ event }}.</h4>
 <br>
 <br>
-You can either accept or decline this invitation:
+<h4>
+    You can either accept or decline this invitation:
 <a href="{{ accept_invite_url }}">Accept</a>
 <a href="{{ decline_invite_url }}">Decline</a>
+</h4>
+
 
 {% endblock%}

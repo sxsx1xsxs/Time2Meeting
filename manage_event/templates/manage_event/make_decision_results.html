@@ -4,8 +4,7 @@
 
 <div align="center">
 <h1>{{ event.event_name }}</h1>
-
-    <h3> You chose <b>{{ event.final_time_start }}</b> to <b>{{ event.final_time_end }}</b> as your final decision.</h3>
+    <h4> You chose <b>{{ event.final_time_start }}</b> to <b>{{ event.final_time_end }}</b> as the final holding time.</h4>
 
 <a class="btn btn-primary"  href="{% url 'manage_event:organize_index' %}" role="button">Back to Organize Event</a>
 {% if can_abort %}
