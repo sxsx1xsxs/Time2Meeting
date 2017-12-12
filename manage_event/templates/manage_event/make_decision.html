@@ -2,7 +2,8 @@
 
 
 {% block head %}
-<h1>Make a decision for {{ event.event_name }}</h1>
+<h1>{{ event.event_name }}</h1>
+<h4>Please make a decision for this event.</h4>
     <table class="table table-hover table-bordered">
         <tr>
             <th scope="row">Created time</th>
@@ -36,8 +37,8 @@
     loadTimeSlotsAndCreateTimeTable("../make_decision_json", "marked");
 </script>
 <br>
-<button type="button" class="btn btn-warning" onclick="location.href='{% url 'manage_event:abort_event_detail' event.id %}'">Abort Event</button>
-<button type="button" class="btn btn-primary" onclick="location.href='{% url 'manage_event:modify_event_deadline_detail' event.id %}'">Modify Deadline</button>
-
 <button type="button" class="btn btn-success"onclick="postTimeSlotsAndRedirect('../make_decision/','../make_decision_render')">Make Decision</button>
+<button type="button" class="btn btn-primary" onclick="location.href='{% url 'manage_event:modify_event_deadline_detail' event.id %}'">Modify Deadline</button>
+<button type="button" class="btn btn-warning" onclick="location.href='{% url 'manage_event:abort_event_detail' event.id %}'">Abort Event</button>
+<br><br>
 {% endblock %}

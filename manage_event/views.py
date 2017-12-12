@@ -242,8 +242,13 @@ def send_invitation(request, event, objs):
                   )
 
     mail_list = [obj.email for obj in objs]
+    recipient_list = []
+    for email in mail_list:
+        user = User.objects.filter(email=email).first()
+        if user:
+            recipient_list.append(user)
     notify.send(sender=request.user,
-                recipient=[User.objects.filter(email=email).first() for email in mail_list],
+                recipient=recipient_list,
                 verb='invite you to join event',
                 target=event,
                 description=event.id,
@@ -403,7 +408,7 @@ def pending(request, event_id):
     """
     event = get_object_or_404(Events, pk=event_id)
 
-    timeslots = TimeSlots.objects.filter(event=event).filter(user=request.user)
+    timeslots = TimeSlots.objects.filter(event=event).filter(user=request.user).order_by('id')
     show_timeslots = []
     for t in timeslots:
         show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
@@ -728,7 +733,7 @@ def select_publish_render(request, event_id):
     :return:
     """
     event = get_object_or_404(Events, pk=event_id)
-    timeslots = TimeSlots.objects.filter(event=event).filter(user=request.user)
+    timeslots = TimeSlots.objects.filter(event=event).filter(user=request.user).order_by('id')
     show_timeslots = []
     for t in timeslots:
         show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))

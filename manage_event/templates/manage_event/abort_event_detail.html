@@ -3,7 +3,7 @@
 
 <h1>Aborting event: {{ event.event_name }}</h1>
 {% if message %}
-<p><strong>{{ message }}</strong></p>
+<h4><strong>{{ message }}</strong></h4>
 
 <form method="post">
     {% csrf_token %}

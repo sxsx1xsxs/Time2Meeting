@@ -1,18 +1,17 @@
 {% extends 'manage_event/sidebar.html' %}
 {% block content %}
 
-{% if can_abort %}
-<br>
-<button onclick="location.href='{% url 'manage_event:abort_event_detail' event.id %}'">Abort event</button>
-<br>
-{% endif %}
 
 <div align="center">
 <h1>{{ event.event_name }}</h1>
-
-<p> You have choose {{ event.final_time_start }} to {{ event.final_time_end }} as your final decision.</p>
+    <h4> You chose <b>{{ event.final_time_start }}</b> to <b>{{ event.final_time_end }}</b> as the final holding time.</h4>
 
 <a class="btn btn-primary"  href="{% url 'manage_event:organize_index' %}" role="button">Back to Organize Event</a>
+{% if can_abort %}
+    <button type="button" class="btn btn-warning" onclick="location.href='{% url 'manage_event:abort_event_detail' event.id %}'">Abort Event</button>
+<br>
+{% endif %}
+<br><br>
 </div>
 
 

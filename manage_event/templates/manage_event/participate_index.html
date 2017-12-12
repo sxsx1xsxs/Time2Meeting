@@ -131,7 +131,7 @@
 <div>
             <div class="tab-content " id="TabContent">
                 <div id="ToDo" class="anchor">
-                    <div class="sectionTitle">To Do </div>
+                    <div class="sectionTitle">To Do</div>
                     <div class="row">
                     {% for event in event_to_do %} {% if forloop.counter|modulo:4 == 1 %}
 
@@ -192,7 +192,7 @@
                     </div>
                 </div>
                 <div id="Decided" class="anchor">
-                    <div class="sectionTitle">Decided </div>
+                    <div class="sectionTitle">Final Result</div>
                     {% for event in event_result %} {% if forloop.counter|modulo:4 == 1 %}
                     <div class="row">
                         {% endif %}
@@ -226,7 +226,7 @@
                     </div>
                 </div>
                 <div id="Pending" class="anchor">
-                   <div class="sectionTitle">Pending </div>
+                   <div class="sectionTitle">Pending Decision</div>
                     {% for event in event_pending %} {% if forloop.counter|modulo:4 == 1 %}
                     <div class="row">
                         {% endif %}
