@@ -408,7 +408,7 @@ def pending(request, event_id):
     """
     event = get_object_or_404(Events, pk=event_id)
 
-    timeslots = TimeSlots.objects.filter(event=event).filter(user=request.user)
+    timeslots = TimeSlots.objects.filter(event=event).filter(user=request.user).order_by('id')
     show_timeslots = []
     for t in timeslots:
         show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))
@@ -733,7 +733,7 @@ def select_publish_render(request, event_id):
     :return:
     """
     event = get_object_or_404(Events, pk=event_id)
-    timeslots = TimeSlots.objects.filter(event=event).filter(user=request.user)
+    timeslots = TimeSlots.objects.filter(event=event).filter(user=request.user).order_by('id')
     show_timeslots = []
     for t in timeslots:
         show_timeslots.append(t.time_slot_start.strftime('%Y-%m-%d %H:%M:%S'))

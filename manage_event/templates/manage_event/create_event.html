@@ -2,11 +2,16 @@
 {% block content %}
 {{ form.media }}
 
-<h1>Create a new event</h1>
-<form action="" method="post">
+
+<div class="col-lg-3 "></div>
+<div class="col-lg-6">
+    <h1>Create a new event</h1>
+    <form action="" method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <input id="create" class = "btn btn-primary btn-block" type="submit" value="Create">
-</form>
+    </form>
+</div>
+
 
 {% endblock%}
