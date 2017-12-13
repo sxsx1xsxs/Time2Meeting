@@ -20,7 +20,6 @@ class InvitationForm(forms.Form):
 
     def __init__(self,user_obj = None,*args,**kwargs):
         self.user_obj = user_obj
-
         super(InvitationForm,self).__init__(*args,**kwargs)
 
     def clean(self):
@@ -38,19 +37,11 @@ class InvitationForm(forms.Form):
             if domain_part != 'gmail.com' and domain_part != 'columbia.edu':
                 raise forms.ValidationError('Email address should be Gmail or LionMail !',
                                             code='address error',)
-                                            
-        for email in emails:
-            print(email)
-            print(self_email)
-            validate_email(email)
-            _, domain_part1 = email.rsplit('@',1)
-            _, domain_part2 = self_email.rsplit('@',1)
-            if domain_part1 == domain_part2:
+            if email == self_email:
                 error = forms.ValidationError("Email address should not be your own email!")
                 error_list.append(error)
         if error_list:
             raise forms.ValidationError(error_list)
-
         return emails
 
 
