@@ -20,9 +20,7 @@ from notifications.signals import notify
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
-from django.forms import ValidationError
-
-from django.core.mail import send_mass_mail, send_mail
+from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
 import functools
