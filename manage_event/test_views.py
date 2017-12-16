@@ -38,7 +38,9 @@ class viewTestCase(TestCase):
                                            time_range_end=time_now + thirty_mins*6,
                                            deadline=time_now + thirty_mins*3,
                                            duration=thirty_mins)
-
+        self.invitation = Invitation.create(event=self.event,
+                                            mail_list=[self.organizer.email],
+                                            inviter=self.organizer)
         self.event_organizer = EventUser.objects.create(event=self.event,
                                                         user=self.organizer,
                                                         role='o')
@@ -66,6 +68,22 @@ class viewTestCase(TestCase):
         notify.send(sender=self.organizer,
                     recipient=self.participant1,
                     verb='invite you to join event',
+                    target=self.event,
+                    description=self.event.id,
+                    timestamp=datetime.datetime.now().replace(microsecond=0))
+
+        notify.send(sender=self.organizer,
+                    recipient=self.participant1,
+                    verb='aborted event',
+                    # action_object=AbortMessage.objects.get(event=event),
+                    target=self.event,
+                    description=self.event.id,
+                    timestamp=datetime.datetime.now().replace(microsecond=0))
+
+        notify.send(sender=self.organizer,
+                    recipient=self.participant1,
+                    verb='modified event',
+                    # action_object=AbortMessage.objects.get(event=event),
                     target=self.event,
                     description=self.event.id,
                     timestamp=datetime.datetime.now().replace(microsecond=0))
@@ -484,9 +502,49 @@ class viewTestCase(TestCase):
         Test the GET response of view notification redirect.
         :return:
         """
-        response = self.client.get(reverse('manage_event:notification_redirect'))
+        response = self.client.get(reverse('manage_event:notification_redirect',
+                                           args=(self.event.id, Notification.objects.first().id), ))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('manage_event:notification_redirect',
+                                           args=(self.event.id, Notification.objects.get(verb='aborted event').id),))
+        self.assertRedirects(response, reverse('manage_event:show_decision_result', args=(self.event.id,)))
+        response = self.client.get(reverse('manage_event:notification_redirect',
+                                           args=(self.event.id, Notification.objects.get(verb='modified event').id), ))
+        self.assertRedirects(response, reverse('manage_event:modify_timeslots', args=(self.event.id,)))
+
+    def test_modify_event_deadline_result(self):
+        """
+        Test the GET response of modify event deadline result.
+        :return:
+        """
+        response = self.client.get(reverse('manage_event:modify_event_deadline_result', args=(self.event.id,)))
         self.assertEqual(response.status_code, 200)
 
+    def test_accept_invitation(self):
+        """
+        Test the GET response of accept invitation.
+        :return:
+        """
+        invite = Invitation.objects.first()
+        response = self.client.get(reverse('manage_event:accept_invitation', args=(invite.key,)))
+        self.assertRedirects(response, reverse('manage_event:select_timeslots', args=(self.event.id,)))
+
+    def test_decline_invitation(self):
+        """
+        Test the GET response of decline invitation.
+        :return:
+        """
+        invite = Invitation.objects.first()
+        response = self.client.get(reverse('manage_event:decline_invitation', args=(invite.key,)))
+        self.assertEqual(response.status_code, 200)
+
+    def test_create_publish_get(self):
+        """
+        Test the GET response of create publish.
+        :return:
+        """
+        response = self.client.get(reverse('manage_event:create_publish', args=(self.event.id,)))
+        self.assertEqual(response.status_code, 200)
 
 class CreateEventViewTests(TestCase):
     """
