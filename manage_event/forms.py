@@ -37,11 +37,6 @@ class InvitationForm(forms.Form):
             if domain_part != 'gmail.com' and domain_part != 'columbia.edu':
                 raise forms.ValidationError('Email address should be Gmail or LionMail !',
                                             code='address error',)
-                                            
-        for email in emails:
-            print(email)
-            print(self_email)
-            validate_email(email)
             if email == self_email:
                 error = forms.ValidationError("Email address should not be your own email!")
                 error_list.append(error)
