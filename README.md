@@ -3,7 +3,7 @@
 
 
 # Time2Meeting
-<img src="https://raw.githubusercontent.com/sxsx1xsxs/Time2Meeting/6307513f5a1c7c0e972c50d3fba2e6cda9819062/wiki_files/images/Homepage.jpg"/>
+<img src="https://raw.githubusercontent.com/sxsx1xsxs/Time2Meeting/00a384bd3185b650015ca55af1b4e4b1210da25a/wiki_files/images/Homepage.jpg"/>
 
 Scheduling Web Application developed by ColdCode @ ASE course 2017, Columbia University.
 

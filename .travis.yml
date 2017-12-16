@@ -12,6 +12,7 @@ services:
   - postgresql
 
 before_script:
+  - export EMAIL_HOST_USER='youremail@gmail.com'
   - export EMAIL_HOST_PASSWORD='test'
   - psql -c 'create database awesomedb;' -U postgres
 
