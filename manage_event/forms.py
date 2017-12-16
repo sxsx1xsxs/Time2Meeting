@@ -13,10 +13,14 @@ class InvitationForm(forms.Form):
     Invitation forms.
     """
     emails = forms.CharField(label='',
-                             widget=forms.Textarea(attrs=
-                                                   {'class': "form-control",
+                             widget=forms.Textarea(attrs={
+                                                    'class': "form-control",
                                                     'rows': 5,
                                                     'placeholder': "Only support Gmail & Lionmail"}))
+
+    def __init__(self, user_obj=None, *args, **kwargs):
+        self.user_obj = user_obj
+        super(InvitationForm, self).__init__(*args, **kwargs)
 
     def clean(self):
         """
@@ -25,13 +29,19 @@ class InvitationForm(forms.Form):
         """
         cleaned_data = super(InvitationForm, self).clean()
         emails = re.compile(r'[^\w.\-+@_]+').split(cleaned_data.get('emails'))
+        self_email = self.user_obj.email
+        error_list = []
         for email in emails:
             validate_email(email)
             _, domain_part = email.rsplit('@', 1)
             if domain_part != 'gmail.com' and domain_part != 'columbia.edu':
                 raise forms.ValidationError('Email address should be Gmail or LionMail !',
                                             code='address error',)
-
+            if email == self_email:
+                error = forms.ValidationError("Email address should not be your own email!")
+                error_list.append(error)
+        if error_list:
+            raise forms.ValidationError(error_list)
         return emails
 
 
@@ -65,8 +75,7 @@ class AbortForm(forms.ModelForm):
         fields = ('Abort_message',)
 
         widgets = {
-            'Abort_message': forms.Textarea(attrs={'class': "form-control",
-                                                    'rows': 5})
+            'Abort_message': forms.Textarea(attrs={'class': "form-control", 'rows': 5})
         }
 
 
