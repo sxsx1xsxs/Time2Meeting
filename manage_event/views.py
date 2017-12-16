@@ -336,7 +336,7 @@ def create_publish(request, event_id):
 
     contacts = [email for email in Invitation.objects.filter(inviter=request.user).values_list('email', flat=True).distinct()]
     if request.method == 'POST':
-        form = InvitationForm(request.POST)
+        form = InvitationForm(request.user, request.POST)
         if form.is_valid():
             mail_list = form.cleaned_data
             objs = Invitation.create(event=event, mail_list=mail_list, inviter=request.user)
