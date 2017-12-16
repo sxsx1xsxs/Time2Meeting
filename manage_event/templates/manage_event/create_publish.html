@@ -1,32 +1,55 @@
 {% extends 'manage_event/sidebar.html' %}
 {% block content %}
-<div class="col-lg-3 "></div>
-<div class="col-lg-6">
-<h1>Event Created Successfully!</h1>
-
-<h4>Type in emails to invite your friends to join the event:</h4>
-
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li {% if message.tags %} class="{{ message.tags }}" {% endif %} >
-        {{ message }}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-<div >
-    <form method="post">
-        {% csrf_token %}
-        {{ form }}
-        <br>
-        <input type="submit" class = "btn btn-primary"  value="Invite">
-    </form>
+<div align="center">
+    <h1>Event Created Successfully!</h1>
 </div>
-<br><br><br>
-<button class = "btn btn-warning" onclick="location.href='{% url 'manage_event:select_timeslots' event_id %}'">Select your time slots</button>
-<button class = "btn btn-primary" onclick="location.href='{% url 'manage_event:organize_index' %}'">Back to organize events</button>
+
+<div class="row">
+    <div class="col-lg-3 "></div>
+    <div class="col-lg-6">
+        <h4>Type in emails to invite your friends to join the event:</h4>
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}" {% endif %} >
+                {{ message }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <div >
+            <form method="post">
+                {% csrf_token %}
+                {{ form }}
+                <br>
+                <input type="submit" class = "btn btn-primary"  value="Invite">
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-3 ">
+        <h4>Contact<i>(Copy to use)</i></h4>
+        <div style="height:115px;border:1px solid #ccc;background-color:white;overflow:auto;">
+            {% for contact in contacts %}
+                {{contact}}
+                <br>
+            {% endfor %}
+        </div>
+    </div>
 </div>
+
+<div class="row">
+    <div class="col-lg-3 ">
+    </div>
+    <div class="col-lg-6">
+        <br><br>
+    <button class = "btn btn-warning" onclick="location.href='{% url 'manage_event:select_timeslots' event_id %}'">Select your time slots</button>
+    <button class = "btn btn-primary" onclick="location.href='{% url 'manage_event:organize_index' %}'">Back to organize events</button>
+
+    </div>
+</div>
+
 
 {% endblock%}

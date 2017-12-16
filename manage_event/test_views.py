@@ -62,6 +62,14 @@ class viewTestCase(TestCase):
         login = self.client.login(username='organizer', password='12345')
         self.assertEqual(login, True)
 
+        # send notification
+        notify.send(sender=self.organizer,
+                    recipient=self.participant1,
+                    verb='invite you to join event',
+                    target=self.event,
+                    description=self.event.id,
+                    timestamp=datetime.datetime.now().replace(microsecond=0))
+
     def test_get_result(self):
         """
         Since get_result() is an internal function, just test the return value of it.
@@ -69,6 +77,14 @@ class viewTestCase(TestCase):
         """
         result = get_result(self.event.id)
         self.assertEqual(result, {self.timeslot.time_slot_start: 2, self.timeslot2.time_slot_start: 1})
+
+    def test_index(self):
+        """
+        test the response of GET request when calling index.
+        :return:
+        """
+        response = self.client.get(reverse('manage_event:index', args=()))
+        self.assertEqual(response.status_code, 200)
 
     def test_organize_index(self):
         """
@@ -449,10 +465,27 @@ class viewTestCase(TestCase):
 
     def test_create_event_get(self):
         """
-        Test the GET response of view create event
+        Test the GET response of view create event.
         :return:
         """
         response = self.client.get(reverse('manage_event:create_event'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_select_publish_post(self):
+        """
+        Test the POST response of view select publish.
+        :return:
+        """
+        response = self.client.get(reverse('manage_event:select_timeslots', args=(self.event.id,)))
+        self.assertEqual(response.status_code, 200)
+
+
+    def test_notification_redirect(self):
+        """
+        Test the GET response of view notification redirect.
+        :return:
+        """
+        response = self.client.get(reverse('manage_event:notification_redirect'))
         self.assertEqual(response.status_code, 200)
 
 
