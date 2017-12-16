@@ -18,7 +18,6 @@ before_script:
 script:
   - python manage.py makemigrations
   - python manage.py migrate
-  - python manage.py test
   - coverage run --source=manage_event manage.py test manage_event
 after_success: coveralls
 
