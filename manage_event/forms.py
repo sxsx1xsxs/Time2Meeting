@@ -43,8 +43,8 @@ class InvitationForm(forms.Form):
             print(email)
             print(self_email)
             validate_email(email)
-            _, domain_part1 = email.rsplit('@',1)
-            _, domain_part2 = self_email.rsplit('@',1)
+            domain_part1 = email
+            domain_part2 = self_email
             if domain_part1 == domain_part2:
                 error = forms.ValidationError("Email address should not be your own email!")
                 error_list.append(error)
