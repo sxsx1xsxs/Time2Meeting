@@ -479,7 +479,6 @@ class viewTestCase(TestCase):
         response = self.client.get(reverse('manage_event:select_timeslots', args=(self.event.id,)))
         self.assertEqual(response.status_code, 200)
 
-
     def test_notification_redirect(self):
         """
         Test the GET response of view notification redirect.
