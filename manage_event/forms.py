@@ -20,7 +20,6 @@ class InvitationForm(forms.Form):
 
     def __init__(self,user_obj = None,*args,**kwargs):
         self.user_obj = user_obj
-
         super(InvitationForm,self).__init__(*args,**kwargs)
 
     def clean(self):
@@ -43,14 +42,11 @@ class InvitationForm(forms.Form):
             print(email)
             print(self_email)
             validate_email(email)
-            domain_part1 = email
-            domain_part2 = self_email
-            if domain_part1 == domain_part2:
+            if email == self_email:
                 error = forms.ValidationError("Email address should not be your own email!")
                 error_list.append(error)
         if error_list:
             raise forms.ValidationError(error_list)
-
         return emails
 
 
