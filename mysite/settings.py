@@ -98,7 +98,6 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'datetimewidget',
     'notifications'
-    # 'manage_event'
 ]
 
 # LOGIN_REDIRECT_URL = '/'
@@ -177,6 +176,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+"""
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.debug',
@@ -188,6 +188,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social.apps.django_app.context_processors.backends',
     'social.apps.django_app.context_processors.login_redirect',
 )
+"""
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.open_id.OpenIdAuth',
