@@ -11,6 +11,6 @@ The detailed documentation is in our wiki page.
 
 ## Contributors
 * [Zhidong Liu](https://github.com/tonyshadow)
-* [Yufeng Zhang](https://github.com/WayneZhang511)
+* [Yufeng Zhang](https://waynezhang511.github.io)
 * [Qimeng Han](https://github.com/sherryhan77)
 * [Yi Zhang](https://github.com/sxsx1xsxs)
