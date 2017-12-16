@@ -6,7 +6,7 @@ Scheduling Web Application developed by ColdCode @ ASE course 2017, Columbia Uni
 
 Our application is deployed on Google cloud and you can access it via www.time2meeting.com
 
-The detailed documentation is in our wiki page
+The detailed documentation is in our wiki page.
 
 
 ## Contributors
