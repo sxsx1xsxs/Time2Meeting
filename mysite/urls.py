@@ -16,7 +16,6 @@ Including another URLconf
 import notifications.urls
 from django.conf.urls import include, url
 from django.contrib import admin
-from manage_event import views
 from home import views
 
 urlpatterns = [
