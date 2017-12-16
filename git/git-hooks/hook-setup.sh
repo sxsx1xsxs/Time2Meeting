@@ -10,7 +10,7 @@
 # 2. cd to your local repo of this project
 # 3. git pull origin master (you will find git/git-hooks dir in your local repo)
 # 4. cd to git/git-hooks dir
-# 5. chech every script in this dir has EXECUTE RIGHT (use ls -l to check)
+# 5. check every script in this dir has EXECUTE RIGHT (use ls -l to check)
 #    (usually they have. If not, run chmod +x scriptname to add execute right)
 # 6. ./hook-setup.sh (run this script)
 # 7. now, you have a pre-commit hook in your local repo, which will run static analysis
