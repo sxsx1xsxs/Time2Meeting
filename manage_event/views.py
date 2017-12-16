@@ -342,6 +342,7 @@ def decline_invitation(request, key):
 
 @login_required
 @permission_required(role='o')
+@event_required
 def create_publish(request, event_id):
     """
     Publish create result.

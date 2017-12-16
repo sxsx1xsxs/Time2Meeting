@@ -5,6 +5,7 @@ from .forms import EventForm
 from .forms import DeadlineForm
 from django.db.models import Q
 
+
 class EventFormTestCase(TestCase):
     """
     This module is for testing forms.py
@@ -114,7 +115,6 @@ class EventFormTestCase(TestCase):
             form2.clean()
         exception2 = context2.exception
         self.assertEqual(exception2.error_list[0].code, 'deadline error')
-
 
     def test_clean_with_time_range_greater_than_max_time_range(self):
         """
