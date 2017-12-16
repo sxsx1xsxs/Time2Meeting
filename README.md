@@ -9,3 +9,8 @@ Our application is deployed on Google cloud and you can access it via www.time2m
 The detailed documentation is in our wiki page
 
 
+## Contributors
+* [Zhidong Liu](https://github.com/tonyshadow)
+* [Yufeng Zhang](https://github.com/WayneZhang511)
+* [Qimeng Han](https://github.com/sherryhan77)
+* [Yi Zhang](https://github.com/sxsx1xsxs)
