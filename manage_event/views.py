@@ -336,7 +336,7 @@ def create_publish(request, event_id):
 
     contacts = [email for email in Invitation.objects.filter(inviter=request.user).values_list('email', flat=True).distinct()]
     if request.method == 'POST':
-        form = InvitationForm(data = request.POST, user_obj = request.user)
+        form = InvitationForm(request.POST)
         if form.is_valid():
             mail_list = form.cleaned_data
             objs = Invitation.create(event=event, mail_list=mail_list, inviter=request.user)
@@ -345,7 +345,7 @@ def create_publish(request, event_id):
             messages.success(request, _('Invite Success!'))
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event_id,)))
     else:
-        form = InvitationForm(user_obj = request.user)
+        form = InvitationForm()
     return render(request, 'manage_event/create_publish.html', {'event_id': event_id, 'form': form, 'contacts': contacts})
 
 
