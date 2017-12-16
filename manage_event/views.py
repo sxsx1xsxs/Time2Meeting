@@ -334,6 +334,7 @@ def create_publish(request, event_id):
     # first check whether this event exists.
     event = get_object_or_404(Events, pk=event_id)
 
+    contacts = [email for email in Invitation.objects.filter(inviter=request.user).values_list('email', flat=True).distinct()]
     if request.method == 'POST':
         form = InvitationForm(data = request.POST, user_obj = request.user)
         if form.is_valid():
@@ -345,7 +346,7 @@ def create_publish(request, event_id):
             return HttpResponseRedirect(reverse('manage_event:create_publish', args=(event_id,)))
     else:
         form = InvitationForm(user_obj = request.user)
-    return render(request, 'manage_event/create_publish.html', {'event_id': event_id, 'form': form})
+    return render(request, 'manage_event/create_publish.html', {'event_id': event_id, 'form': form, 'contacts': contacts})
 
 
 @login_required
