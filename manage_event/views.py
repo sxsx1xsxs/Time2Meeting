@@ -20,9 +20,7 @@ from notifications.signals import notify
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
-from django.forms import ValidationError
-
-from django.core.mail import send_mass_mail, send_mail
+from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
 import functools
@@ -171,6 +169,7 @@ def create_event(request):
         form = EventForm()
     return render(request, 'manage_event/create_event.html', {'form': form})
 
+
 @login_required
 #@permission_required(role='o')
 def modify_event_deadline_detail(request, event_id):
@@ -299,11 +298,30 @@ def permission_required(role='p'):
     return decorator
 
 
+def event_required(foo):
+    @functools.wraps(foo)
+    def wrapper(request, event_id):
+        event = get_object_or_404(Events, pk=event_id)
+        if event.status == 'Abort':
+            messages.warning(request, _('Sorry, this event has been aborted!'))
+            return HttpResponseRedirect(reverse('manage_event:index'))
+        if datetime.datetime.now() > event.deadline:
+            messages.warning(request, _('Sorry, this event has passed the deadline!'))
+            return HttpResponseRedirect(reverse('manage_event:index'))
+        return foo(request, event_id)
+    return wrapper
+
+
 @login_required
 @invitation_required
 def accept_invitation(request, key):
     invitation = get_object_or_404(Invitation, key=key)
     event = invitation.event
+
+    event_required(event)
+    if event.status == 'Abort':
+        messages.warning(request, _('Sorry, this event has been aborted!'))
+        return
 
     EventUser.objects.get_or_create(user=request.user, event=event)
     invitation.confirmed = True
@@ -496,6 +514,7 @@ def make_decision_results(request, event_id):
             contents = {'event': event}
         return render(request, 'manage_event/make_decision_results.html', contents)
 
+
 @login_required
 @permission_required(role='o')
 def make_decision_json(request, event_id):
@@ -641,6 +660,7 @@ def webLogout(request):
 
 
 @login_required
+@event_required
 def select_timeslots(request, event_id):
     """
     Select timeslots page.
@@ -655,6 +675,7 @@ def select_timeslots(request, event_id):
 
 
 @login_required
+@event_required
 def modify_timeslots(request, event_id):
     """
     Modify timeslots page.
@@ -726,6 +747,7 @@ def select_publish(request, event_id):
 
 
 @login_required
+@event_required
 def select_publish_render(request, event_id):
     """
     Pulish selection of time slots.
@@ -743,6 +765,7 @@ def select_publish_render(request, event_id):
 
 
 @login_required
+@event_required
 def modify_timeslots_read(request, event_id):
     """
     Read modified time slots.
@@ -772,6 +795,7 @@ def modify_timeslots_read(request, event_id):
 
 
 @login_required
+@event_required
 def modify_timeslots_update(request, event_id):
     """
     Update modified timeslots.
