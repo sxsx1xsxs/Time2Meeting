@@ -8,6 +8,8 @@ Our application is deployed on Google cloud and you can access it via www.time2m
 
 The detailed documentation is in our [wiki page](https://github.com/sxsx1xsxs/Time2Meeting/wiki).
 
+(https://raw.githubusercontent.com/sxsx1xsxs/Time2Meeting/6307513f5a1c7c0e972c50d3fba2e6cda9819062/wiki_files/images/Homepage.jpg)
+
 
 ## Contributors
 * [Zhidong Liu](https://github.com/tonyshadow)
