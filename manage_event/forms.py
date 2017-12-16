@@ -38,10 +38,8 @@ class InvitationForm(forms.Form):
                 raise forms.ValidationError('Email address should be Gmail or LionMail !',
                                             code='address error',)
             if email == self_email:
-                error = forms.ValidationError("Email address should not be your own email!")
-                error_list.append(error)
-        if error_list:
-            raise forms.ValidationError(error_list)
+                raise forms.ValidationError("Email address should not be your own email!",
+                                            code='own email error',)
         return emails
 
 
