@@ -1,6 +1,6 @@
 celery
 astroid==1.5.3
-certifi==2017.7.27.1
+certifi==2022.12.7
 chardet==3.0.4
 cheroot==5.10.0
 CherryPy==12.0.1
