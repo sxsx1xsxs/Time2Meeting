@@ -9,7 +9,7 @@ Django==1.11.5
 django-datetime-widget==0.9.3
 future==0.16.0
 glob2==0.6
-gunicorn==19.7.1
+gunicorn==22.0.0
 idna==2.6
 isort==4.2.15
 jaraco.classes==1.4.3
